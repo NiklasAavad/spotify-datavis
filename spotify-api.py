@@ -41,11 +41,11 @@ def ensure_valid_token():
 
     print("Access token was successfully updated!")
 
-def get(url):
+def get(url, params=None):
     ensure_valid_token()
     token = os.getenv('TOKEN')
     headers={ 'Authorization': f'Bearer {token}' }
-    return requests.get(url, headers=headers)
+    return requests.get(url, headers=headers, params=params)
 
 def get_track(track_id):
     response = get(track_url + track_id)
@@ -53,12 +53,22 @@ def get_track(track_id):
         raise Exception("Could not find song with id:", track_id, "text:", response.text) # TODO should probably not raise exception, but just keep going
     return response.json()
 
-def get_genres(track_id):
+def get_several_tracks(track_ids):
+    track_id_string = ','.join(track_ids)
+    params = {
+        "ids": track_id_string
+    }
+    return get(track_url, params=params)
+
+def get_genres_from_track_id(track_id):
     track_response = get_track(track_id)
+    return get_genres_from_track_response(track_response)
+
+def get_genres_from_track_response(track_response):
     genres = get_genre_by_album(track_response)
     if len(genres) == 0:
         genres = get_genre_by_artist(track_response)
-    print(genres)
+    return genres
 
 def get_genre_by_album(track_response):
     album_id = track_response['album']['id']
@@ -105,4 +115,14 @@ def get_access_token():
     return response
 
 if __name__ == "__main__":
-    get_genres(sprinter)
+    tracks = [sprinter, hips_no_lie]
+    responses = get_several_tracks(tracks)
+    if responses.status_code != 200:
+        print("ooops")
+    else:
+        track_responses = responses.json()
+        tracks = track_responses['tracks']
+        for track in tracks:
+            genres = get_genres_from_track_response(track)
+            print(genres)
+
