@@ -49,7 +49,7 @@ def get(url, params=None):
         return get(url, params)
 
     if response.status_code != 200:
-        raise Exception("Error when calling Spotify API:", response.text)
+        raise Exception("Error when calling Spotify API:", response.status_code, response.text)
 
     return response.json()
 
