@@ -37,6 +37,8 @@ def ensure_valid_token():
     expires_at = current_time + parsed_response['expires_in']
     set_key(dotenv_path, 'EXPIRES_AT', str(expires_at))
 
+    load_dotenv(dotenv_path) # Needs to reload to be able to use the new token!
+
     print("Access token was successfully updated!")
 
 def get(url):
@@ -82,10 +84,18 @@ def get_genre_by_artist(track_response):
 def get_access_token():
     token_url = "https://accounts.spotify.com/api/token"
 
+    client_id = os.getenv("CLIENT_ID")
+    if client_id is None:
+        raise Exception("Please remember to add your Spotify Api Client Id to the .env file")
+
+    client_secret = os.getenv("CLIENT_SECRET")
+    if client_secret is None:
+        raise Exception("Please remember to add your Spotify Api Client Secret to the .env file")
+
     payload = {
         "grant_type": "client_credentials",
-        "client_id": os.getenv("CLIENT_ID"),
-        "client_secret": os.getenv("CLIENT_SECRET")
+        "client_id": client_id,
+        "client_secret": client_secret
     }
 
     headers = {
