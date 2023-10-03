@@ -38,9 +38,20 @@ def ensure_valid_token():
 
 def get(url, params=None):
     ensure_valid_token()
+
     token = os.getenv('TOKEN')
-    headers={ 'Authorization': f'Bearer {token}' }
-    return requests.get(url, headers=headers, params=params)
+    headers={'Authorization': f'Bearer {token}'}
+    response = requests.get(url, headers=headers, params=params)
+
+    if response.status_code == 429:
+        print("Too many requests, waiting 10 seconds...")
+        time.sleep(10)
+        return get(url, params)
+
+    if response.status_code != 200:
+        raise Exception("Error when calling Spotify API:", response.text)
+
+    return response.json()
 
 def get_access_token():
     token_url = "https://accounts.spotify.com/api/token"

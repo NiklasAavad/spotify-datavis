@@ -3,20 +3,14 @@ from db import is_track_saved, add_track_artists, is_artist_saved, add_artist_ge
 from testsongs import *
 
 def get_track(track_id):
-    response = get(track_url + track_id)
-    if response.status_code != 200:
-        raise Exception("Could not find song with id:", track_id, "text:", response.text) # TODO should probably not raise exception, but just keep going
-    return response.json()
+    return get(track_url + track_id)
 
 def get_several_tracks(track_ids):
     track_ids_string = ','.join(track_ids)
     params = {
         "ids": track_ids_string
     }
-    responses = get(track_url, params=params)
-    if responses.status_code != 200:
-        raise Exception("Something went wrong when getting several tracks", responses.text)
-    return responses.json()
+    return get(track_url, params=params)
 
 def get_genres_from_track_id(track_id):
     track_response = get_track(track_id)
@@ -31,9 +25,7 @@ def get_genres_from_track_response(track_response):
 def get_genre_by_album(track_response):
     album_id = track_response['album']['id']
     album_response = get(album_url + album_id)
-    if album_response.status_code != 200:
-        raise Exception("Could not find album with id:", album_id, "text:", album_response.text) # TODO should probably not raise exception, but just keep going
-    genres = album_response.json()['genres']
+    genres = album_response['genres']
     return genres
     
 def get_genre_by_artist(track_response):
@@ -42,9 +34,7 @@ def get_genre_by_artist(track_response):
     all_genres = []
     for id in artist_ids:
         artist_response = get(artist_url + id)
-        if artist_response.status_code != 200:
-            raise Exception("Could not find artist with id:", id, "text:", artist_response.text) # TODO should probably not raise exception, but just keep going
-        all_genres += artist_response.json()['genres']
+        all_genres += artist_response['genres']
     return all_genres
 
 # Assumes that a query for several tracks has been made
@@ -55,10 +45,7 @@ def get_several_artists(artist_ids):
     params = {
         "ids": artist_ids_string
     }
-    responses = get(artist_url, params=params)
-    if responses.status_code != 200:
-        raise Exception("Something went wrong when getting several tracks", responses.text)
-    return responses.json()
+    return get(artist_url, params=params)
 
 def update_genre_for_artists(artist_ids):
     # TODO Cut it up into batches of size 50 or use Producer/Consumer?
