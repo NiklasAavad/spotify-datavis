@@ -1,56 +1,6 @@
-import requests
-import time
-import os
-from dotenv import load_dotenv, set_key
-
-dotenv_path = '.env'
-load_dotenv(dotenv_path)
-
-api_url_base = "https://api.spotify.com/"
-api_url = api_url_base + "v1/"
-
-track_url = api_url + "tracks/"
-album_url = api_url + "albums/"
-artist_url = api_url + "artists/"
-
-shakira_song = "6mICuAdrwEjh6Y6lroV2Kg"
-sprinter = "2FDTHlrBguDzQkp7PVj16Q"
-hips_no_lie = "3ZFTkvIE7kyPt6Nu3PEa7V"
-psycho = "0FWAIRd9Uz5uNek7cALYNC"
-
-# Global dicts, appear kinda as a database!
-track_artist_dict = {} # TODO maybe choose one of these that works best?
-artist_track_dict = {} # TODO maybe choose one of these that works best?
-artist_genre_dict = {}
-
-def ensure_valid_token(): 
-    current_time = time.time()
-
-    expire_ts = os.getenv("EXPIRES_AT")
-    is_token_valid = expire_ts is not None and current_time <= float(expire_ts)
-    if is_token_valid:
-        return
-
-    response = get_access_token()
-    if response.status_code != 200:
-        raise Exception("No access token was received:", response.text)
-    parsed_response = response.json()
-
-    token = parsed_response['access_token']
-    set_key(dotenv_path, 'TOKEN', token)
-
-    expires_at = current_time + parsed_response['expires_in']
-    set_key(dotenv_path, 'EXPIRES_AT', str(expires_at))
-
-    load_dotenv(dotenv_path, override=True) # Needs to reload to be able to use the new token!
-
-    print("Access token was successfully updated!")
-
-def get(url, params=None):
-    ensure_valid_token()
-    token = os.getenv('TOKEN')
-    headers={ 'Authorization': f'Bearer {token}' }
-    return requests.get(url, headers=headers, params=params)
+from apibasics import get, track_url, album_url, artist_url
+from db import is_track_saved, add_track_artists, is_artist_saved, add_artist_genre, print_db
+from testsongs import *
 
 def get_track(track_id):
     response = get(track_url + track_id)
@@ -118,9 +68,8 @@ def update_genre_for_artists(artist_ids):
     for artist in artists:
         artist_id = artist['id']
         genres = artist['genres']
-        artist_genre_dict[artist_id] = genres
+        add_artist_genre(artist_id, genres)
 
-# TODO clipholder
 def update_genre_for_tracks(track_ids):
     # TODO Cut it up into batches of size 50
     track_responses = get_several_tracks(track_ids)
@@ -137,43 +86,11 @@ def get_artist_ids(tracks):
 
         # Update db dicts
         track_id = track['id']
-        track_artist_dict[track_id] = artist_ids
-        for artist_id in artist_ids:
-            artist_track_dict[artist_id] = track_id
+        add_track_artists(track_id, artist_ids)
 
     return all_artist_ids
-
-def get_access_token():
-    token_url = "https://accounts.spotify.com/api/token"
-
-    client_id = os.getenv("CLIENT_ID")
-    if client_id is None:
-        raise Exception("Please remember to add your Spotify Api Client Id to the .env file")
-
-    client_secret = os.getenv("CLIENT_SECRET")
-    if client_secret is None:
-        raise Exception("Please remember to add your Spotify Api Client Secret to the .env file")
-
-    payload = {
-        "grant_type": "client_credentials",
-        "client_id": client_id,
-        "client_secret": client_secret
-    }
-
-    headers = {
-        "Content-Type": "application/x-www-form-urlencoded"
-    }
-
-    response = requests.post(token_url, data=payload, headers=headers)
-
-    return response
 
 if __name__ == "__main__":
     tracks = [sprinter, hips_no_lie]
     update_genre_for_tracks(tracks)
-    print("track/artist")
-    print(track_artist_dict)
-    print("artist/track")
-    print(artist_track_dict)
-    print("artist/genre")
-    print(artist_genre_dict)
+    print_db()
