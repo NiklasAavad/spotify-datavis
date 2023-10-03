@@ -85,7 +85,7 @@ def get_genre_by_artist(track_response):
     for id in artist_ids:
         artist_response = get(artist_url + id)
         if artist_response.status_code != 200:
-            raise Exception("Could not find artist with id:", id, "text:", arist_response.text) # TODO should probably not raise exception, but just keep going
+            raise Exception("Could not find artist with id:", id, "text:", artist_response.text) # TODO should probably not raise exception, but just keep going
         all_genres += artist_response.json()['genres']
     return all_genres
 
