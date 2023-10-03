@@ -1,9 +1,9 @@
 # spotify-datavis
 
 ## Spotify API
-We have used Spotify's api to get the genre of each track and augmented the dataset with this info. \
+We have used Spotify's api to get the genre of each track and augmented the dataset with this info.
 
-The genre is foremost chosen by the album of the track. If no genre is assigned to the album, then the genre is decided by a union of the genres from all artists associated with the track. \
+The genre is foremost chosen by the album of the track. If no genre is assigned to the album, then the genre is decided by a union of the genres from all artists associated with the track.
 
 ### Usage
 To replicate, make sure to add a .env file. This file needs the following information:
