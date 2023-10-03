@@ -18,6 +18,11 @@ sprinter = "2FDTHlrBguDzQkp7PVj16Q"
 hips_no_lie = "3ZFTkvIE7kyPt6Nu3PEa7V"
 psycho = "0FWAIRd9Uz5uNek7cALYNC"
 
+# Global dicts, appear kinda as a database!
+track_artist_dict = {} # TODO maybe choose one of these that works best?
+artist_track_dict = {} # TODO maybe choose one of these that works best?
+artist_genre_dict = {}
+
 def ensure_valid_token(): 
     current_time = time.time()
 
@@ -54,11 +59,14 @@ def get_track(track_id):
     return response.json()
 
 def get_several_tracks(track_ids):
-    track_id_string = ','.join(track_ids)
+    track_ids_string = ','.join(track_ids)
     params = {
-        "ids": track_id_string
+        "ids": track_ids_string
     }
-    return get(track_url, params=params)
+    responses = get(track_url, params=params)
+    if responses.status_code != 200:
+        raise Exception("Something went wrong when getting several tracks", responses.text)
+    return responses.json()
 
 def get_genres_from_track_id(track_id):
     track_response = get_track(track_id)
@@ -89,6 +97,52 @@ def get_genre_by_artist(track_response):
         all_genres += artist_response.json()['genres']
     return all_genres
 
+# Assumes that a query for several tracks has been made
+# TODO, need to consider how to properly go through artist ids, if there are more than 50 (limit from Spotify)
+# Potentially have some form of Producer/Consumer system?
+def get_several_artists(artist_ids):
+    artist_ids_string = ','.join(artist_ids)
+    params = {
+        "ids": artist_ids_string
+    }
+    responses = get(artist_url, params=params)
+    if responses.status_code != 200:
+        raise Exception("Something went wrong when getting several tracks", responses.text)
+    return responses.json()
+
+def update_genre_for_artists(artist_ids):
+    # TODO Cut it up into batches of size 50 or use Producer/Consumer?
+    # TODO could also go through all tracks first and find their artists - THEN go through all artist and find their genres!
+    artist_responses = get_several_artists(artist_ids)
+    artists = artist_responses['artists']
+    for artist in artists:
+        artist_id = artist['id']
+        genres = artist['genres']
+        artist_genre_dict[artist_id] = genres
+
+# TODO clipholder
+def update_genre_for_tracks(track_ids):
+    # TODO Cut it up into batches of size 50
+    track_responses = get_several_tracks(track_ids)
+    tracks = track_responses['tracks']
+    artist_ids = get_artist_ids(tracks)
+    update_genre_for_artists(artist_ids)
+    
+def get_artist_ids(tracks):
+    all_artist_ids = []
+    for track in tracks:
+        artists = track['artists']
+        artist_ids = [artist['id'] for artist in artists]
+        all_artist_ids += artist_ids
+
+        # Update db dicts
+        track_id = track['id']
+        track_artist_dict[track_id] = artist_ids
+        for artist_id in artist_ids:
+            artist_track_dict[artist_id] = track_id
+
+    return all_artist_ids
+
 def get_access_token():
     token_url = "https://accounts.spotify.com/api/token"
 
@@ -116,13 +170,10 @@ def get_access_token():
 
 if __name__ == "__main__":
     tracks = [sprinter, hips_no_lie]
-    responses = get_several_tracks(tracks)
-    if responses.status_code != 200:
-        print("ooops")
-    else:
-        track_responses = responses.json()
-        tracks = track_responses['tracks']
-        for track in tracks:
-            genres = get_genres_from_track_response(track)
-            print(genres)
-
+    update_genre_for_tracks(tracks)
+    print("track/artist")
+    print(track_artist_dict)
+    print("artist/track")
+    print(artist_track_dict)
+    print("artist/genre")
+    print(artist_genre_dict)
