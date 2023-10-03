@@ -3,7 +3,7 @@ import time
 import os
 from dotenv import load_dotenv, set_key
 
-dotenv_path = '.env'
+dotenv_path = '../.env'
 load_dotenv(dotenv_path)
 
 api_url_base = "https://api.spotify.com/"
