@@ -135,7 +135,7 @@ def check_if_all_tracks_is_in_db(file_path):
     chunk_size = 50
     chunks = pd.read_csv(file_path, chunksize=chunk_size)
 
-    last_chunk_to_check = load_db()
+    _ = load_db()
 
     tracks_not_in_db = 0
 
@@ -152,9 +152,10 @@ def check_if_all_tracks_is_in_db(file_path):
         
 
 if __name__ == "__main__":
-    """ file_path = '../../unique_charts.csv' """
+    file_path = '../../unique_charts.csv'
     """ write_to_db(file_path) """
     """ check_if_all_tracks_is_in_db(file_path) """
     """ output_path = "../../charts_missing_from_db.json" """
     """ remove_tracks_that_are_in_db(file_path, output_path) """
-    track_artist_for_tracks_not_in_db()
+    """ track_artist_for_tracks_not_in_db() """
+    remove_duplicates_from_artist_ids()
