@@ -32,14 +32,8 @@ def save_db(index_of_how_far_we_made_it):
     with open(index_of_how_far_we_made_it_path, 'w') as outfile:   
         json.dump(index_of_how_far_we_made_it, outfile)
 
-    with open(track_artist_dict_path, 'w') as outfile:
-        json.dump(track_artist_dict, outfile)
-
     with open(artist_genre_dict_path, 'w') as outfile:
         json.dump(artist_genre_dict, outfile)
-
-    with open(all_artist_ids_path, 'w') as outfile:
-        json.dump(all_artist_ids, outfile)
 
 def is_track_saved(track_id):
     return track_id in track_artist_dict
