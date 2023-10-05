@@ -29,11 +29,13 @@ def load_db():
         return json.load(json_file)
 
 def save_db(index_of_how_far_we_made_it):
-    with open(index_of_how_far_we_made_it_path, 'w') as outfile:   
-        json.dump(index_of_how_far_we_made_it, outfile)
+    raise Exception("Do not use this method, we should have all data. Uncomment the method below, if you really need it")
 
-    with open(artist_genre_dict_path, 'w') as outfile:
-        json.dump(artist_genre_dict, outfile)
+    """ with open(index_of_how_far_we_made_it_path, 'w') as outfile:    """
+    """     json.dump(index_of_how_far_we_made_it, outfile) """
+    """"""
+    """ with open(artist_genre_dict_path, 'w') as outfile: """
+    """     json.dump(artist_genre_dict, outfile) """
 
 def is_track_saved(track_id):
     return track_id in track_artist_dict

@@ -53,9 +53,12 @@ def update_genre_for_artists(artist_ids):
     artist_responses = get_several_artists(artist_ids)
     artists = artist_responses['artists']
     for artist in artists:
-        artist_id = artist['id']
-        genres = artist['genres']
-        add_artist_genre(artist_id, genres)
+        try:
+            artist_id = artist['id']
+            genres = artist['genres']
+            add_artist_genre(artist_id, genres)
+        except:
+            print("Something went wrong with artist:", artist)
 
 def update_genre_for_tracks(track_ids):
     # TODO Cut it up into batches of size 50

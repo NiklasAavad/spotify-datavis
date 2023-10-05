@@ -1,6 +1,6 @@
 from pickle import load
 import pandas as pd
-from query import get_artist_ids, get_several_tracks
+from query import get_artist_ids, get_several_tracks, update_genre_for_artists
 from db import write_artist_ids, save_db, load_db, get_artist_ids_from_db, OVERwrite_artist_ids, is_track_saved, get_tracks_artist_db
 import json
 
@@ -26,6 +26,23 @@ def write_track_artist_to_db(file_path):
    
     # track -> artist dict will be written during the get_aritst_ids method
     write_artist_ids(unsaved_artists)
+    save_db(-1) # mean we're done!!!
+
+def write_artist_genre_to_db():
+    how_far_we_have_come = load_db()
+    artist_list = get_artist_ids_from_db()
+    print("Arists in list:", len(artist_list))
+
+    batch_size = 50
+
+    for i in range(how_far_we_have_come, len(artist_list), batch_size):
+        print(f'Processing #{i}')
+        batch = artist_list[i : i+batch_size]
+        update_genre_for_artists(batch)
+        if i % 1000 == 0:
+            print('Saving to db')
+            save_db(i)
+
     save_db(-1) # mean we're done!!!
 
 def track_artist_for_tracks_not_in_db():
@@ -155,8 +172,9 @@ if __name__ == "__main__":
     """ file_path = '../../unique_charts.csv' """
     file_path = '../../top200_charts.csv'
     """ write_to_db(file_path) """
-    check_if_all_tracks_is_in_db(file_path)
+    """ check_if_all_tracks_is_in_db(file_path) """
     """ output_path = "../../charts_missing_from_db.json" """
     """ remove_tracks_that_are_in_db(file_path, output_path) """
     """ track_artist_for_tracks_not_in_db() """
     """ remove_duplicates_from_artist_ids() """
+    write_artist_genre_to_db()
