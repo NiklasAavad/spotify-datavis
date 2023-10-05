@@ -1,6 +1,6 @@
 import pandas as pd
 from query import get_artist_ids, get_several_tracks, update_genre_for_artists
-from db import write_artist_ids, save_db, load_db, get_artist_ids_from_db, OVERwrite_artist_ids, is_track_saved, get_tracks_artist_db, is_artist_saved
+from db import write_artist_ids, save_db, load_db, get_artist_ids_from_db, OVERwrite_artist_ids, is_track_saved, get_tracks_artist_db, is_artist_saved, get_artist_genre_db
 import json
 
 def write_track_artist_to_db(file_path):
@@ -192,6 +192,84 @@ def check_if_all_tracks_are_associated_with_genres():
                 print(f'Artist {artist_id} is not in db, for track {track_id}')
 
     print("Number of artists, NOT in db:", missing_artists)
+
+def get_all_genres():
+    _ = load_db()
+    
+    artist_genre_dict = get_artist_genre_db()
+    all_genres = set()
+
+    for _, genres in artist_genre_dict.items():
+        all_genres.update(genres)
+
+    print("Number of genres:", len(all_genres))
+    print("Genres:", all_genres)
+
+# TODO wip
+def get_genre_count():
+    _ = load_db()
+    
+    artist_genre_dict = get_artist_genre_db()
+    genre_count = {}
+
+    for _, genres in artist_genre_dict.items():
+        for genre in genres:
+            if genre in genre_count:
+                genre_count[genre] += 1
+            else:
+                genre_count[genre] = 1
+
+    """ genres_with_one_count = 0 """
+    """ for genre, count in genre_count.items(): """
+    """     if count == 1: """
+    """         genres_with_one_count += 1 """
+    """         print(genre) """
+    """"""
+    """ print("Number of genres with 1 count:", genres_with_one_count) """
+
+
+    new_artist_genre_dict = {}
+    new_genres = set()
+    artist_wo_genre = 0
+
+
+
+    for artist, genres in artist_genre_dict.items():
+        most_popular_genre = None
+        count_of_most_popular = 0
+        for genre in genres:
+            count = genre_count[genre]
+            if count > count_of_most_popular:
+                most_popular_genre = genre
+                count_of_most_popular = count
+        if most_popular_genre == None:
+            # print("Nothing was found, count of most popular:", count_of_most_popular, "artist:", artist)
+            artist_wo_genre += 1
+        new_artist_genre_dict[artist] = most_popular_genre
+        new_genres.add(most_popular_genre)
+
+    print("Number of genres:", len(new_genres))
+    print("Songs without genre:", artist_wo_genre)
+
+    """ genre_count = {} """
+    """ for _, genres in new_artist_genre_dict.items(): """
+    """     for genre in genres: """
+    """         if genre in genre_count: """
+    """             genre_count[genre] += 1 """
+    """         else: """
+    """             genre_count[genre] = 1 """
+    """"""
+    """ genres_with_one_count = 0 """
+    """ for genre, count in genre_count.items(): """
+    """     if count == 1: """
+    """         genres_with_one_count += 1 """
+    """         print(genre) """
+    """"""
+    """ print("Number of genres with 1 count:", genres_with_one_count) """
+
+
+
+
 
 if __name__ == "__main__":
     check_if_all_tracks_are_associated_with_genres()

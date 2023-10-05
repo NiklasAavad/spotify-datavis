@@ -52,6 +52,9 @@ def is_artist_saved(artist_id):
 def add_artist_genre(artist_id, genre):
     artist_genre_dict[artist_id] = genre
 
+def get_artist_genre_db():
+    return artist_genre_dict
+
 def write_artist_ids(artist_ids):
     global all_artist_ids
     all_artist_ids += artist_ids

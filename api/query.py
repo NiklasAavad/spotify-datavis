@@ -72,3 +72,10 @@ def get_artist_ids(tracks):
         add_track_artists(track_id, artist_ids)
 
     return all_artist_ids
+
+if __name__ == "__main__":
+    track_responses = get_several_tracks(all_songs)
+    tracks = track_responses['tracks']
+    for track in tracks:
+        genre = get_genres_from_track_response(track)
+        print(genre)
