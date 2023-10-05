@@ -1,5 +1,5 @@
 from apibasics import get, track_url, album_url, artist_url
-from db import is_track_saved, add_track_artists, is_artist_saved, add_artist_genre, print_db
+from db import is_track_saved, add_track_artists, is_artist_saved, add_artist_genre, print_db, load_db
 from testsongs import *
 
 def get_track(track_id):
@@ -17,9 +17,7 @@ def get_genres_from_track_id(track_id):
     return get_genres_from_track_response(track_response)
 
 def get_genres_from_track_response(track_response):
-    genres = get_genre_by_album(track_response)
-    if len(genres) == 0:
-        genres = get_genre_by_artist(track_response)
+    genres = get_genre_by_artist(track_response)
     return genres
 
 def get_genre_by_album(track_response):
@@ -79,6 +77,3 @@ def get_artist_ids(tracks):
         add_track_artists(track_id, artist_ids)
 
     return all_artist_ids
-
-if __name__ == "__main__":
-    print_db()

@@ -1,6 +1,6 @@
 import pandas as pd
 from query import get_artist_ids, get_several_tracks, update_genre_for_artists
-from db import write_artist_ids, save_db, load_db, get_artist_ids_from_db, OVERwrite_artist_ids, is_track_saved, get_tracks_artist_db
+from db import write_artist_ids, save_db, load_db, get_artist_ids_from_db, OVERwrite_artist_ids, is_track_saved, get_tracks_artist_db, is_artist_saved
 import json
 
 def write_track_artist_to_db(file_path):
@@ -165,15 +165,43 @@ def check_if_all_tracks_is_in_db(file_path):
         print(f'Tracks missing from chunk {i}:', tracks_missing_from_current_chunk)
 
     print("Number of tracks, NOT in db:", tracks_not_in_db)
-        
+
+def check_if_all_artists_is_in_db():
+    _ = load_db()
+    all_artist_ids = get_artist_ids_from_db()
+
+    artists_not_in_db = 0
+
+    for artist_id in all_artist_ids:
+        if not is_artist_saved(artist_id):
+            print(artist_id)
+            artists_not_in_db += 1
+
+    print("Number of artists, NOT in db:", artists_not_in_db)
+
+def check_if_all_tracks_are_associated_with_genres():
+    _ = load_db()
+    track_artist_db = get_tracks_artist_db()
+
+    missing_artists = 0
+
+    for track_id, artist_ids in track_artist_db.items():
+        for artist_id in artist_ids:
+            if not is_artist_saved(artist_id):
+                missing_artists += 1
+                print(f'Artist {artist_id} is not in db, for track {track_id}')
+
+    print("Number of artists, NOT in db:", missing_artists)
 
 if __name__ == "__main__":
     """ file_path = '../../unique_charts.csv' """
-    file_path = '../../top200_charts.csv'
+    """ file_path = '../../top200_charts.csv' """
     """ write_to_db(file_path) """
     """ check_if_all_tracks_is_in_db(file_path) """
     """ output_path = "../../charts_missing_from_db.json" """
     """ remove_tracks_that_are_in_db(file_path, output_path) """
     """ track_artist_for_tracks_not_in_db() """
     """ remove_duplicates_from_artist_ids() """
-    write_artist_genre_to_db()
+    """ write_artist_genre_to_db() """
+    """ check_if_all_artists_is_in_db() """
+    check_if_all_tracks_are_associated_with_genres()

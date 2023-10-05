@@ -73,8 +73,3 @@ def print_db():
     with open(index_of_how_far_we_made_it_path, 'w') as outfile:   
         json.dump(-1, outfile)
 
-if __name__ == "__main__":
-    idx = load_db()
-    print("we made it this far:", idx)
-    print("and have this many items in our artist list:", len(all_artist_ids))
-    print("and this many items in our track_artist_dict:", len(track_artist_dict))
