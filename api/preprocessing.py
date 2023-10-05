@@ -4,7 +4,7 @@ from query import get_artist_ids, get_several_tracks
 from db import write_artist_ids, save_db, load_db, get_artist_ids_from_db, OVERwrite_artist_ids, is_track_saved, get_tracks_artist_db
 import json
 
-def write_to_db(file_path):
+def write_track_artist_to_db(file_path):
     chunk_size = 50
     chunks = pd.read_csv(file_path, chunksize=chunk_size)
 
