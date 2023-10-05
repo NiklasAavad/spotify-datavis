@@ -1,5 +1,5 @@
 from apibasics import get, track_url, album_url, artist_url
-from db import is_track_saved, add_track_artists, is_artist_saved, add_artist_genre, print_db, load_db
+from db import add_track_artists, add_artist_genre
 from testsongs import *
 
 def get_track(track_id):
@@ -36,8 +36,6 @@ def get_genre_by_artist(track_response):
     return all_genres
 
 # Assumes that a query for several tracks has been made
-# TODO, need to consider how to properly go through artist ids, if there are more than 50 (limit from Spotify)
-# Potentially have some form of Producer/Consumer system?
 def get_several_artists(artist_ids):
     artist_ids_string = ','.join(artist_ids)
     params = {
@@ -46,8 +44,6 @@ def get_several_artists(artist_ids):
     return get(artist_url, params=params)
 
 def update_genre_for_artists(artist_ids):
-    # TODO Cut it up into batches of size 50 or use Producer/Consumer?
-    # TODO could also go through all tracks first and find their artists - THEN go through all artist and find their genres!
     artist_responses = get_several_artists(artist_ids)
     artists = artist_responses['artists']
     for artist in artists:
@@ -59,7 +55,6 @@ def update_genre_for_artists(artist_ids):
             print("Something went wrong with artist:", artist)
 
 def update_genre_for_tracks(track_ids):
-    # TODO Cut it up into batches of size 50
     track_responses = get_several_tracks(track_ids)
     tracks = track_responses['tracks']
     artist_ids = get_artist_ids(tracks)

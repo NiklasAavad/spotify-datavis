@@ -194,14 +194,4 @@ def check_if_all_tracks_are_associated_with_genres():
     print("Number of artists, NOT in db:", missing_artists)
 
 if __name__ == "__main__":
-    """ file_path = '../../unique_charts.csv' """
-    """ file_path = '../../top200_charts.csv' """
-    """ write_to_db(file_path) """
-    """ check_if_all_tracks_is_in_db(file_path) """
-    """ output_path = "../../charts_missing_from_db.json" """
-    """ remove_tracks_that_are_in_db(file_path, output_path) """
-    """ track_artist_for_tracks_not_in_db() """
-    """ remove_duplicates_from_artist_ids() """
-    """ write_artist_genre_to_db() """
-    """ check_if_all_artists_is_in_db() """
     check_if_all_tracks_are_associated_with_genres()
