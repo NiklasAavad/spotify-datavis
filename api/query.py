@@ -78,6 +78,4 @@ def get_artist_ids(tracks):
     return all_artist_ids
 
 if __name__ == "__main__":
-    tracks = [sprinter, hips_no_lie]
-    update_genre_for_tracks(tracks)
     print_db()
