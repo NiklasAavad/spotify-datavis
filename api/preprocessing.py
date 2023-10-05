@@ -1,4 +1,3 @@
-from pickle import load
 import pandas as pd
 from query import get_artist_ids, get_several_tracks, update_genre_for_artists
 from db import write_artist_ids, save_db, load_db, get_artist_ids_from_db, OVERwrite_artist_ids, is_track_saved, get_tracks_artist_db
