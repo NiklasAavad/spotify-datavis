@@ -1,6 +1,6 @@
 import pandas as pd
 from query import get_artist_ids, get_several_tracks, update_genre_for_artists
-from db import write_artist_ids, save_db, load_db, get_artist_ids_from_db, OVERwrite_artist_ids, is_track_saved, get_tracks_artist_db, is_artist_saved, get_artist_genre_db
+from db import write_artist_ids, save_db, load_db, get_artist_ids_from_db, OVERwrite_artist_ids, is_track_saved, get_tracks_artist_db, is_artist_saved, get_artist_genre_db, get_artist_wo_genre_from_db
 import json
 
 def write_track_artist_to_db(file_path):
@@ -29,12 +29,13 @@ def write_track_artist_to_db(file_path):
 
 def write_artist_genre_to_db():
     how_far_we_have_come = load_db()
-    artist_list = get_artist_ids_from_db()
+    artist_list = get_artist_wo_genre_from_db()
     print("Arists in list:", len(artist_list))
 
     batch_size = 50
 
-    for i in range(how_far_we_have_come, len(artist_list), batch_size):
+    # TODO change to how_far_we_have_come
+    for i in range(0, len(artist_list), batch_size):
         print(f'Processing #{i}')
         batch = artist_list[i : i+batch_size]
         update_genre_for_artists(batch)
@@ -267,9 +268,22 @@ def get_genre_count():
     """"""
     """ print("Number of genres with 1 count:", genres_with_one_count) """
 
+def check_artists_without_genre():
+    _ = load_db()
+    
+    artist_genre_dict = get_artist_genre_db()
+    artists_total = 0
+    artist_wo_genre = 0
 
+    for artist, genres in artist_genre_dict.items():
+        artists_total += 1
+        if len(genres) == 0:
+            print(artist)
+            artist_wo_genre += 1
 
+    print("Artists without genre:", artist_wo_genre)
+    print("Artists in total:", artists_total)
 
 
 if __name__ == "__main__":
-    check_if_all_tracks_are_associated_with_genres()
+    check_artists_without_genre()
