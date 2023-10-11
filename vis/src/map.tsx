@@ -16,6 +16,12 @@ export const Map = ({ countries }: MapProps) => {
 
 	const geoPathGenerator = d3.geoPath().projection(projection);
 
+	// tooltip creation
+	d3.select('body')
+		.append('div')
+		.attr('id', 'tooltip')
+		.attr('style', 'position: absolute; opacity: 0;')
+
 	const mouseOver = (data: string) => {
 		d3.select('#tooltip')
 			.transition()
@@ -36,13 +42,6 @@ export const Map = ({ countries }: MapProps) => {
 			.style('left', (event.pageX + 10) + 'px')
 			.style('top', (event.pageY - 10) + 'px')
 	}
-
-	// tooltip creation
-	d3.select('body')
-		.append('div')
-		.attr('id', 'tooltip')
-		.attr('style', 'position: absolute; opacity: 0;')
-
 
 	const allSvgPaths = countries.features
 		.filter(shape => shape.properties?.ADMIN !== 'Antarctica')
