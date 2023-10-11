@@ -1,5 +1,6 @@
 import * as d3 from 'd3';
 import { FeatureCollection } from 'geojson';
+import { useState } from 'react';
 
 type MapProps = {
 	countries: FeatureCollection
@@ -8,6 +9,8 @@ type MapProps = {
 export const Map = ({ countries }: MapProps) => {
 	const width = 1200;
 	const height = 700;
+
+	const [selectedCountries, setSelectedCountries] = useState<Set<string>>(new Set())
 
 	const projection = d3
 		.geoMercator()
@@ -22,15 +25,26 @@ export const Map = ({ countries }: MapProps) => {
 		.attr('id', 'tooltip')
 		.attr('style', 'position: absolute; opacity: 0;')
 
-	const mouseOver = (data: string) => {
+	const handleClick = (country: string) => {
+		const newSet = new Set(selectedCountries)
+		if (selectedCountries.has(country)) {
+			newSet.delete(country)
+		} else {
+			newSet.add(country)
+		}
+		setSelectedCountries(newSet)
+		console.log(newSet)
+	}
+
+	const handleMouseOver = (country: string) => {
 		d3.select('#tooltip')
 			.transition()
 			.duration(200)
 			.style('opacity', 0.9)
-			.text(data)
+			.text(country)
 	}
 
-	const mouseLeave = () => {
+	const handleMouseLeave = () => {
 		d3.select('#tooltip')
 			.transition()
 			.duration(200)
@@ -43,6 +57,14 @@ export const Map = ({ countries }: MapProps) => {
 			.style('top', (event.pageY - 10) + 'px')
 	}
 
+	const getFill = (country: string) => {
+		if (selectedCountries.has(country)) {
+			return 'red'
+		} else {
+			return 'grey'
+		}
+	}
+
 	const allSvgPaths = countries.features
 		.filter(shape => shape.properties?.ADMIN !== 'Antarctica')
 		.map(shape => {
@@ -50,10 +72,11 @@ export const Map = ({ countries }: MapProps) => {
 				d={geoPathGenerator(shape)}
 				stroke="lightgrey"
 				strokeWidth={0.5}
-				fill="grey"
+				fill={getFill(shape.properties?.ADMIN)}
 				fillOpacity={0.7}
-				onMouseOver={() => mouseOver(shape.properties?.ADMIN)}
-				onMouseLeave={mouseLeave}
+				onClick={() => handleClick(shape.properties?.ADMIN)}
+				onMouseOver={() => handleMouseOver(shape.properties?.ADMIN)}
+				onMouseLeave={handleMouseLeave}
 				onMouseMove={mouseMove}
 			/>
 		})
