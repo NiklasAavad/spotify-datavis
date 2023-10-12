@@ -2,7 +2,7 @@
 import * as d3 from 'd3';
 import { useEffect, useRef, useState } from 'react';
 import './map.css'
-import { countries } from './countries.ts'
+import { countries } from '../data/countries.ts'
 import { Country } from './country.tsx';
 
 export const Map = () => {
