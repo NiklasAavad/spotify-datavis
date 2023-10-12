@@ -14,7 +14,16 @@ export const Map = ({ countries }: MapProps) => {
 
 	const svgRef = useRef<SVGSVGElement | null>(null)
 
+	const initTooltip = () => {
+		d3.select('body')
+			.append('div')
+			.attr('id', 'tooltip')
+			.attr('style', 'position: absolute; opacity: 0;')
+	}
+
 	useEffect(() => {
+		initTooltip()
+
 		const svg = d3.select(svgRef.current)
 
 		const zoomed = (event: d3.D3ZoomEvent<SVGSVGElement, unknown>) => {
@@ -33,12 +42,6 @@ export const Map = ({ countries }: MapProps) => {
 		.center([-40, 65])
 
 	const geoPathGenerator = d3.geoPath().projection(projection);
-
-	// tooltip creation
-	d3.select('body')
-		.append('div')
-		.attr('id', 'tooltip')
-		.attr('style', 'position: absolute; opacity: 0;')
 
 	const handleClick = (country: string) => {
 		const newSet = new Set(selectedCountries)
