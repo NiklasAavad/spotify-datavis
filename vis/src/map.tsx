@@ -2,6 +2,7 @@
 import * as d3 from 'd3';
 import { FeatureCollection } from 'geojson';
 import { useEffect, useRef, useState } from 'react';
+import './map.css'
 
 type MapProps = {
 	countries: FeatureCollection
@@ -61,6 +62,7 @@ export const Map = ({ countries }: MapProps) => {
 	const handleMouseOver = (country: string) => {
 		d3.select('#tooltip')
 			.style('opacity', 0.9)
+			.classed('unselectable', true)
 			.text(country)
 	}
 
