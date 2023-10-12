@@ -43,12 +43,17 @@ export const Country: React.FC<CountryProps> = (props) => {
 			.style('top', (event.pageY - 10) + 'px')
 	}
 
+	const colorScale = d3
+		.scaleLinear<string>()
+		.domain([0, 100])
+		.range(['blue', 'green'])
+
 	const getFill = () => {
 		if (score === -1) {
 			return 'grey'
-		} 
+		}
 
-		return 'green'
+		return colorScale(score)
 
 	}
 
