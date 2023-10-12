@@ -3,7 +3,7 @@ from flask import Flask, jsonify
 app = Flask(__name__)
 
 @app.route('/test')
-def your_endpoint():
+def test():
     fake_data = {
         "USA": 90,
         "Canada": 80,
