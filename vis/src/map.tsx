@@ -95,9 +95,11 @@ export const Map = ({ countries }: MapProps) => {
 
 	return (
 		<>
-			<svg ref={svgRef} style={{ border: 'solid' }} width={width} height={height}>
-				{allSvgPaths}
-			</svg>
+			<div style={{ height: height, width: width, overflow: 'hidden', border: 'solid' }}>
+				<svg ref={svgRef} width={width} height={height}>
+					{allSvgPaths}
+				</svg>
+			</div>
 		</>
 	)
 }
