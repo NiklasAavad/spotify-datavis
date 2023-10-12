@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as d3 from 'd3';
 import { useEffect, useRef, useState } from 'react';
-import './map.css'
+import './WorldMap.css'
 import { countries } from '../data/countries.ts'
-import { Country } from './country.tsx';
+import { Country } from './Country.tsx';
 
-export const Map = () => {
+export const WorldMap = () => {
 	const width = 1200;
 	const height = 700;
 

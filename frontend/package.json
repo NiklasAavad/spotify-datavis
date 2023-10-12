@@ -12,11 +12,13 @@
   "dependencies": {
     "@types/d3": "^7.4.1",
     "@types/geojson": "^7946.0.11",
+    "axios": "^1.5.1",
     "d3": "^7.8.5",
     "d3-geo": "^3.1.0",
     "json-loader": "^0.5.7",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-query": "^3.39.3"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",
