@@ -38,16 +38,12 @@ export const Map = ({ countries }: MapProps) => {
 
 	const handleMouseOver = (country: string) => {
 		d3.select('#tooltip')
-			.transition()
-			.duration(200)
 			.style('opacity', 0.9)
 			.text(country)
 	}
 
 	const handleMouseLeave = () => {
 		d3.select('#tooltip')
-			.transition()
-			.duration(200)
 			.style('opacity', 0)
 	}
 
