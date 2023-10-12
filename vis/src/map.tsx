@@ -1,14 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as d3 from 'd3';
-import { FeatureCollection } from 'geojson';
 import { useEffect, useRef, useState } from 'react';
 import './map.css'
+import { countries } from './countries.ts'
 
-type MapProps = {
-	countries: FeatureCollection
-}
-
-export const Map = ({ countries }: MapProps) => {
+export const Map = () => {
 	const width = 1200;
 	const height = 700;
 
