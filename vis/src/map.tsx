@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 import { FeatureCollection } from 'geojson';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type MapProps = {
 	countries: FeatureCollection
@@ -11,6 +11,23 @@ export const Map = ({ countries }: MapProps) => {
 	const height = 700;
 
 	const [selectedCountries, setSelectedCountries] = useState<Set<string>>(new Set())
+
+	const svgRef = useRef<SVGSVGElement | null>(null)
+
+	useEffect(() => {
+		const svg = d3.select(svgRef.current)
+
+		const zoomed = (event: d3.D3ZoomEvent<SVGSVGElement, unknown>) => {
+			const { transform } = event
+			svg.attr('transform', transform)
+		}
+
+		const zoom = d3.zoom()
+			.scaleExtent([1, 8])
+			.on('zoom', zoomed)
+
+		svg.call(zoom)
+	}, [])
 
 	const projection = d3
 		.geoMercator()
@@ -78,7 +95,7 @@ export const Map = ({ countries }: MapProps) => {
 
 	return (
 		<>
-			<svg style={{ border: 'solid' }} width={width} height={height}>
+			<svg ref={svgRef} style={{ border: 'solid' }} width={width} height={height}>
 				{allSvgPaths}
 			</svg>
 		</>
