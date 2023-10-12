@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as d3 from 'd3';
 import { FeatureCollection } from 'geojson';
 import { useEffect, useRef, useState } from 'react';
@@ -21,6 +22,13 @@ export const Map = ({ countries }: MapProps) => {
 			.attr('style', 'position: absolute; opacity: 0;')
 	}
 
+	const projection = d3
+		.geoMercator()
+		.scale(width / 2 / Math.PI - 40)
+		.center([-40, 65])
+
+	const geoPathGenerator = d3.geoPath().projection(projection);
+
 	useEffect(() => {
 		initTooltip()
 
@@ -28,20 +36,16 @@ export const Map = ({ countries }: MapProps) => {
 
 		const zoomed = (event: d3.D3ZoomEvent<SVGSVGElement, unknown>) => {
 			const { transform } = event
-			svg.attr('transform', transform as any) // eslint-disable-line @typescript-eslint/no-explicit-any
+			svg.selectAll('path').attr('transform', transform as any)
 		}
 
-		const zoom = d3.zoom().scaleExtent([1, 8]).on('zoom', zoomed) as any // eslint-disable-line @typescript-eslint/no-explicit-any
+		const zoom = d3
+			.zoom()
+			.scaleExtent([1, 8])
+			.on('zoom', zoomed)
 
-		svg.call(zoom)
-	}, [])
-
-	const projection = d3
-		.geoMercator()
-		.scale(width / 2 / Math.PI - 40)
-		.center([-40, 65])
-
-	const geoPathGenerator = d3.geoPath().projection(projection);
+		svg.call(zoom as any)
+	}, [geoPathGenerator, projection])
 
 	const handleClick = (country: string) => {
 		const newSet = new Set(selectedCountries)
@@ -98,7 +102,7 @@ export const Map = ({ countries }: MapProps) => {
 		<>
 			<div style={{ height: height, width: width, overflow: 'hidden', border: 'solid' }}>
 				<svg ref={svgRef} width={width} height={height}>
-					{allSvgPaths}
+					<g>{allSvgPaths}</g>
 				</svg>
 			</div>
 		</>
