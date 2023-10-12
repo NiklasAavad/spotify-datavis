@@ -43,7 +43,7 @@ export const Map = () => {
 			.on('zoom', zoomed)
 
 		svg.call(zoom as any)
-	}, [geoPathGenerator, projection])
+	}, [])
 
 	const countrySvgPaths = countries.features
 		.map(countryFeature => <Country
