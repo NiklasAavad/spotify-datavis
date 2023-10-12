@@ -62,16 +62,15 @@ export const Map = ({ countries }: MapProps) => {
 	}
 
 	const allSvgPaths = countries.features
-		.filter(shape => shape.properties?.ADMIN !== 'Antarctica')
 		.map(shape => {
 			return <path
 				d={geoPathGenerator(shape)}
 				stroke="lightgrey"
 				strokeWidth={0.5}
-				fill={getFill(shape.properties?.ADMIN)}
+				fill={getFill(shape.properties?.name)}
 				fillOpacity={0.7}
-				onClick={() => handleClick(shape.properties?.ADMIN)}
-				onMouseOver={() => handleMouseOver(shape.properties?.ADMIN)}
+				onClick={() => handleClick(shape.properties?.name)}
+				onMouseOver={() => handleMouseOver(shape.properties?.name)}
 				onMouseLeave={handleMouseLeave}
 				onMouseMove={mouseMove}
 			/>
