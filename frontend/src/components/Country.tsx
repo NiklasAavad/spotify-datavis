@@ -8,11 +8,12 @@ type CountryProps = {
 	}>,
 	selectedCountries: Set<string>,
 	setSelectedCountries: (newSet: Set<string>) => void,
-	geoPathGenerator: d3.GeoPath<any, d3.GeoPermissibleObjects>
+	geoPathGenerator: d3.GeoPath<any, d3.GeoPermissibleObjects>,
+	score: number
 }
 
 export const Country: React.FC<CountryProps> = (props) => {
-	const { countryFeature, selectedCountries, setSelectedCountries, geoPathGenerator } = props
+	const { countryFeature, selectedCountries, setSelectedCountries, geoPathGenerator, score } = props
 
 	const handleClick = (country: string) => {
 		const newSet = new Set(selectedCountries)
@@ -42,19 +43,20 @@ export const Country: React.FC<CountryProps> = (props) => {
 			.style('top', (event.pageY - 10) + 'px')
 	}
 
-	const getFill = (country: string) => {
-		if (selectedCountries.has(country)) {
-			return 'red'
-		} else {
+	const getFill = () => {
+		if (score === -1) {
 			return 'grey'
-		}
+		} 
+
+		return 'green'
+
 	}
 
 	return <path
 		d={geoPathGenerator(countryFeature)}
 		stroke="lightgrey"
 		strokeWidth={0.5}
-		fill={getFill(countryFeature.properties?.name)}
+		fill={getFill()}
 		fillOpacity={0.7}
 		onClick={() => handleClick(countryFeature.properties?.name)}
 		onMouseOver={() => handleMouseOver(countryFeature.properties?.name)}

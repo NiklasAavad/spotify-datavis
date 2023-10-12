@@ -33,7 +33,7 @@ export const Entrypoint = () => {
 
 	return (
 		<>
-			<WorldMap />
+			<WorldMap countryScores={countryScores} />
 		</>
 	)
 }

@@ -5,7 +5,11 @@ import './WorldMap.css'
 import { countries } from '../data/countries.ts'
 import { Country } from './Country.tsx';
 
-export const WorldMap = () => {
+type WorldMapProps = {
+	countryScores: Map<string, number>
+}
+
+export const WorldMap: React.FC<WorldMapProps> = (props) => {
 	const width = 1200;
 	const height = 700;
 
@@ -45,12 +49,21 @@ export const WorldMap = () => {
 		svg.call(zoom as any)
 	}, [])
 
+	const getScore = (countryName: string) => {
+		const score = props.countryScores.get(countryName)
+		if (score === undefined) {
+			return -1
+		}
+		return score
+	}
+
 	const countrySvgPaths = countries.features
 		.map(countryFeature => <Country
 			countryFeature={countryFeature}
 			selectedCountries={selectedCountries}
 			setSelectedCountries={setSelectedCountries}
-			geoPathGenerator={geoPathGenerator} />
+			geoPathGenerator={geoPathGenerator}
+			score={getScore(countryFeature.properties?.name)} />
 		);
 
 	return (
