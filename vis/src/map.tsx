@@ -19,12 +19,10 @@ export const Map = ({ countries }: MapProps) => {
 
 		const zoomed = (event: d3.D3ZoomEvent<SVGSVGElement, unknown>) => {
 			const { transform } = event
-			svg.attr('transform', transform)
+			svg.attr('transform', transform as any) // eslint-disable-line @typescript-eslint/no-explicit-any
 		}
 
-		const zoom = d3.zoom()
-			.scaleExtent([1, 8])
-			.on('zoom', zoomed)
+		const zoom = d3.zoom().scaleExtent([1, 8]).on('zoom', zoomed) as any // eslint-disable-line @typescript-eslint/no-explicit-any
 
 		svg.call(zoom)
 	}, [])

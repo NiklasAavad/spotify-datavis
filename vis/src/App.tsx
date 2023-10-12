@@ -5,7 +5,7 @@ import './App.css'
 function App() {
 	return (
 		<>
-			<Map countries={countries} />
+			<Map countries={countries as any} /> {/* eslint-disable-line @typescript-eslint/no-explicit-any */}
 		</>
 	)
 }
