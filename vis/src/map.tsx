@@ -56,7 +56,6 @@ export const Map = ({ countries }: MapProps) => {
 			newSet.add(country)
 		}
 		setSelectedCountries(newSet)
-		console.log(newSet)
 	}
 
 	const handleMouseOver = (country: string) => {
