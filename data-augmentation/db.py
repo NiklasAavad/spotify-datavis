@@ -97,6 +97,9 @@ def get_list_of_all_tracks():
 def add_track_features(track_id, features):
     track_feature_dict[track_id] = features
 
+def get_track_feature_db():
+    return track_feature_dict
+
 # TODO only for testing purposes
 def print_db():
     with open(index_of_how_far_we_made_it_path, 'w') as outfile:   

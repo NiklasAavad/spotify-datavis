@@ -1,6 +1,6 @@
 import pandas as pd
 from query import get_artist_ids, get_several_tracks, update_genre_for_artists, get_several_track_features, write_track_features_to_db
-from db import write_artist_ids, save_db, load_db, get_artist_ids_from_db, OVERwrite_artist_ids, is_track_saved, get_tracks_artist_db, is_artist_saved, get_artist_genre_db, get_artist_wo_genre_from_db, get_list_of_all_tracks
+from db import write_artist_ids, save_db, load_db, get_artist_ids_from_db, OVERwrite_artist_ids, is_track_saved, get_tracks_artist_db, is_artist_saved, get_artist_genre_db, get_artist_wo_genre_from_db, get_list_of_all_tracks, get_track_feature_db
 import json
 
 def write_track_artist_to_db(file_path):
@@ -304,5 +304,76 @@ def write_track_features():
 
     save_db(-1) # mean we're done!!!
 
+def check_if_all_tracks_have_features():
+    _ = load_db()
+
+    track_list = get_list_of_all_tracks()
+    
+    track_feature_dict = get_track_feature_db()
+
+    tracks_wo_features = 0
+
+    for track in track_list:
+        if track not in track_feature_dict:
+            print(track)
+            tracks_wo_features += 1
+
+    print("tracks without features", tracks_wo_features)
+
+def check_track_features_for_all_songs():
+    _ = load_db()
+
+    track_feature_dict = get_track_feature_db()
+
+    tracks_wo_features = 0
+    tracks_wo_danceability = 0
+    tracks_wo_energy = 0
+    tracks_wo_acousticness = 0
+    tracks_wo_instrumentalness = 0
+    tracks_wo_liveness = 0
+    tracks_wo_loudness = 0
+    tracks_wo_speechiness = 0
+    tracks_wo_valence = 0
+    tracks_wo_bpm = 0
+    tracks_with_instrumentalness = 0
+
+    for track, features in track_feature_dict.items():
+        if features == None:
+            print(track)
+            tracks_wo_features += 1
+        if features['danceability'] == None or features['danceability'] == 0:
+            tracks_wo_danceability += 1
+        if features['energy'] == None or features['energy'] == 0:
+            tracks_wo_energy += 1
+        if features['acousticness'] == None or features['acousticness'] == 0:
+            tracks_wo_acousticness += 1
+        if features['instrumentalness'] == None or features['instrumentalness'] == 0:
+            tracks_wo_instrumentalness += 1
+        if features['liveness'] == None or features['liveness'] == 0:
+            tracks_wo_liveness += 1
+        if features['loudness'] == None or features['loudness'] == 0:
+            tracks_wo_loudness += 1
+        if features['speechiness'] == None or features['speechiness'] == 0:
+            tracks_wo_speechiness += 1
+        if features['valence'] == None or features['valence'] == 0:
+            tracks_wo_valence += 1
+        if features['tempo'] == None or features['tempo'] == 0:
+            tracks_wo_bpm += 1
+        if features['instrumentalness'] == None or features['instrumentalness'] == 1:
+            tracks_with_instrumentalness += 1
+
+    print("tracks without features", tracks_wo_features)
+    print("tracks without danceability", tracks_wo_danceability)
+    print("tracks without energy", tracks_wo_energy)
+    print("tracks without acousticness", tracks_wo_acousticness)
+    print("tracks without instrumentalness", tracks_wo_instrumentalness)
+    print("tracks without liveness", tracks_wo_liveness)
+    print("tracks without loudness", tracks_wo_loudness)
+    print("tracks without speechiness", tracks_wo_speechiness)
+    print("tracks without valence", tracks_wo_valence)
+    print("tracks without bpm", tracks_wo_bpm)
+    print("tracks with instrumentalness", tracks_with_instrumentalness)
+
+
 if __name__ == "__main__":
-    write_track_features()
+    check_track_features_for_all_songs()
