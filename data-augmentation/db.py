@@ -5,6 +5,7 @@ track_artist_dict = {}
 artist_genre_dict = {}
 all_artist_ids = []
 artist_wo_genre = []
+track_feature_dict = {}
 
 # Paths for db
 track_artist_dict_path = 'track_artist_dict.json'
@@ -12,12 +13,14 @@ artist_genre_dict_path = 'artist_genre_dict.json'
 all_artist_ids_path = 'all_artist_ids.json'
 index_of_how_far_we_made_it_path = 'index_of_how_far_we_made_it.json'
 artist_wo_genre_path = 'artists_wo_genre.json'
+track_feature_dict_path = 'track_feature_dict.json'
 
 def load_db():
     global track_artist_dict
     global artist_genre_dict
     global all_artist_ids
     global artist_wo_genre
+    global track_feature_dict
 
     with open(track_artist_dict_path) as json_file:
         track_artist_dict = json.load(json_file)
@@ -31,12 +34,18 @@ def load_db():
     with open(artist_wo_genre_path) as json_file:
         artist_wo_genre = json.load(json_file)
 
+    with open(track_feature_dict_path) as json_file:
+        track_feature_dict = json.load(json_file)
+
     with open(index_of_how_far_we_made_it_path) as json_file:
         return json.load(json_file)
 
 
 def save_db(index_of_how_far_we_made_it):
     # raise Exception("Do not use this method, we should have all data. Uncomment the method below, if you really need it")
+
+    with open(track_feature_dict_path, 'w') as outfile:
+        json.dump(track_feature_dict, outfile)
 
     with open(index_of_how_far_we_made_it_path, 'w') as outfile:   
         json.dump(index_of_how_far_we_made_it, outfile)
@@ -80,9 +89,19 @@ def load_how_far_we_made_it():
     with open(index_of_how_far_we_made_it_path) as json_file:
         return json.load(json_file)
 
+# Assumes the db has been loaded
+def get_list_of_all_tracks():
+    track_list = list(track_artist_dict.keys())
+    return track_list
+
+def add_track_features(track_id, features):
+    track_feature_dict[track_id] = features
 
 # TODO only for testing purposes
 def print_db():
     with open(index_of_how_far_we_made_it_path, 'w') as outfile:   
         json.dump(-1, outfile)
 
+if __name__ == "__main__":
+    _ = load_db()
+    get_list_of_all_tracks()

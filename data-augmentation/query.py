@@ -1,6 +1,7 @@
-from apibasics import get, track_url, album_url, artist_url
-from db import add_track_artists, add_artist_genre
+from apibasics import get, track_url, album_url, artist_url, track_feature_url
 from testsongs import *
+import random
+from db import load_db, get_list_of_all_tracks, save_db, add_track_features
 
 def get_track(track_id):
     return get(track_url + track_id)
@@ -74,5 +75,20 @@ def get_artist_ids(tracks):
 
     return all_artist_ids
 
+def get_several_track_features(track_list):
+    track_ids_string = ','.join(track_list)
+    params = {
+        "ids": track_ids_string
+    }
+    return get(track_feature_url, params=params)
+
+def write_track_features_to_db(track_features):
+    for feature in track_features:
+        try:
+            track_id = feature['id']
+            add_track_features(track_id, feature)
+        except:
+            print("Something went wrong with feature:", feature)
+
 if __name__ == "__main__":
-    update_genre_for_artists(test_artists_wo_genre)
+    print("hello query")

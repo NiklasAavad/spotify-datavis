@@ -1,6 +1,6 @@
 import pandas as pd
-from query import get_artist_ids, get_several_tracks, update_genre_for_artists
-from db import write_artist_ids, save_db, load_db, get_artist_ids_from_db, OVERwrite_artist_ids, is_track_saved, get_tracks_artist_db, is_artist_saved, get_artist_genre_db, get_artist_wo_genre_from_db
+from query import get_artist_ids, get_several_tracks, update_genre_for_artists, get_several_track_features, write_track_features_to_db
+from db import write_artist_ids, save_db, load_db, get_artist_ids_from_db, OVERwrite_artist_ids, is_track_saved, get_tracks_artist_db, is_artist_saved, get_artist_genre_db, get_artist_wo_genre_from_db, get_list_of_all_tracks
 import json
 
 def write_track_artist_to_db(file_path):
@@ -284,6 +284,25 @@ def check_artists_without_genre():
     print("Artists without genre:", artist_wo_genre)
     print("Artists in total:", artists_total)
 
+def write_track_features(): 
+    how_far_we_have_come = load_db()
+
+    track_list = get_list_of_all_tracks()
+
+    batch_size = 100
+
+    for i in range(how_far_we_have_come, len(track_list), batch_size):
+        print(f'Processing #{i}')
+        batch = track_list[i : i+batch_size]
+        
+        track_feature_responses = get_several_track_features(batch)
+        write_track_features_to_db(track_feature_responses['audio_features'])
+
+        if i % 1000 == 0:
+            print('Saving to db')
+            save_db(i)
+
+    save_db(-1) # mean we're done!!!
 
 if __name__ == "__main__":
-    check_artists_without_genre()
+    write_track_features()
