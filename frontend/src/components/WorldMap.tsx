@@ -43,7 +43,7 @@ export const WorldMap: React.FC<WorldMapProps> = (props) => {
 
 		const zoom = d3
 			.zoom()
-			.scaleExtent([1, 8])
+			.scaleExtent([1, 20])
 			.on('zoom', zoomed)
 
 		svg.call(zoom as any)
