@@ -7,7 +7,7 @@ import { Country } from './Country.tsx';
 
 type WorldMapProps = {
 	countryScores: Map<string, number>
-	colorScale: d3.ScaleSequential<string>;
+	colorScale: d3.ScaleSequential<string, string>;
 }
 
 export const WorldMap: React.FC<WorldMapProps> = (props) => {
@@ -51,11 +51,7 @@ export const WorldMap: React.FC<WorldMapProps> = (props) => {
 	}, [])
 
 	const getScore = (countryName: string) => {
-		const score = props.countryScores.get(countryName)
-		if (score === undefined) {
-			return -1
-		}
-		return score
+		return props.countryScores.get(countryName);
 	}
 
 	const countrySvgPaths = countries.features

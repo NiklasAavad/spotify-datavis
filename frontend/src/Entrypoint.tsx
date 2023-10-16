@@ -72,7 +72,8 @@ export const Entrypoint = () => {
 
 	const cubehelixScale = d3
 		.scaleSequential(d3.interpolateCubehelix.gamma(1)(startColor, endColor))
-		.domain([0, 100]);
+		.domain([0, 100])
+		.unknown('grey')
 
 	const countryScores = new Map<string, number>(Object.entries(data));
 	console.log(countryScores)

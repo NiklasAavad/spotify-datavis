@@ -9,8 +9,8 @@ type CountryProps = {
 	selectedCountries: Set<string>,
 	setSelectedCountries: (newSet: Set<string>) => void,
 	geoPathGenerator: d3.GeoPath<any, d3.GeoPermissibleObjects>,
-	score: number
-	colorScale: d3.ScaleSequential<string>
+	score: number | undefined,
+	colorScale: d3.ScaleSequential<string, string>
 }
 
 export const Country: React.FC<CountryProps> = (props) => {
@@ -24,7 +24,7 @@ export const Country: React.FC<CountryProps> = (props) => {
 
 	const handleClick = (country: string) => {
 		// Do not add countries with no score! TODO, what if a country suddenly has no data and therefore 'no score'? might need to define the available countries instead
-		if (score === -1) {
+		if (score === undefined) {
 			return;
 		}
 
@@ -38,10 +38,10 @@ export const Country: React.FC<CountryProps> = (props) => {
 	}
 
 	const getText = (country: string) => {
-		if (score !== -1) {
-			return `${country}: ${score}%`
+		if (score === undefined) {
+			return ''
 		}
-		return ''
+		return `${country}: ${score}%`
 	}
 
 	const handleMouseOver = (country: string) => {
@@ -63,9 +63,6 @@ export const Country: React.FC<CountryProps> = (props) => {
 	}
 
 	const getFill = () => {
-		if (score === -1) {
-			return 'grey'
-		}
 		return colorScale(score)
 	}
 
