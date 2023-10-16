@@ -1,7 +1,7 @@
 import * as d3 from 'd3';
 
 type ColorLegendProps = {
-	colorScale: d3.ScaleLinear<string, string>;
+	colorScale: d3.ScaleSequential<string>;
 	width: number;
 	height: number;
 }

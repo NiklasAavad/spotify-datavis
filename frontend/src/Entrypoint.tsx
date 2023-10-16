@@ -67,17 +67,19 @@ const SHOULD_USE_BACKEND = false;
 export const Entrypoint = () => {
 	const data = getData();
 
-	const colorScale = d3
-		.scaleLinear<string>()
-		.domain([0, 100])
-		.range(['blue', 'green']);
+	const startColor = 'purple'
+	const endColor = 'yellow'
+
+	const cubehelixScale = d3
+		.scaleSequential(d3.interpolateCubehelix.gamma(1)(startColor, endColor))
+		.domain([0, 100]);
 
 	const countryScores = new Map<string, number>(Object.entries(data));
 	console.log(countryScores)
 
 	return (
 		<>
-			<ColorLegend colorScale={colorScale} width={500} height={50} />
+			<ColorLegend colorScale={cubehelixScale} width={500} height={50} />
 			<WorldMap countryScores={countryScores} />
 		</>
 	)

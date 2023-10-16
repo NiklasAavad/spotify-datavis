@@ -43,17 +43,19 @@ export const Country: React.FC<CountryProps> = (props) => {
 			.style('top', (event.pageY - 10) + 'px')
 	}
 
-	const colorScale = d3
-		.scaleLinear<string>()
-		.domain([0, 100])
-		.range(['blue', 'green'])
+	const startColor = 'purple'
+	const endColor = 'yellow'
+
+	const cubehelixScale = d3
+		.scaleSequential(d3.interpolateCubehelix.gamma(1)(startColor, endColor))
+		.domain([0, 100]);
 
 	const getFill = () => {
 		if (score === -1) {
 			return 'grey'
 		}
 
-		return colorScale(score)
+		return cubehelixScale(score)
 
 	}
 
