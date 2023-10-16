@@ -9,10 +9,13 @@ type ColorLegendProps = {
 export const ColorLegend: React.FC<ColorLegendProps> = ({ colorScale, width, height }) => {
 	const gradientId = 'colorGradient';
 
+	const colorStops = Array.from({ length: 101 }, (_, i) => colorScale(i));
+
 	const linearGradient = (
 		<linearGradient id={gradientId}>
-			<stop offset="0%" stopColor={colorScale(0)} />
-			<stop offset="100%" stopColor={colorScale(100)} />
+			{colorStops.map((color, i) => (
+				<stop key={i} offset={`${i}%`} stopColor={color} />
+			))}
 		</linearGradient>
 	);
 
