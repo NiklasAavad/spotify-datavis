@@ -23,6 +23,11 @@ export const Country: React.FC<CountryProps> = (props) => {
 	} = props
 
 	const handleClick = (country: string) => {
+		// Do not add countries with no score! TODO, what if a country suddenly has no data and therefore 'no score'? might need to define the available countries instead
+		if (score === -1) {
+			return;
+		}
+
 		const newSet = new Set(selectedCountries)
 		if (selectedCountries.has(country)) {
 			newSet.delete(country)
@@ -64,10 +69,17 @@ export const Country: React.FC<CountryProps> = (props) => {
 		return colorScale(score)
 	}
 
+	const getStrokeWidth = () => {
+		if (selectedCountries.has(countryFeature.properties?.name)) {
+			return 1.5
+		}
+		return 0.5
+	}
+
 	return <path
 		d={geoPathGenerator(countryFeature)}
 		stroke="lightgrey"
-		strokeWidth={0.5}
+		strokeWidth={getStrokeWidth()}
 		fill={getFill()}
 		fillOpacity={0.7}
 		onClick={() => handleClick(countryFeature.properties?.name)}
