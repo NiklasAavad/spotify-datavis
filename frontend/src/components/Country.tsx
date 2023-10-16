@@ -32,11 +32,18 @@ export const Country: React.FC<CountryProps> = (props) => {
 		setSelectedCountries(newSet)
 	}
 
+	const getText = (country: string) => {
+		if (score !== -1) {
+			return `${country}: ${score}%`
+		}
+		return ''
+	}
+
 	const handleMouseOver = (country: string) => {
 		d3.select('#tooltip')
 			.style('opacity', 0.9)
 			.classed('unselectable', true)
-			.text(`${country}: ${score}%`)
+			.text(getText(country))
 	}
 
 	const handleMouseLeave = () => {
