@@ -36,7 +36,7 @@ export const Country: React.FC<CountryProps> = (props) => {
 		d3.select('#tooltip')
 			.style('opacity', 0.9)
 			.classed('unselectable', true)
-			.text(country)
+			.text(`${country}: ${score}%`)
 	}
 
 	const handleMouseLeave = () => {
