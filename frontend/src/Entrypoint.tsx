@@ -6,6 +6,8 @@ import { useQuery } from 'react-query';
 import { ColorLegend } from './components/ColorLegend';
 import * as d3 from 'd3';
 
+const SHOULD_USE_BACKEND = false;
+
 const useScores = () => {
 	const getScores = async () => {
 		try {
@@ -22,7 +24,9 @@ const useScores = () => {
 	return useQuery('scores', getScores);
 }
 
-const getData = () => {
+const useData = () => {
+	const { data, isLoading, isError, error } = useScores();
+
 	if (!SHOULD_USE_BACKEND) {
 		return {
 			"USA": 90,
@@ -48,8 +52,6 @@ const getData = () => {
 		};
 	}
 
-	const { data, isLoading, isError, error } = useScores();
-
 	if (isError) {
 		console.log("error:", error);
 		throw new Error("damn error");
@@ -62,10 +64,8 @@ const getData = () => {
 	console.log("Loading...");
 }
 
-const SHOULD_USE_BACKEND = false;
-
 export const Entrypoint = () => {
-	const data = getData();
+	const data = useData();
 
 	const startColor = 'purple'
 	const endColor = 'yellow'
