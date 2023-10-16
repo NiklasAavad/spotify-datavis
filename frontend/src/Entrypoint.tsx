@@ -80,7 +80,7 @@ export const Entrypoint = () => {
 	return (
 		<>
 			<ColorLegend colorScale={cubehelixScale} width={500} height={50} />
-			<WorldMap countryScores={countryScores} />
+			<WorldMap countryScores={countryScores} colorScale={cubehelixScale} />
 		</>
 	)
 }

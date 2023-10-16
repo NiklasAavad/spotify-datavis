@@ -10,10 +10,17 @@ type CountryProps = {
 	setSelectedCountries: (newSet: Set<string>) => void,
 	geoPathGenerator: d3.GeoPath<any, d3.GeoPermissibleObjects>,
 	score: number
+	colorScale: d3.ScaleSequential<string>
 }
 
 export const Country: React.FC<CountryProps> = (props) => {
-	const { countryFeature, selectedCountries, setSelectedCountries, geoPathGenerator, score } = props
+	const { countryFeature,
+		selectedCountries,
+		setSelectedCountries,
+		geoPathGenerator,
+		score,
+		colorScale
+	} = props
 
 	const handleClick = (country: string) => {
 		const newSet = new Set(selectedCountries)
@@ -43,20 +50,11 @@ export const Country: React.FC<CountryProps> = (props) => {
 			.style('top', (event.pageY - 10) + 'px')
 	}
 
-	const startColor = 'purple'
-	const endColor = 'yellow'
-
-	const cubehelixScale = d3
-		.scaleSequential(d3.interpolateCubehelix.gamma(1)(startColor, endColor))
-		.domain([0, 100]);
-
 	const getFill = () => {
 		if (score === -1) {
 			return 'grey'
 		}
-
-		return cubehelixScale(score)
-
+		return colorScale(score)
 	}
 
 	return <path
