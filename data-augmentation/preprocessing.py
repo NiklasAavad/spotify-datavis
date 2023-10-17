@@ -412,9 +412,50 @@ def transform_url_to_id(file_path, output_file_path):
     print('Saving top200 rows to file')
     filtered_rows.to_csv(output_file_path, index=False)  # index=False to exclude the index column
 
+# Needs to create seperate files for each chunk, because we cannot have this much data in memory at once (process killed...)
+def append_audio_features_to_rows(file_path):
+    chunk_size = 1000000 
+    chunks = pd.read_csv(file_path, chunksize=chunk_size)
+
+    _ = load_db()
+    track_feature_dict = get_track_feature_db()
+
+    for i, chunk in enumerate(chunks):
+        print('Processing chunk:', i + 1)
+
+        feature_columns = ['danceability', 'energy', 'acousticness', 'instrumentalness',
+                            'liveness', 'loudness', 'speechiness', 'valence', 'tempo']
+
+        for column in feature_columns:
+            chunk[column] = chunk['url'].apply(lambda url: track_feature_dict[url][column])
+
+        # Write the chunk to an output file
+        chunk.to_csv(f'chunk_{i}.csv', index=False)
+
+    print('Chunks saved to separate files. Combine them if needed.')
+
+def remove_rows_without_audio_features(file_path, output_file_path):
+    chunk_size = 1000000 
+    chunks = pd.read_csv(file_path, chunksize=chunk_size)
+
+    _ = load_db()
+    track_feature_dict = get_track_feature_db()
+
+    filtered_rows = pd.DataFrame()
+
+    for i, chunk in enumerate(chunks):
+        print('Processing chunk:', i+1)
+        # should remove all rows if the url of the row is not in the track_audio_dict
+        chunk = chunk[chunk['url'].isin(track_feature_dict)]
+        filtered_rows = filtered_rows.append(chunk)
+
+    print('Saving top200 rows to file')
+    filtered_rows.to_csv(output_file_path, index=False)  # index=False to exclude the index column
 
 if __name__ == "__main__":
-    print_one_row('../../top200_charts_no_category.csv')
-    print_one_row('../../top200_charts_no_category_id_no_url.csv')
+    # print_one_row('../../top200_charts_no_category.csv')
+    # print_one_row('../../top200_charts_no_category_id_no_url.csv')
     # remove_chart_category('../../top200_charts.csv', '../../top200_charts_no_category.csv')
     # transform_url_to_id('../../top200_charts_no_category.csv', '../../top200_charts_no_category_id_no_url.csv')
+    # remove_rows_without_audio_features('../../top200_charts_no_category_id_no_url.csv', '../../top200_only_songs_with_audio_features.csv')
+    append_audio_features_to_rows('../../top200_only_songs_with_audio_features.csv')
