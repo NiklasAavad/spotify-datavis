@@ -374,6 +374,32 @@ def check_track_features_for_all_songs():
     print("tracks without bpm", tracks_wo_bpm)
     print("tracks with instrumentalness", tracks_with_instrumentalness)
 
+def print_one_row(file_path):
+    chunk_size = 100 
+    chunks = pd.read_csv(file_path, chunksize=chunk_size)
+
+    for i, chunk in enumerate(chunks):
+        print('Processing chunk:', i+1)
+        print(chunk.iloc[0])
+        break
+
+# We can remove chart category, because we no longer have viral50 in the dataset
+def remove_chart_category(file_path, output_file_path):
+    chunk_size = 1000000 
+    chunks = pd.read_csv(file_path, chunksize=chunk_size)
+
+    filtered_rows = pd.DataFrame()
+
+    for i, chunk in enumerate(chunks):
+        print('Processing chunk:', i+1)
+        chunk = chunk.drop(columns=['chart'])
+        filtered_rows = filtered_rows.append(chunk)
+
+    print('Saving top200 rows to file')
+    filtered_rows.to_csv(output_file_path, index=False)  # index=False to exclude the index column
+
 
 if __name__ == "__main__":
-    check_track_features_for_all_songs()
+    print_one_row('../../top200_charts.csv')
+    print_one_row('../../top200_charts_no_category.csv')
+    # remove_chart_category('../../top200_charts.csv', '../../top200_charts_no_category.csv')
