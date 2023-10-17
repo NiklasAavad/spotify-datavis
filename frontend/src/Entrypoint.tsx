@@ -37,12 +37,12 @@ const useScore = () => {
 }
 
 const useFakeData = () => {
-	const SHOULD_USE_BACKEND = true;
-	const { data } = useTestScores();
+	const SHOULD_USE_BACKEND = false;
+	const { data, isLoading, isError, error } = useTestScores();
 
 	if (!SHOULD_USE_BACKEND) {
-		return {
-			"USA": 90,
+		const data = {
+			"United States": 90,
 			"Canada": 80,
 			"Mexico": 85,
 			"Spain": 80,
@@ -63,13 +63,20 @@ const useFakeData = () => {
 			"Australia": 80,
 			"New Zealand": 90,
 		};
+
+		const isLoading = false;
+		const isError = false;
+		const error = "";
+
+		return { data, isLoading, isError, error }
 	}
 
-	return data;
+	return { data, isLoading, isError, error };
 }
 
 export const Entrypoint = () => {
-	const { data, isLoading, isError } = useScore();
+	/* const { data, isLoading, isError } = useScore(); */
+	const { data, isLoading, isError } = useFakeData();
 
 	if (isLoading) {
 		return <div>Loading...</div>;

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import './WorldMap.css'
 import { countries } from '../data/countries.ts'
 import { Country } from './Country.tsx';
+import { Spinner } from './Spinner.tsx';
 
 type WorldMapProps = {
 	countryScores: Map<string, number>
@@ -15,6 +16,8 @@ export const WorldMap: React.FC<WorldMapProps> = (props) => {
 	const height = 700;
 
 	const [selectedCountries, setSelectedCountries] = useState<Set<string>>(new Set())
+
+	const [isLoading, setIsLoading] = useState<boolean>(false)
 
 	const svgRef = useRef<SVGSVGElement | null>(null)
 
@@ -64,13 +67,19 @@ export const WorldMap: React.FC<WorldMapProps> = (props) => {
 			colorScale={props.colorScale} />
 		);
 
+	const svgOpacity = isLoading ? 0.1 : 1.0
+
 	return (
 		<>
-			<div style={{ height: height, width: width, overflow: 'hidden', border: 'solid' }}>
-				<svg ref={svgRef} width={width} height={height}>
-					<g>{countrySvgPaths}</g>
-				</svg>
+			<div style={{ height: height, width: width, overflow: 'hidden', position: 'relative', border: 'solid' }}>
+				<div style={{ opacity: svgOpacity }}>
+					<svg ref={svgRef} width={width} height={height}>
+						<g>{countrySvgPaths}</g>
+					</svg>
+				</div>
+				<Spinner isLoading={isLoading} />
 			</div>
+			<button onClick={() => setIsLoading(current => !current)}>Toggle loading</button>
 		</>
 	)
 }
