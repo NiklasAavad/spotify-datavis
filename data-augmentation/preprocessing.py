@@ -452,10 +452,71 @@ def remove_rows_without_audio_features(file_path, output_file_path):
     print('Saving top200 rows to file')
     filtered_rows.to_csv(output_file_path, index=False)  # index=False to exclude the index column
 
+def write_csv_to_mysql_db():
+    import mysql.connector
+    import os
+    from dotenv import load_dotenv
+
+    dotenv_path = '../.env'
+    load_dotenv(dotenv_path)
+
+    host = "localhost"
+    database = "spotify_datavis"
+    user = "root"
+    password = os.getenv("MYSQL_PASSWORD")
+    if password is None:
+        raise Exception("Please remember to add your MySQL password to the .env file")
+
+    cursor = None
+    conn = None
+
+    try:
+        conn = mysql.connector.connect(
+            host=host,
+            user=user,
+            password=password,
+            database=database
+        )
+
+        if conn.is_connected():
+            print("Connected to MySQL")
+
+            chunk_i = 0
+
+            csv_file_path = f'./chunks/chunk_{chunk_i}.csv'
+            chunk_size = 10_000
+
+            table_name = 'spotify_chart'
+
+            cursor = conn.cursor()
+            for i, chunk in enumerate(pd.read_csv(csv_file_path, chunksize=chunk_size)):
+                print('Processing chunk:', i+1)
+                for _, row in chunk.iterrows():
+                    data = row.to_dict()
+                    data["chart_rank"] = data.pop("rank") # Map "rank" to "chart_rank"
+                    columns = ', '.join(data.keys())
+                    values = ', '.join(["%s" for _ in data])
+                    insert_query = f"INSERT INTO {table_name} ({columns}) VALUES ({values});"
+                    cursor.execute(insert_query, list(data.values()))
+
+            # Commit the transaction
+            conn.commit()
+
+    except Exception as e:
+        print("Error: ", e, data)
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if conn is not None:
+            conn.close()
+        print("Done done done")
+
+
 if __name__ == "__main__":
-    # print_one_row('../../top200_charts_no_category.csv')
+    # print_one_row("./chunks/chunk_0.csv")
     # print_one_row('../../top200_charts_no_category_id_no_url.csv')
     # remove_chart_category('../../top200_charts.csv', '../../top200_charts_no_category.csv')
     # transform_url_to_id('../../top200_charts_no_category.csv', '../../top200_charts_no_category_id_no_url.csv')
     # remove_rows_without_audio_features('../../top200_charts_no_category_id_no_url.csv', '../../top200_only_songs_with_audio_features.csv')
-    append_audio_features_to_rows('../../top200_only_songs_with_audio_features.csv')
+    # append_audio_features_to_rows('../../top200_only_songs_with_audio_features.csv')
+    write_csv_to_mysql_db()
