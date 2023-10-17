@@ -25,7 +25,7 @@ const useTestScores = () => {
 const useScore = () => {
 	const getScore = async () => {
 		try {
-			const response = await axios.get('http://localhost:5000/api/score');
+			const response = await axios.get('http://localhost:5000/api/score?lower_bound=0.5&upper_bound=0.9'); // TODO: make this dynamic
 			console.log(response.data)
 			return response.data;
 		} catch (error) {
