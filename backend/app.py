@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 import mysql.connector
 import os
@@ -52,13 +52,16 @@ def score():
     if cursor is None:
         raise Exception("No database connection")
 
+    lower_bound = float(request.args.get("lower_bound", 0.0))
+    upper_bound = float(request.args.get("upper_bound", 1.0))
+
     cursor.execute("""
         SELECT
             region,
-            (COUNT(CASE WHEN danceability >= 0.7 THEN 1 END) / COUNT(*) * 100) AS percentage
+            (COUNT(CASE WHEN danceability >= %s AND danceability <= %s THEN 1 END) / COUNT(*) * 100) AS percentage
         FROM spotify_chart
         GROUP BY region;
-    """)
+    """, (lower_bound, upper_bound))
 
     # Fetch the result
     result = cursor.fetchall()
