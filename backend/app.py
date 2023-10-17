@@ -63,7 +63,10 @@ def score():
     # Fetch the result
     result = cursor.fetchall()
 
-    return jsonify(result)
+    # Create a dictionary with region as the key and percentage as the value
+    data_dict = {row[0]: row[1] for row in result}
+
+    return jsonify(data_dict)
 
 def connect_to_db():
     global cursor, conn

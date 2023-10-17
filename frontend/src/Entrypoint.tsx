@@ -6,9 +6,7 @@ import { useQuery } from 'react-query';
 import { ColorLegend } from './components/ColorLegend';
 import * as d3 from 'd3';
 
-const SHOULD_USE_BACKEND = false;
-
-const useScores = () => {
+const useTestScores = () => {
 	const getScores = async () => {
 		try {
 			console.log("axios start baby")
@@ -21,11 +19,26 @@ const useScores = () => {
 		}
 	};
 
-	return useQuery('scores', getScores);
+	return useQuery('testScores', getScores);
 }
 
-const useData = () => {
-	const { data, isLoading, isError, error } = useScores();
+const useScore = () => {
+	const getScore = async () => {
+		try {
+			const response = await axios.get('http://localhost:5000/api/score');
+			console.log(response.data)
+			return response.data;
+		} catch (error) {
+			throw new Error('Error fetching data from the API');
+		}
+	};
+
+	return useQuery('scores', getScore);
+}
+
+const useFakeData = () => {
+	const SHOULD_USE_BACKEND = true;
+	const { data } = useTestScores();
 
 	if (!SHOULD_USE_BACKEND) {
 		return {
@@ -52,20 +65,19 @@ const useData = () => {
 		};
 	}
 
-	if (isError) {
-		console.log("error:", error);
-		throw new Error("damn error");
-	}
-
-	if (!isLoading) {
-		return data;
-	}
-
-	console.log("Loading...");
+	return data;
 }
 
 export const Entrypoint = () => {
-	const data = useData();
+	const { data, isLoading, isError } = useScore();
+
+	if (isLoading) {
+		return <div>Loading...</div>;
+	}
+
+	if (isError) {
+		return <div>Error :'(</div>;
+	}
 
 	const startColor = 'purple'
 	const endColor = 'yellow'
