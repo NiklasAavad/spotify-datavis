@@ -398,8 +398,23 @@ def remove_chart_category(file_path, output_file_path):
     print('Saving top200 rows to file')
     filtered_rows.to_csv(output_file_path, index=False)  # index=False to exclude the index column
 
+def transform_url_to_id(file_path, output_file_path):
+    chunk_size = 1000000 
+    chunks = pd.read_csv(file_path, chunksize=chunk_size)
+
+    filtered_rows = pd.DataFrame()
+
+    for i, chunk in enumerate(chunks):
+        print('Processing chunk:', i+1)
+        chunk['url'] = chunk['url'].apply(get_id_from_url)
+        filtered_rows = filtered_rows.append(chunk)
+
+    print('Saving top200 rows to file')
+    filtered_rows.to_csv(output_file_path, index=False)  # index=False to exclude the index column
+
 
 if __name__ == "__main__":
-    print_one_row('../../top200_charts.csv')
     print_one_row('../../top200_charts_no_category.csv')
+    print_one_row('../../top200_charts_no_category_id_no_url.csv')
     # remove_chart_category('../../top200_charts.csv', '../../top200_charts_no_category.csv')
+    # transform_url_to_id('../../top200_charts_no_category.csv', '../../top200_charts_no_category_id_no_url.csv')
