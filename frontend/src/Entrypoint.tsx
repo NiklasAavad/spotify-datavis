@@ -6,6 +6,7 @@ import { useQuery, useQueryClient } from 'react-query';
 import { ColorLegend } from './components/ColorLegend';
 import * as d3 from 'd3';
 import { useState } from 'react';
+import { useFakeData } from './utility/FakedThings';
 
 const SCORE = 'score';
 
