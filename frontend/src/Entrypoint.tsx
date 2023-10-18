@@ -43,8 +43,8 @@ export const Entrypoint = () => {
 
 	const refetchData = () => {
 		const newParams = {
-			lower_bound: parseFloat((document.getElementById('danceability-lowerbound') as HTMLInputElement).value), // TODO make this nicer...
-			upper_bound: parseFloat((document.getElementById('danceability-upperbound') as HTMLInputElement).value),
+			lower_bound: parseFloat((document.getElementById('danceability-lowerbound') as HTMLInputElement).value) || 0.0, // TODO make this nicer...
+			upper_bound: parseFloat((document.getElementById('danceability-upperbound') as HTMLInputElement).value) || 1.0,
 		}
 
 		setParams(newParams);
