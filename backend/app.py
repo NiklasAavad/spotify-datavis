@@ -49,6 +49,8 @@ def test():
 
 @app.route('/api/score')
 def score():
+    connect_to_db()
+
     if cursor is None:
         raise Exception("No database connection")
 
@@ -82,7 +84,4 @@ def connect_to_db():
     cursor = conn.cursor()
 
 if __name__ == '__main__':
-    connect_to_db()
-    if conn is None or not conn.is_connected():
-        raise Exception("Could not connect to database")
     app.run()
