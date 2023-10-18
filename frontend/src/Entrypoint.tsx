@@ -18,7 +18,7 @@ export const Entrypoint = () => {
 		.domain([0, dataUpperBound])
 		.unknown('grey')
 
-	const onChangeValue = (event: React.ChangeEvent<HTMLInputElement>) => {
+	const onChangeQueryType = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const newQueryType = event.target.value as QueryType;
 		setQueryType(newQueryType);
 	}
@@ -28,7 +28,7 @@ export const Entrypoint = () => {
 			<ColorLegend colorScale={cubehelixScale} width={500} height={50} upperBound={dataUpperBound} />
 			<MapContainer data={data} isLoading={isLoading} isError={isError} colorScale={cubehelixScale} />
 			{paramComponent}
-			<div onChange={onChangeValue}>
+			<div onChange={onChangeQueryType}>
 				<input type="radio" value={QueryType.Attribute} name="gender" checked={queryType === QueryType.Attribute} /> Attribute
 				<input type="radio" value={QueryType.Score} name="gender" checked={queryType === QueryType.Score} /> Score
 			</div>
