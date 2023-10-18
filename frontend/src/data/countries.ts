@@ -4374,7 +4374,7 @@ export const countries: FeatureCollection = {
     },
     {
       type: 'Feature',
-      properties: { name: 'England' },
+      properties: { name: 'United Kingdom' },
       geometry: {
         type: 'MultiPolygon',
         coordinates: [
