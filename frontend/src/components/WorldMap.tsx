@@ -61,7 +61,7 @@ export const WorldMap: React.FC<WorldMapProps> = (props) => {
 			.on('zoom', zoomed)
 
 		svg.call(zoom as any)
-	}, [])
+	}, [props.data])
 
 	const getScore = (countryName: string) => {
 		return countryScores.get(countryName);
