@@ -27,10 +27,13 @@ export const Entrypoint = () => {
 		<>
 			<ColorLegend colorScale={cubehelixScale} width={500} height={50} upperBound={dataUpperBound} />
 			<MapContainer data={data} isLoading={isLoading} isError={isError} colorScale={cubehelixScale} />
-			{paramComponent}
+			<div style={{ margin: '8px' }}>
+				{paramComponent}
+			</div>
+			<div>Query Type:</div>
 			<div onChange={onChangeQueryType}>
-				<input type="radio" value={QueryType.Attribute} name="gender" checked={queryType === QueryType.Attribute} /> Attribute
-				<input type="radio" value={QueryType.Score} name="gender" checked={queryType === QueryType.Score} /> Score
+				<input type="radio" value={QueryType.Attribute} checked={queryType === QueryType.Attribute} /> Attribute
+				<input type="radio" value={QueryType.Score} checked={queryType === QueryType.Score} /> Score
 			</div>
 		</>
 	)

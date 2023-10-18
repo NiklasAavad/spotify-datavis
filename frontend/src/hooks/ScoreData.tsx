@@ -43,6 +43,7 @@ export const ScoreData: DataProvider = () => {
 
 	const paramComponent = (
 		<>
+			<div>Metrics:</div>
 			<div>
 				<label htmlFor="danceability-lowerbound">Danceability Lower Bound </label>
 				<input type="number" placeholder="0.0" min="0" max="1" step="0.01" id="danceability-lowerbound" />

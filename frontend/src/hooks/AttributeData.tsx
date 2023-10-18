@@ -7,6 +7,10 @@ enum Attribute {
 	Danceability = 'danceability',
 	Energy = 'energy',
 	Valence = 'valence',
+	Acousticness = 'acousticness',
+	Instrumentalness = 'instrumentalness',
+	Liveness = 'liveness',
+	Speechiness = 'speechiness',
 }
 
 // TODO if we use this, we should probably make a Params type which includes the time period or something
@@ -32,23 +36,24 @@ export const AttributeData: DataProvider = () => {
 	const queryClient = useQueryClient();
 	const queryResult = useAttribute(attribute);
 
-	const refetchData = () => {
-		const newAttribute = (document.getElementById('attribute') as HTMLInputElement).value as Attribute;
+	const onChangeAttribute = (event: React.ChangeEvent<HTMLInputElement>) => {
+		const newAttribute = event.target.value as Attribute;
 		setAttribute(newAttribute);
 		queryClient.invalidateQueries([newAttribute]);
 	}
 
 	const paramComponent = (
 		<>
-			<div>
-				<label htmlFor="attribute">Attribute </label>
-				<select id="attribute">
-					<option value={Attribute.Danceability}>Danceability</option>
-					<option value={Attribute.Energy}>Energy</option>
-					<option value={Attribute.Valence}>Valence</option>
-				</select>
+			<div>Attribute:</div>
+			<div onChange={onChangeAttribute}>
+				<input type="radio" value={Attribute.Danceability} checked={attribute == Attribute.Danceability} /> Danceability
+				<input type="radio" value={Attribute.Energy} checked={attribute == Attribute.Energy} /> Energy
+				<input type="radio" value={Attribute.Valence} checked={attribute == Attribute.Valence} /> Valence
+				<input type="radio" value={Attribute.Acousticness} checked={attribute == Attribute.Acousticness} /> Acousticness
+				<input type="radio" value={Attribute.Instrumentalness} checked={attribute == Attribute.Instrumentalness} /> Instrumentalness
+				<input type="radio" value={Attribute.Liveness} checked={attribute == Attribute.Liveness} /> Liveness
+				<input type="radio" value={Attribute.Speechiness} checked={attribute == Attribute.Speechiness} /> Speechiness
 			</div>
-			<button onClick={refetchData}>Update chart</button>
 		</>
 	)
 

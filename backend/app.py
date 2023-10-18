@@ -95,8 +95,6 @@ def attribute():
     # Fetch the result
     result = cursor.fetchall()
 
-    print(result)
-
     # Create a dictionary with region as the key and average as the value
     data_dict = {row[0]: row[1] for row in result}
 
