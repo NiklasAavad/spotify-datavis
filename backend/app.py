@@ -73,6 +73,35 @@ def score():
 
     return jsonify(data_dict)
 
+@app.route('/api/attribute')
+def attribute():
+    connect_to_db()
+
+    if cursor is None:
+        raise Exception("No database connection")
+
+    attribute = request.args.get("attribute")
+    if attribute is None:
+        raise Exception("No attribute specified")
+
+    cursor.execute(f"""
+        SELECT
+            region,
+            AVG({attribute}) AS {attribute}
+        FROM spotify_chart
+        GROUP BY region;
+    """)
+
+    # Fetch the result
+    result = cursor.fetchall()
+
+    print(result)
+
+    # Create a dictionary with region as the key and average as the value
+    data_dict = {row[0]: row[1] for row in result}
+
+    return jsonify(data_dict)
+
 def connect_to_db():
     global cursor, conn
     conn = mysql.connector.connect(

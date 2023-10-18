@@ -4,12 +4,14 @@ type ColorLegendProps = {
 	colorScale: d3.ScaleSequential<string, string>;
 	width: number;
 	height: number;
+	upperBound: number;
 }
 
-export const ColorLegend: React.FC<ColorLegendProps> = ({ colorScale, width, height }) => {
+export const ColorLegend: React.FC<ColorLegendProps> = ({ colorScale, width, height, upperBound }) => {
 	const gradientId = 'colorGradient';
 
-	const colorStops = Array.from({ length: 101 }, (_, i) => colorScale(i));
+	const colorStep = 100 / upperBound;
+	const colorStops = Array.from({ length: 101 }, (_, i) => colorScale(i / colorStep));
 
 	const linearGradient = (
 		<linearGradient id={gradientId}>

@@ -53,3 +53,33 @@ export const useFakeData = () => {
 
 	return { data, isLoading, isError };
 }
+
+export const useFakeAttributeData = () => {
+	const data = {
+		"United States": 0.90,
+		"Canada": 0.80,
+		"Mexico": 0.85,
+		"Spain": 0.80,
+		"Portugal": 0.90,
+		"France": 0.70,
+		"Italy": 0.75,
+		"Germany": 0.20,
+		"England": 0.75,
+		"Denmark": 0.90,
+		"Sweden": 0.15,
+		"Norway": 0.80,
+		"Finland": 0.90,
+		"Russia": 0.70,
+		"China": 0.10,
+		"Japan": 0.50,
+		"South Korea": 0.60,
+		"India": 0.30,
+		"Australia": 0.80,
+		"New Zealand": 0.90,
+	};
+
+	const isLoading = false;
+	const isError = false;
+
+	return { data, isLoading, isError };
+}
