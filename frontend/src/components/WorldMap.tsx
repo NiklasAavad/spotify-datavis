@@ -4,19 +4,17 @@ import { useEffect, useRef, useState } from 'react';
 import './WorldMap.css'
 import { countries } from '../data/countries.ts'
 import { Country } from './Country.tsx';
-import { Spinner } from './Spinner.tsx';
 
 type WorldMapProps = {
 	data: any; // should be a dict of country name -> score (percentage), but we do not validate this yet.
 	isLoading: boolean;
 	isError: boolean;
 	colorScale: d3.ScaleSequential<string, string>;
+	width: number;
+	height: number;
 }
 
 export const WorldMap: React.FC<WorldMapProps> = (props) => {
-	const width = 1200;
-	const height = 700;
-
 	const [selectedCountries, setSelectedCountries] = useState<Set<string>>(new Set())
 	const [countryScores, setCountryScores] = useState<Map<string, number>>(new Map())
 
@@ -40,7 +38,7 @@ export const WorldMap: React.FC<WorldMapProps> = (props) => {
 
 	const projection = d3
 		.geoMercator()
-		.scale(width / 2 / Math.PI - 40)
+		.scale(props.width / 2 / Math.PI - 40)
 		.center([-40, 65])
 
 	const geoPathGenerator = d3.geoPath().projection(projection);
@@ -77,22 +75,22 @@ export const WorldMap: React.FC<WorldMapProps> = (props) => {
 			colorScale={props.colorScale} />
 		);
 
-	const svgOpacity = props.isLoading ? 0.1 : 1.0
-
 	if (props.isError) {
-		return <div>Error...</div>
+		return (
+			<div style={{
+				display: 'flex',
+				justifyContent: 'center',
+				alignItems: 'center',
+				height: '100%',
+			}}>
+				<div style={{ fontSize: '100px' }}>Error...</div>
+			</div>
+		);
 	}
 
 	return (
-		<>
-			<div style={{ height: height, width: width, overflow: 'hidden', position: 'relative', border: 'solid' }}>
-				<div style={{ opacity: svgOpacity }}>
-					<svg ref={svgRef} width={width} height={height}>
-						<g>{countrySvgPaths}</g>
-					</svg>
-				</div>
-				<Spinner isLoading={props.isLoading} />
-			</div>
-		</>
+		<svg ref={svgRef} width={props.width} height={props.height}>
+			<g>{countrySvgPaths}</g>
+		</svg>
 	)
 }

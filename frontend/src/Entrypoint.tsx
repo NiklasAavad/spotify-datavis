@@ -7,6 +7,7 @@ import { ColorLegend } from './components/ColorLegend';
 import * as d3 from 'd3';
 import { useState } from 'react';
 import { useFakeData } from './utility/FakedThings';
+import { MapContainer } from './components/MapContainer';
 
 const SCORE = 'score';
 
@@ -63,7 +64,7 @@ export const Entrypoint = () => {
 	return (
 		<>
 			<ColorLegend colorScale={cubehelixScale} width={500} height={50} />
-			<WorldMap data={data} isLoading={isLoading} isError={isError} colorScale={cubehelixScale} />
+			<MapContainer data={data} isLoading={isLoading} isError={isError} colorScale={cubehelixScale} />
 			<div>
 				<label htmlFor="danceability-lowerbound">Danceability Lower Bound </label>
 				<input type="number" min="0" max="1" step="0.01" id="danceability-lowerbound" />
