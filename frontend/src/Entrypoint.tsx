@@ -38,7 +38,7 @@ const useScore = () => {
 
 const useFakeData = () => {
 	const SHOULD_USE_BACKEND = false;
-	const { data, isLoading, isError, error } = useTestScores();
+	const { data, isLoading, isError } = useTestScores();
 
 	if (!SHOULD_USE_BACKEND) {
 		const data = {
@@ -66,25 +66,16 @@ const useFakeData = () => {
 
 		const isLoading = false;
 		const isError = false;
-		const error = "";
 
-		return { data, isLoading, isError, error }
+		return { data, isLoading, isError }
 	}
 
-	return { data, isLoading, isError, error };
+	return { data, isLoading, isError };
 }
 
 export const Entrypoint = () => {
-	/* const { data, isLoading, isError } = useScore(); */
-	const { data, isLoading, isError } = useFakeData();
-
-	if (isLoading) {
-		return <div>Loading...</div>;
-	}
-
-	if (isError) {
-		return <div>Error :'(</div>;
-	}
+	const { data, isLoading, isError } = useScore();
+	/* const { data, isLoading, isError } = useFakeData(); */
 
 	const startColor = 'purple'
 	const endColor = 'yellow'
@@ -94,13 +85,10 @@ export const Entrypoint = () => {
 		.domain([0, 100])
 		.unknown('grey')
 
-	const countryScores = new Map<string, number>(Object.entries(data));
-	console.log(countryScores)
-
 	return (
 		<>
 			<ColorLegend colorScale={cubehelixScale} width={500} height={50} />
-			<WorldMap countryScores={countryScores} colorScale={cubehelixScale} />
+			<WorldMap data={data} isLoading={isLoading} isError={isError} colorScale={cubehelixScale} />
 		</>
 	)
 }

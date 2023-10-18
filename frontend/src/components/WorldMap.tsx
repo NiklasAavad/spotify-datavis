@@ -7,7 +7,9 @@ import { Country } from './Country.tsx';
 import { Spinner } from './Spinner.tsx';
 
 type WorldMapProps = {
-	countryScores: Map<string, number>
+	data: any; // should be a dict of country name -> score (percentage), but we do not validate this yet.
+	isLoading: boolean;
+	isError: boolean;
 	colorScale: d3.ScaleSequential<string, string>;
 }
 
@@ -16,8 +18,16 @@ export const WorldMap: React.FC<WorldMapProps> = (props) => {
 	const height = 700;
 
 	const [selectedCountries, setSelectedCountries] = useState<Set<string>>(new Set())
+	const [countryScores, setCountryScores] = useState<Map<string, number>>(new Map())
 
-	const [isLoading, setIsLoading] = useState<boolean>(false)
+	useEffect(() => {
+		if (!props.data) {
+			return
+		}
+
+		const countryScores = new Map<string, number>(Object.entries(props.data));
+		setCountryScores(countryScores)
+	}, [props.data])
 
 	const svgRef = useRef<SVGSVGElement | null>(null)
 
@@ -54,7 +64,7 @@ export const WorldMap: React.FC<WorldMapProps> = (props) => {
 	}, [])
 
 	const getScore = (countryName: string) => {
-		return props.countryScores.get(countryName);
+		return countryScores.get(countryName);
 	}
 
 	const countrySvgPaths = countries.features
@@ -67,7 +77,11 @@ export const WorldMap: React.FC<WorldMapProps> = (props) => {
 			colorScale={props.colorScale} />
 		);
 
-	const svgOpacity = isLoading ? 0.1 : 1.0
+	const svgOpacity = props.isLoading ? 0.1 : 1.0
+
+	if (props.isError) {
+		return <div>Error...</div>
+	}
 
 	return (
 		<>
@@ -77,9 +91,8 @@ export const WorldMap: React.FC<WorldMapProps> = (props) => {
 						<g>{countrySvgPaths}</g>
 					</svg>
 				</div>
-				<Spinner isLoading={isLoading} />
+				<Spinner isLoading={props.isLoading} />
 			</div>
-			<button onClick={() => setIsLoading(current => !current)}>Toggle loading</button>
 		</>
 	)
 }
