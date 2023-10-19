@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { DataProvider } from "./useData";
+import { useCallback, useEffect, useState } from "react";
+import { DataProvider, Dates } from "./useData";
 import { useQuery, useQueryClient } from "react-query";
 import axios from "axios";
 
@@ -13,13 +13,14 @@ enum Attribute {
 	Speechiness = 'speechiness',
 }
 
-// TODO if we use this, we should probably make a Params type which includes the time period or something
-const useAttribute = (attribute: Attribute) => {
-	const getAttribute = async (attribute: Attribute) => {
+const useAttribute = (attribute: Attribute, dates: Dates) => {
+	const getAttribute = async () => {
 		try {
 			const response = await axios.get('http://localhost:5000/api/attribute', {
 				params: {
 					attribute: attribute,
+					from_date: dates.fromDate,
+					to_date: dates.toDate,
 				}
 			});
 			return response.data;
@@ -28,19 +29,26 @@ const useAttribute = (attribute: Attribute) => {
 		}
 	};
 
-	return useQuery(['attribute', attribute], () => getAttribute(attribute)); // TODO remember to use QueryType.Attribute
+	return useQuery(['attribute', attribute, dates.fromDate, dates.toDate], () => getAttribute()); // TODO remember to use QueryType.Attribute
 }
 
-export const AttributeData: DataProvider = () => {
+export const AttributeData: DataProvider = (dates: Dates) => {
 	const [attribute, setAttribute] = useState<Attribute>(Attribute.Danceability);
 	const queryClient = useQueryClient();
-	const queryResult = useAttribute(attribute);
+	const queryResult = useAttribute(attribute, dates);
 
 	const onChangeAttribute = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const newAttribute = event.target.value as Attribute;
 		setAttribute(newAttribute);
-		queryClient.invalidateQueries([newAttribute]);
 	}
+
+	const refetchData = useCallback((dates: Dates) => {
+		queryClient.invalidateQueries(['attribute', attribute, dates.fromDate, dates.toDate]);
+	}, [attribute, queryClient])
+
+	useEffect(() => {
+		refetchData(dates);
+	}, [dates, refetchData])
 
 	const paramComponent = (
 		<>

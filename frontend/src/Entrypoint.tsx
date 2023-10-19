@@ -7,7 +7,7 @@ import { QueryType, useData } from './hooks/useData';
 export const Entrypoint = () => {
 	const [queryType, setQueryType] = useState<QueryType>(QueryType.Attribute);
 
-	const { queryResult, paramComponent, dataUpperBound } = useData(queryType);
+	const { queryResult, paramComponent, dataUpperBound, dateComponent } = useData(queryType);
 	const { data, isLoading, isError } = queryResult;
 
 	const startColor = 'purple'
@@ -34,6 +34,9 @@ export const Entrypoint = () => {
 			<div onChange={onChangeQueryType}>
 				<input type="radio" value={QueryType.Attribute} checked={queryType === QueryType.Attribute} /> Attribute
 				<input type="radio" value={QueryType.Score} checked={queryType === QueryType.Score} /> Score
+			</div>
+			<div style={{ margin: '8px' }}>
+				{dateComponent}
 			</div>
 		</>
 	)

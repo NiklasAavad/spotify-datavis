@@ -1,18 +1,22 @@
 import { useQuery, useQueryClient } from "react-query";
-import { DataProvider } from "./useData";
+import { DataProvider, Dates } from "./useData";
 import axios from "axios";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 type ScoreParams = {
 	lower_bound: number,
 	upper_bound: number,
 }
 
-const useScore = (params: ScoreParams) => {
-	const getScore = async (params: ScoreParams) => {
+const useScore = (params: ScoreParams, dates: Dates) => {
+	const getScore = async () => {
 		try {
 			const response = await axios.get('http://localhost:5000/api/score', {
-				params: params,
+				params: {
+					...params,
+					from_date: dates.fromDate,
+					to_date: dates.toDate,
+				}
 			});
 			return response.data;
 		} catch (error) {
@@ -20,26 +24,32 @@ const useScore = (params: ScoreParams) => {
 		}
 	};
 
-	return useQuery(['score', params], () => getScore(params)); // TODO remember to change 'score' to QueryType.Score
+	return useQuery(['score', params, dates.fromDate, dates.toDate], getScore); // TODO remember to change 'score' to QueryType.Score
 }
 
-export const ScoreData: DataProvider = () => {
+export const ScoreData: DataProvider = (dates: Dates) => {
 	const queryClient = useQueryClient();
 	const [params, setParams] = useState<ScoreParams>({
 		lower_bound: 0.0,
 		upper_bound: 1.0,
 	})
-	const queryResult = useScore(params);
+	const queryResult = useScore(params, dates);
 
-	const refetchData = () => {
+	const onChangeParams = () => {
 		const newParams = {
 			lower_bound: parseFloat((document.getElementById('danceability-lowerbound') as HTMLInputElement).value) || 0.0, // TODO make this nicer...
 			upper_bound: parseFloat((document.getElementById('danceability-upperbound') as HTMLInputElement).value) || 1.0,
 		}
-
 		setParams(newParams);
-		queryClient.invalidateQueries(['score', newParams]);
 	}
+
+	const refetchData = useCallback((dates: Dates) => {
+		queryClient.invalidateQueries(['score', params, dates.fromDate, dates.toDate]);
+	}, [params, queryClient])
+
+	useEffect(() => {
+		refetchData(dates);
+	}, [dates, refetchData])
 
 	const paramComponent = (
 		<>
@@ -52,7 +62,7 @@ export const ScoreData: DataProvider = () => {
 				<label htmlFor="danceability-upperbound">Danceability Upper Bound </label>
 				<input type="number" placeholder="1.0" min="0" max="1" step="0.01" id="danceability-upperbound" />
 			</div>
-			<button onClick={refetchData}>Update chart</button>
+			<button onClick={onChangeParams}>Change metrics</button>
 		</>
 	)
 
