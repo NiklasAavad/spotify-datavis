@@ -56,14 +56,19 @@ def score():
 
     lower_bound = float(request.args.get("lower_bound", 0.0))
     upper_bound = float(request.args.get("upper_bound", 1.0))
+    
+    from_date, to_date = get_from_and_to_date()
 
-    cursor.execute("""
+    query = """
         SELECT
             region,
             (COUNT(CASE WHEN danceability >= %s AND danceability <= %s THEN 1 END) / COUNT(*) * 100) AS percentage
         FROM spotify_chart
+        WHERE date BETWEEN %s AND %s
         GROUP BY region;
-    """, (lower_bound, upper_bound))
+    """
+
+    cursor.execute(query, (lower_bound, upper_bound, from_date, to_date))
 
     # Fetch the result
     result = cursor.fetchall()
@@ -84,13 +89,18 @@ def attribute():
     if attribute is None:
         raise Exception("No attribute specified")
 
-    cursor.execute(f"""
+    from_date, to_date = get_from_and_to_date()
+
+    query = f"""
         SELECT
             region,
-            AVG({attribute}) AS {attribute}
+            AVG({attribute})
         FROM spotify_chart
+        WHERE date BETWEEN %s AND %s
         GROUP BY region;
-    """)
+    """
+
+    cursor.execute(query, (from_date, to_date))
 
     # Fetch the result
     result = cursor.fetchall()
@@ -99,6 +109,12 @@ def attribute():
     data_dict = {row[0]: row[1] for row in result}
 
     return jsonify(data_dict)
+
+# Assumes active request
+def get_from_and_to_date():
+    from_date = request.args.get("from_date", "2017-01-01")
+    to_date = request.args.get("to_date", "2021-12-31")
+    return from_date, to_date
 
 def connect_to_db():
     global cursor, conn
