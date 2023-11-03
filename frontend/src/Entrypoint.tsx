@@ -12,7 +12,7 @@ export const Entrypoint = () => {
 
 	const { paramComponent, dataUpperBound, dateComponent, params } = useData(queryType);
 	const queryFunction = useQueryFunction(queryType);
-	const { data, isLoading, isError } = useQuery([queryType, params], () => queryFunction(params));
+	const { data, isLoading } = useQuery([queryType, params], () => queryFunction(params));
 
 	const startColor = 'purple'
 	const endColor = 'yellow'
@@ -35,7 +35,7 @@ export const Entrypoint = () => {
 	return (
 		<>
 			<ColorLegend colorScale={cubehelixScale} width={500} height={50} upperBound={dataUpperBound} />
-			<MapContainer data={data} isLoading={isLoading} isError={isError} colorScale={cubehelixScale} />
+			<MapContainer data={data} isLoading={isLoading} colorScale={cubehelixScale} />
 			<div style={{ margin: '8px' }}>
 				{paramComponent}
 			</div>

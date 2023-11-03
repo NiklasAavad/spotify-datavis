@@ -8,7 +8,6 @@ import { Country } from './Country.tsx';
 type WorldMapProps = {
 	data: any; // should be a dict of country name -> score (percentage), but we do not validate this yet.
 	isLoading: boolean;
-	isError: boolean;
 	colorScale: d3.ScaleSequential<string, string>;
 	width: number;
 	height: number;
@@ -74,19 +73,6 @@ export const WorldMap: React.FC<WorldMapProps> = (props) => {
 			score={getScore(countryFeature.properties?.name)}
 			colorScale={props.colorScale} />
 		);
-
-	if (props.isError) {
-		return (
-			<div style={{
-				display: 'flex',
-				justifyContent: 'center',
-				alignItems: 'center',
-				height: '100%',
-			}}>
-				<div style={{ fontSize: '100px' }}>Error...</div>
-			</div>
-		);
-	}
 
 	return (
 		<svg ref={svgRef} width={props.width} height={props.height}>
