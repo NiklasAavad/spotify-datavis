@@ -1,39 +1,25 @@
-import { useQuery, useQueryClient } from "react-query";
-import { DataProvider, Dates } from "./useData";
-import axios from "axios";
-import { useCallback, useEffect, useState } from "react";
+import { DataProvider, QueryType } from "./useData";
+import { useEffect, useState } from "react";
 
-type ScoreParams = {
+export type ScoreParams = {
 	lower_bound: number,
 	upper_bound: number,
 }
 
-const useScore = (params: ScoreParams, dates: Dates) => {
-	const getScore = async () => {
-		try {
-			const response = await axios.get('http://localhost:5000/api/score', {
-				params: {
-					...params,
-					from_date: dates.fromDate,
-					to_date: dates.toDate,
-				}
-			});
-			return response.data;
-		} catch (error) {
-			throw new Error('Error fetching data from the API');
-		}
-	};
-
-	return useQuery(['score', params, dates.fromDate, dates.toDate], getScore); // TODO remember to change 'score' to QueryType.Score
+const DATA_UPPER_BOUND = 100;
+const INITIAL_SCORE_PARAMS: ScoreParams = {
+	lower_bound: 0.0,
+	upper_bound: 1.0,
 }
 
-export const ScoreData: DataProvider = (dates: Dates) => {
-	const queryClient = useQueryClient();
-	const [params, setParams] = useState<ScoreParams>({
-		lower_bound: 0.0,
-		upper_bound: 1.0,
-	})
-	const queryResult = useScore(params, dates);
+export const ScoreData: DataProvider = (queryType: QueryType) => {
+	const [params, setParams] = useState<ScoreParams>(INITIAL_SCORE_PARAMS);
+
+	useEffect(() => {
+		if (!params) {
+			setParams(INITIAL_SCORE_PARAMS)
+		}
+	}, [queryType, params])
 
 	const onChangeParams = () => {
 		const newParams = {
@@ -42,14 +28,6 @@ export const ScoreData: DataProvider = (dates: Dates) => {
 		}
 		setParams(newParams);
 	}
-
-	const refetchData = useCallback((dates: Dates) => {
-		queryClient.invalidateQueries(['score', params, dates.fromDate, dates.toDate]);
-	}, [params, queryClient])
-
-	useEffect(() => {
-		refetchData(dates);
-	}, [dates, refetchData])
 
 	const paramComponent = (
 		<>
@@ -66,7 +44,5 @@ export const ScoreData: DataProvider = (dates: Dates) => {
 		</>
 	)
 
-	const dataUpperBound = 100;
-
-	return { queryResult, paramComponent, dataUpperBound }
+	return { paramComponent, dataUpperBound: DATA_UPPER_BOUND, params }
 }

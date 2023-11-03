@@ -1,7 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
-import { DataProvider, Dates } from "./useData";
-import { useQuery, useQueryClient } from "react-query";
-import axios from "axios";
+import { useEffect, useState } from "react";
+import { DataProvider, QueryType } from "./useData";
 
 enum Attribute {
 	Danceability = 'danceability',
@@ -13,42 +11,24 @@ enum Attribute {
 	Speechiness = 'speechiness',
 }
 
-const useAttribute = (attribute: Attribute, dates: Dates) => {
-	const getAttribute = async () => {
-		try {
-			const response = await axios.get('http://localhost:5000/api/attribute', {
-				params: {
-					attribute: attribute,
-					from_date: dates.fromDate,
-					to_date: dates.toDate,
-				}
-			});
-			return response.data;
-		} catch (error) {
-			throw new Error('Error fetching data from the API');
-		}
-	};
-
-	return useQuery(['attribute', attribute, dates.fromDate, dates.toDate], () => getAttribute()); // TODO remember to use QueryType.Attribute
+export type AttributeParams = {
+	attribute: Attribute
 }
 
-export const AttributeData: DataProvider = (dates: Dates) => {
-	const [attribute, setAttribute] = useState<Attribute>(Attribute.Danceability);
-	const queryClient = useQueryClient();
-	const queryResult = useAttribute(attribute, dates);
+const DATA_UPPER_BOUND = 1;
+const INITIAL_ATTRIBUTE: Attribute = Attribute.Danceability;
+
+export const AttributeData: DataProvider = (queryType: QueryType) => {
+	const [attribute, setAttribute] = useState<Attribute>(INITIAL_ATTRIBUTE);
+
+	useEffect(() => {
+		setAttribute(INITIAL_ATTRIBUTE)
+	}, [queryType])
 
 	const onChangeAttribute = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const newAttribute = event.target.value as Attribute;
 		setAttribute(newAttribute);
 	}
-
-	const refetchData = useCallback((dates: Dates) => {
-		queryClient.invalidateQueries(['attribute', attribute, dates.fromDate, dates.toDate]);
-	}, [attribute, queryClient])
-
-	useEffect(() => {
-		refetchData(dates);
-	}, [dates, refetchData])
 
 	const paramComponent = (
 		<>
@@ -65,7 +45,5 @@ export const AttributeData: DataProvider = (dates: Dates) => {
 		</>
 	)
 
-	const dataUpperBound = 1;
-
-	return { queryResult, paramComponent, dataUpperBound }
+	return { paramComponent, dataUpperBound: DATA_UPPER_BOUND, params: { attribute } }
 }

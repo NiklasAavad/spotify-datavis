@@ -1,14 +1,18 @@
 import { ColorLegend } from './components/ColorLegend';
 import * as d3 from 'd3';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MapContainer } from './components/MapContainer';
 import { QueryType, useData } from './hooks/useData';
+import { useQueryFunction } from './hooks/useOurQuery';
+import { useQuery, useQueryClient } from 'react-query';
 
 export const Entrypoint = () => {
 	const [queryType, setQueryType] = useState<QueryType>(QueryType.Attribute);
+	const queryClient = useQueryClient();
 
-	const { queryResult, paramComponent, dataUpperBound, dateComponent } = useData(queryType);
-	const { data, isLoading, isError } = queryResult;
+	const { paramComponent, dataUpperBound, dateComponent, params } = useData(queryType);
+	const queryFunction = useQueryFunction(queryType);
+	const { data, isLoading, isError } = useQuery([queryType, params], () => queryFunction(params));
 
 	const startColor = 'purple'
 	const endColor = 'yellow'
@@ -22,6 +26,11 @@ export const Entrypoint = () => {
 		const newQueryType = event.target.value as QueryType;
 		setQueryType(newQueryType);
 	}
+
+	useEffect(() => {
+		console.log("invalidating queries")
+		queryClient.invalidateQueries([queryType, params]);
+	}, [params, queryClient, queryType])
 
 	return (
 		<>
