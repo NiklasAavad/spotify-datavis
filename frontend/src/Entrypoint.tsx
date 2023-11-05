@@ -57,8 +57,8 @@ export const Entrypoint = () => {
 			</div>
 			<div>Query Type:</div>
 			<div onChange={onChangeQueryType}>
-				<input type="radio" value={QueryType.Attribute} checked={queryType === QueryType.Attribute} /> Attribute
-				<input type="radio" value={QueryType.Score} checked={queryType === QueryType.Score} /> Score
+				<input type="radio" value={QueryType.Attribute} defaultChecked={queryType === QueryType.Attribute} /> Attribute
+				<input type="radio" value={QueryType.Score} defaultChecked={queryType === QueryType.Score} /> Score
 			</div>
 			<div style={{ margin: '8px' }}>
 				<DateChanger setDates={setDates} />
