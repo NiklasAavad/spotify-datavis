@@ -17,8 +17,6 @@ export const ScoreParameterChanger: React.FC<ScoreParameterChangerProps> = (prop
 		props.setParams(newParams);
 	}
 
-	console.log("hello from score parameter changer, the current score is:", props.score)
-
 	return (
 		<>
 			<div>Metrics:</div>
