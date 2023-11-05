@@ -66,6 +66,7 @@ export const WorldMap: React.FC<WorldMapProps> = (props) => {
 
 	const countrySvgPaths = countries.features
 		.map(countryFeature => <Country
+			key={countryFeature.properties?.name}
 			countryFeature={countryFeature}
 			selectedCountries={selectedCountries}
 			setSelectedCountries={setSelectedCountries}
