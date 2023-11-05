@@ -2,11 +2,11 @@ import { ColorLegend } from './components/ColorLegend';
 import * as d3 from 'd3';
 import { useEffect, useState } from 'react';
 import { MapContainer } from './components/MapContainer';
-import { DateChanger, Dates } from './hooks/useData';
-import { QueryType, useQueryFunction } from './hooks/useOurQuery';
 import { useQuery, useQueryClient } from 'react-query';
-import { Attribute, AttributeParameterChanger, AttributeParams } from './hooks/AttributeData';
-import { ScoreParameterChanger, ScoreParams } from './hooks/ScoreData';
+import { QueryType, useQueryFunction } from './hooks/useQueryFunction';
+import { DateChanger, Dates } from './components/DateChanger';
+import { Attribute, AttributeParameterChanger, AttributeParams } from './components/AttributeParameterChanger';
+import { ScoreParameterChanger, ScoreParams } from './components/ScoreParameterChanger';
 
 export const Entrypoint = () => {
 	const [queryType, setQueryType] = useState<QueryType>(QueryType.Attribute);
