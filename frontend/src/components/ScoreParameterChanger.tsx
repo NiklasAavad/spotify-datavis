@@ -22,11 +22,11 @@ export const ScoreParameterChanger: React.FC<ScoreParameterChangerProps> = (prop
 			<div>Metrics:</div>
 			<div>
 				<label htmlFor="danceability-lowerbound">Danceability Lower Bound </label>
-				<input type="number" placeholder="0.0" min="0" max="1" step="0.01" id="danceability-lowerbound" />
+				<input type="number" defaultValue={props.score.lower_bound} min="0" max="1" step="0.01" id="danceability-lowerbound" />
 			</div>
 			<div>
 				<label htmlFor="danceability-upperbound">Danceability Upper Bound </label>
-				<input type="number" placeholder="1.0" min="0" max="1" step="0.01" id="danceability-upperbound" />
+				<input type="number" defaultValue={props.score.upper_bound} min="0" max="1" step="0.01" id="danceability-upperbound" />
 			</div>
 			<button onClick={onChangeParams}>Change metrics</button>
 		</>
