@@ -1,29 +1,35 @@
-import { Dates, QueryType } from "./useData";
 import axios from "axios";
+import { Dates } from "./useData";
+import { AttributeParams } from "./AttributeData";
+import { ScoreParams } from "./ScoreData";
 
-type ScoreParams = {
-	lower_bound: number,
-	upper_bound: number,
+export enum QueryType {
+	Attribute = 'attribute',
+	Score = 'score',
 }
 
-const getScore = async (params: ScoreParams & Dates) => {
-	const response = await axios.get('http://localhost:5000/api/score', { params });
+export type QueryParams = ScoreParams | AttributeParams;
+
+const getQuery = async (queryType: QueryType, params: QueryParams, dates: Dates) => {
+	const response = await axios.get(`http://localhost:5000/api/${queryType}`, {
+		params: {
+			...params,
+			...dates,
+		}
+	});
 	return response.data;
+}
+
+const getScore = async (params: QueryParams, dates: Dates) => {
+	return getQuery(QueryType.Score, params, dates);
 };
 
-enum Attribute {
-	Danceability = 'danceability',
-	Energy = 'energy',
-	Valence = 'valence',
-	Acousticness = 'acousticness',
-	Instrumentalness = 'instrumentalness',
-	Liveness = 'liveness',
-	Speechiness = 'speechiness',
-}
-
-const getAttribute = async (params: Attribute & Dates) => {
-	const response = await axios.get('http://localhost:5000/api/attribute', { params });
-	return response.data;
+const getAttribute = async (params: QueryParams, dates: Dates) => {
+	const isValidParams = 'attribute' in params;
+	if (!isValidParams) {
+		throw new Error('Attribute is required');
+	}
+	return getQuery(QueryType.Attribute, params, dates);
 };
 
 export const useQueryFunction = (queryType: QueryType) => {

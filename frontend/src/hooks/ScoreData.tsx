@@ -1,35 +1,25 @@
-import { DataProvider, QueryType } from "./useData";
-import { useEffect, useState } from "react";
-
 export type ScoreParams = {
 	lower_bound: number,
 	upper_bound: number,
 }
 
-const DATA_UPPER_BOUND = 100;
-const INITIAL_SCORE_PARAMS: ScoreParams = {
-	lower_bound: 0.0,
-	upper_bound: 1.0,
+type ScoreParameterChangerProps = {
+	score: ScoreParams
+	setParams: React.Dispatch<React.SetStateAction<ScoreParams>>
 }
 
-export const ScoreData: DataProvider = (queryType: QueryType) => {
-	const [params, setParams] = useState<ScoreParams>(INITIAL_SCORE_PARAMS);
-
-	useEffect(() => {
-		if (!params) {
-			setParams(INITIAL_SCORE_PARAMS)
-		}
-	}, [queryType, params])
-
+export const ScoreParameterChanger: React.FC<ScoreParameterChangerProps> = (props) => {
 	const onChangeParams = () => {
 		const newParams = {
 			lower_bound: parseFloat((document.getElementById('danceability-lowerbound') as HTMLInputElement).value) || 0.0, // TODO make this nicer...
 			upper_bound: parseFloat((document.getElementById('danceability-upperbound') as HTMLInputElement).value) || 1.0,
 		}
-		setParams(newParams);
+		props.setParams(newParams);
 	}
 
-	const paramComponent = (
+	console.log("hello from score parameter changer, the current score is:", props.score)
+
+	return (
 		<>
 			<div>Metrics:</div>
 			<div>
@@ -43,6 +33,4 @@ export const ScoreData: DataProvider = (queryType: QueryType) => {
 			<button onClick={onChangeParams}>Change metrics</button>
 		</>
 	)
-
-	return { paramComponent, dataUpperBound: DATA_UPPER_BOUND, params }
 }

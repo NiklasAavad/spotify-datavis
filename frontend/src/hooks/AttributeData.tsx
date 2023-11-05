@@ -1,7 +1,4 @@
-import { useEffect, useState } from "react";
-import { DataProvider, QueryType } from "./useData";
-
-enum Attribute {
+export enum Attribute {
 	Danceability = 'danceability',
 	Energy = 'energy',
 	Valence = 'valence',
@@ -15,22 +12,20 @@ export type AttributeParams = {
 	attribute: Attribute
 }
 
-const DATA_UPPER_BOUND = 1;
-const INITIAL_ATTRIBUTE: Attribute = Attribute.Danceability;
+type AttributeParameterChangerProps = {
+	attribute: Attribute
+	setParams: React.Dispatch<React.SetStateAction<AttributeParams>>
+}
 
-export const AttributeData: DataProvider = (queryType: QueryType) => {
-	const [attribute, setAttribute] = useState<Attribute>(INITIAL_ATTRIBUTE);
-
-	useEffect(() => {
-		setAttribute(INITIAL_ATTRIBUTE)
-	}, [queryType])
+export const AttributeParameterChanger: React.FC<AttributeParameterChangerProps> = (props) => {
+	const { attribute, setParams } = props;
 
 	const onChangeAttribute = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const newAttribute = event.target.value as Attribute;
-		setAttribute(newAttribute);
+		setParams({ attribute: newAttribute });
 	}
 
-	const paramComponent = (
+	return (
 		<>
 			<div>Attribute:</div>
 			<div onChange={onChangeAttribute}>
@@ -44,6 +39,4 @@ export const AttributeData: DataProvider = (queryType: QueryType) => {
 			</div>
 		</>
 	)
-
-	return { paramComponent, dataUpperBound: DATA_UPPER_BOUND, params: { attribute } }
 }
