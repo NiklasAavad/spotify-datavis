@@ -30,10 +30,9 @@ export const Entrypoint = () => {
 
 	const startColor = 'purple'
 	const endColor = 'yellow'
-	const dataUpperBound = queryType === QueryType.Attribute ? 1 : 100;
 	const cubehelixScale = d3
 		.scaleSequential(d3.interpolateCubehelix.gamma(1)(startColor, endColor))
-		.domain([0, dataUpperBound])
+		.domain([0, 1])
 		.unknown('grey')
 
 	const onChangeQueryType = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,7 +46,7 @@ export const Entrypoint = () => {
 
 	return (
 		<>
-			<ColorLegend colorScale={cubehelixScale} width={500} height={50} upperBound={dataUpperBound} />
+			<ColorLegend colorScale={cubehelixScale} width={500} height={50} />
 			<MapContainer data={data} isLoading={isLoading} colorScale={cubehelixScale} />
 			<div style={{ margin: '8px' }}>
 				{queryType === QueryType.Attribute ?

@@ -23,26 +23,26 @@ cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 @app.route('/test')
 def test():
     fake_data = {
-        "USA": 90,
-        "Canada": 80,
-        "Mexico": 85,
-        "Spain": 80,
-        "Portugal": 90,
-        "France": 70,
-        "Italy": 75,
-        "Germany": 20,
-        "England": 75,
-        "Denmark": 90,
-        "Sweden": 15,
-        "Norway": 80,
-        "Finland": 90,
-        "Russia": 70,
-        "China": 10,
-        "Japan": 50,
-        "South Korea": 60,
-        "India": 30,
-        "Australia": 80,
-        "New Zealand": 90,
+        "USA": 0.90,
+        "Canada": 0.80,
+        "Mexico": 0.85,
+        "Spain": 0.80,
+        "Portugal": 0.90,
+        "France": 0.70,
+        "Italy": 0.75,
+        "Germany": 0.20,
+        "England": 0.75,
+        "Denmark": 0.90,
+        "Sweden": 0.15,
+        "Norway": 0.80,
+        "Finland": 0.90,
+        "Russia": 0.70,
+        "China": 0.10,
+        "Japan": 0.50,
+        "South Korea": 0.60,
+        "India": 0.30,
+        "Australia": 0.80,
+        "New Zealand": 0.90,
     }
 
     return jsonify(fake_data)
@@ -62,7 +62,7 @@ def score():
     query = """
         SELECT
             region,
-            (COUNT(CASE WHEN danceability >= %s AND danceability <= %s THEN 1 END) / COUNT(*) * 100) AS percentage
+            (COUNT(CASE WHEN danceability >= %s AND danceability <= %s THEN 1 END) / COUNT(*))
         FROM spotify_chart
         WHERE date BETWEEN %s AND %s
         GROUP BY region;

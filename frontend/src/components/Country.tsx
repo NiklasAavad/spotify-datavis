@@ -41,7 +41,7 @@ export const Country: React.FC<CountryProps> = (props) => {
 		if (score === undefined) {
 			return ''
 		}
-		return `${country}: ${score}%`
+		return `${country}: ${score}`
 	}
 
 	const handleMouseOver = (country: string) => {
