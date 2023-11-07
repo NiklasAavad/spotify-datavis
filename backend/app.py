@@ -110,6 +110,41 @@ def attribute():
 
     return jsonify(data_dict)
 
+@app.route('/api/metrics')
+def metrics():
+    connect_to_db()
+
+    if cursor is None:
+        raise Exception("No database connection")
+
+    countries = request.args.get("countries")
+    if countries is None:
+        raise Exception("No countries specified")
+    country_list = [country.strip() for country in countries.split(',')]
+
+    from_date, to_date = get_from_and_to_date()
+
+    query = f"""
+        SELECT
+            region, danceability, chart_rank
+        FROM spotify_chart
+        WHERE 
+            date BETWEEN %s AND %s
+            AND region IN ({', '.join(['%s' for _ in country_list])})
+    """
+
+    cursor.execute(query, (from_date, to_date) + tuple(country_list))
+
+    # Fetch the result
+    result = cursor.fetchall()
+
+    json_objects = [
+        {"region": row[0], "danceability": row[1], "chart_rank": row[2]}
+        for row in result
+    ]
+
+    return jsonify(json_objects)
+
 # Assumes active request
 def get_from_and_to_date():
     from_date = request.args.get("from_date", "2017-01-01")
