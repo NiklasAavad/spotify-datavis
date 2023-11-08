@@ -11,10 +11,9 @@ type ScatterPlotProps = {
 	data: DataPoint[];
 }
 
-export const ScatterPlot: React.FC<ScatterPlotProps> = ({data}) => {
-	console.log(data);
-
+export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data }) => {
 	const svgRef = useRef();
+	const legendRef = useRef();
 
 	useEffect(() => {
 		const margin = { top: 10, right: 30, bottom: 30, left: 60 };
@@ -58,7 +57,25 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({data}) => {
 			.attr('cy', d => y(d.danceability))
 			.attr('r', 5)
 			.style('fill', d => color(d.region));
+
+		// TODO det her vil formenligt blive byttet ud med selectedCountries
+		const uniqueRegions = [...new Set(data.map(d => d.region))];
+		const sortedUniqueRegions = uniqueRegions.sort((a, b) => a.localeCompare(b));
+		console.log("sortedUniqueRegions", sortedUniqueRegions)
+
+		// Add legend
+		d3.select(legendRef.current)
+			.selectAll('legend')
+			.data(sortedUniqueRegions)
+			.enter()
+			.append('div')
+			.attr('class', 'legend')
+			.style('color', d => color(d))
+			.text(d => d);
 	}, [data]);
 
-	return <div ref={svgRef}></div>;
+	return <>
+		<div ref={svgRef}></div>;
+		<div ref={legendRef}></div>;
+	</>
 }
