@@ -147,8 +147,8 @@ def metrics():
 
 # Assumes active request
 def get_from_and_to_date():
-    from_date = request.args.get("from_date", "2017-01-01")
-    to_date = request.args.get("to_date", "2021-12-31")
+    from_date = request.args.get("fromDate", "2017-01-01")
+    to_date = request.args.get("toDate", "2021-12-31")
     return from_date, to_date
 
 def connect_to_db():
