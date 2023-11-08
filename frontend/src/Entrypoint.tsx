@@ -1,8 +1,8 @@
 import { ColorLegend } from './components/ColorLegend';
 import * as d3 from 'd3';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { MapContainer } from './components/MapContainer';
-import { useQuery, useQueryClient } from 'react-query';
+import { useQuery } from 'react-query';
 import { QueryType, useQueryFunction } from './hooks/useQueryFunction';
 import { DateChanger, Dates } from './components/DateChanger';
 import { Attribute, AttributeParameterChanger, AttributeParams } from './components/AttributeParameterChanger';
@@ -38,12 +38,10 @@ export const Entrypoint = () => {
 	});
 	const currentParams = queryType === QueryType.Attribute ? currentAttributeParams : currentScoreParams;
 
-	const queryClient = useQueryClient();
 	const queryFunction = useQueryFunction(queryType);
-	// The following is the initial query function, which is used to get the initial data. This will contiously be invalidated when parameters change (see the useEffect)
 	const { data, isLoading } = useQuery([queryType, currentParams, dates], () => queryFunction(currentParams, dates));
 
-	const { data: metrics, isLoading: loadingMetrics } = useQuery(["metric", selectedCountries, dates], () => getMetrics(dates, selectedCountries));
+	const { data: metrics, isLoading: loadingMetrics } = useQuery(["metric", Array.from(selectedCountries), dates], () => getMetrics(dates, selectedCountries));
 
 	const startColor = 'purple'
 	const endColor = 'yellow'
@@ -56,20 +54,6 @@ export const Entrypoint = () => {
 		const newQueryType = event.target.value as QueryType;
 		setQueryType(newQueryType);
 	}
-
-	useEffect(() => {
-		queryClient.invalidateQueries([queryType, currentParams, dates]);
-	}, [queryClient, queryType, currentParams, dates])
-
-	useEffect(() => {
-		console.log("invalidate") // TODO delete this console.log
-		queryClient.invalidateQueries(["metric", selectedCountries, dates]);
-	}, [queryClient, selectedCountries, dates])
-
-	// TODO delete this, when we are sure that metrics are working
-	useEffect(() => {
-		console.log("Metrics changed:", metrics)
-	}, [metrics])
 
 	return (
 		<>
