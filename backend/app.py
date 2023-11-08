@@ -78,6 +78,8 @@ def score():
         data_dict = {row[0]: row[1] for row in result}
 
         return jsonify(data_dict)
+    except Exception as e:
+        print(e)
     finally:
         cursor.close()
         conn.close()
@@ -114,6 +116,8 @@ def attribute():
         data_dict = {row[0]: row[1] for row in result}
 
         return jsonify(data_dict)
+    except Exception as e:
+        print(e)
     finally:
         cursor.close()
         conn.close()
@@ -153,6 +157,8 @@ def metrics():
         ]
 
         return jsonify(json_objects)
+    except Exception as e:
+        print(e)
     finally:
         cursor.close()
         conn.close()
