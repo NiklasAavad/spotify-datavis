@@ -55,7 +55,7 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data }) => {
 			.append('circle')
 			.attr('cx', d => x(d.chart_rank))
 			.attr('cy', d => y(d.danceability))
-			.attr('r', 5)
+			.attr('r', 3) // radius of each point
 			.style('fill', d => color(d.region));
 
 		// TODO det her vil formenligt blive byttet ud med selectedCountries
