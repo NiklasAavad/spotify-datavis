@@ -28,7 +28,9 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, isLoading }) => 
 		const height = 400 - margin.top - margin.bottom;
 
 		const svg = d3.select(svgRef.current)
-			.append('svg')
+			.selectAll('svg')
+			.data([null]) // This is to bind the data to the selection
+			.join('svg') // This will create a new SVG if it doesn't exist
 			.attr('width', width + margin.left + margin.right)
 			.attr('height', height + margin.top + margin.bottom)
 			.append('g')
