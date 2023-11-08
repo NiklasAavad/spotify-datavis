@@ -57,7 +57,7 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data }) => {
 			.attr('cy', d => y(d.danceability))
 			.attr('r', 4) // radius of each point
 			.attr('opacity', 0.7)
-			.style('fill', d => color(d.region));
+			.style('fill', d => color(d.region) as string);
 
 		// TODO det her vil formenligt blive byttet ud med selectedCountries
 		const uniqueRegions = [...new Set(data.map(d => d.region))];
@@ -71,7 +71,7 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data }) => {
 			.enter()
 			.append('div')
 			.attr('class', 'legend')
-			.style('color', d => color(d))
+			.style('color', d => color(d) as string)
 			.text(d => d);
 	}, [data]);
 
