@@ -9,13 +9,20 @@ type DataPoint = {
 
 type ScatterPlotProps = {
 	data: DataPoint[];
+	isLoading: boolean;
 }
 
-export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data }) => {
+export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, isLoading }) => {
 	const svgRef = useRef();
 	const legendRef = useRef();
 
 	useEffect(() => {
+		console.log("data:", data)
+
+		if (!data) {
+			return;
+		}
+
 		const margin = { top: 10, right: 30, bottom: 30, left: 60 };
 		const width = 460 - margin.left - margin.right;
 		const height = 400 - margin.top - margin.bottom;
@@ -75,8 +82,12 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data }) => {
 			.text(d => d);
 	}, [data]);
 
+	if (isLoading) {
+		return <div>Loading...</div>;
+	}
+
 	return <>
-		<div ref={svgRef}></div>;
-		<div ref={legendRef}></div>;
+		<div ref={svgRef}></div>
+		<div ref={legendRef}></div>
 	</>
 }
