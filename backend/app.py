@@ -49,101 +49,113 @@ def test():
 
 @app.route('/api/score')
 def score():
-    connect_to_db()
+    conn, cursor = connect_to_db()
 
-    if cursor is None:
-        raise Exception("No database connection")
+    try:
+        if cursor is None:
+            raise Exception("No database connection")
 
-    lower_bound = float(request.args.get("lower_bound", 0.0))
-    upper_bound = float(request.args.get("upper_bound", 1.0))
-    
-    from_date, to_date = get_from_and_to_date()
+        lower_bound = float(request.args.get("lower_bound", 0.0))
+        upper_bound = float(request.args.get("upper_bound", 1.0))
+        
+        from_date, to_date = get_from_and_to_date()
 
-    query = """
-        SELECT
-            region,
-            (COUNT(CASE WHEN danceability >= %s AND danceability <= %s THEN 1 END) / COUNT(*))
-        FROM spotify_chart
-        WHERE date BETWEEN %s AND %s
-        GROUP BY region;
-    """
+        query = """
+            SELECT
+                region,
+                (COUNT(CASE WHEN danceability >= %s AND danceability <= %s THEN 1 END) / COUNT(*))
+            FROM spotify_chart
+            WHERE date BETWEEN %s AND %s
+            GROUP BY region;
+        """
 
-    cursor.execute(query, (lower_bound, upper_bound, from_date, to_date))
+        cursor.execute(query, (lower_bound, upper_bound, from_date, to_date))
 
-    # Fetch the result
-    result = cursor.fetchall()
+        # Fetch the result
+        result = cursor.fetchall()
 
-    # Create a dictionary with region as the key and percentage as the value
-    data_dict = {row[0]: row[1] for row in result}
+        # Create a dictionary with region as the key and percentage as the value
+        data_dict = {row[0]: row[1] for row in result}
 
-    return jsonify(data_dict)
+        return jsonify(data_dict)
+    finally:
+        cursor.close()
+        conn.close()
 
 @app.route('/api/attribute')
 def attribute():
-    connect_to_db()
+    conn, cursor = connect_to_db()
 
-    if cursor is None:
-        raise Exception("No database connection")
+    try:
+        if cursor is None:
+            raise Exception("No database connection")
 
-    attribute = request.args.get("attribute")
-    if attribute is None:
-        raise Exception("No attribute specified")
+        attribute = request.args.get("attribute")
+        if attribute is None:
+            raise Exception("No attribute specified")
 
-    from_date, to_date = get_from_and_to_date()
+        from_date, to_date = get_from_and_to_date()
 
-    query = f"""
-        SELECT
-            region,
-            AVG({attribute})
-        FROM spotify_chart
-        WHERE date BETWEEN %s AND %s
-        GROUP BY region;
-    """
+        query = f"""
+            SELECT
+                region,
+                AVG({attribute})
+            FROM spotify_chart
+            WHERE date BETWEEN %s AND %s
+            GROUP BY region;
+        """
 
-    cursor.execute(query, (from_date, to_date))
+        cursor.execute(query, (from_date, to_date))
 
-    # Fetch the result
-    result = cursor.fetchall()
+        # Fetch the result
+        result = cursor.fetchall()
 
-    # Create a dictionary with region as the key and average as the value
-    data_dict = {row[0]: row[1] for row in result}
+        # Create a dictionary with region as the key and average as the value
+        data_dict = {row[0]: row[1] for row in result}
 
-    return jsonify(data_dict)
+        return jsonify(data_dict)
+    finally:
+        cursor.close()
+        conn.close()
 
 @app.route('/api/metrics')
 def metrics():
-    connect_to_db()
+    conn, cursor = connect_to_db()
 
-    if cursor is None:
-        raise Exception("No database connection")
+    try:
+        if cursor is None:
+            raise Exception("No database connection")
 
-    countries = request.args.get("countries")
-    if countries is None:
-        raise Exception("No countries specified")
-    country_list = [country.strip() for country in countries.split(',')]
+        countries = request.args.get("countries")
+        if countries is None:
+            raise Exception("No countries specified")
+        country_list = [country.strip() for country in countries.split(',')]
 
-    from_date, to_date = get_from_and_to_date()
+        from_date, to_date = get_from_and_to_date()
 
-    query = f"""
-        SELECT
-            region, danceability, chart_rank
-        FROM spotify_chart
-        WHERE 
-            date BETWEEN %s AND %s
-            AND region IN ({', '.join(['%s' for _ in country_list])})
-    """
+        query = f"""
+            SELECT
+                region, danceability, chart_rank
+            FROM spotify_chart
+            WHERE 
+                date BETWEEN %s AND %s
+                AND region IN ({', '.join(['%s' for _ in country_list])})
+        """
 
-    cursor.execute(query, (from_date, to_date) + tuple(country_list))
+        cursor.execute(query, (from_date, to_date) + tuple(country_list))
 
-    # Fetch the result
-    result = cursor.fetchall()
+        # Fetch the result
+        result = cursor.fetchall()
 
-    json_objects = [
-        {"region": row[0], "danceability": row[1], "chart_rank": row[2]}
-        for row in result
-    ]
+        json_objects = [
+            {"region": row[0], "danceability": row[1], "chart_rank": row[2]}
+            for row in result
+        ]
 
-    return jsonify(json_objects)
+        return jsonify(json_objects)
+    finally:
+        cursor.close()
+        conn.close()
 
 # Assumes active request
 def get_from_and_to_date():
@@ -159,7 +171,7 @@ def connect_to_db():
         password=password,
         database=database
     )
-    cursor = conn.cursor()
+    return conn, conn.cursor()
 
 if __name__ == '__main__':
     app.run()
