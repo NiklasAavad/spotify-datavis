@@ -10,9 +10,8 @@ import { ScoreParameterChanger, ScoreParams } from './components/ScoreParameterC
 import { ScatterPlot } from './components/ScatterPlot';
 import axios from 'axios';
 
-const getMetrics = async (dates: Dates) => {
-	const fakeSelectedCounties: Set<string> = new Set(["Sweden", "Norway"]);
-	const preparedCountries: string = Array.from(fakeSelectedCounties).join(', ');
+const getMetrics = async (dates: Dates, selectedCountries: Set<string>) => {
+	const preparedCountries: string = Array.from(selectedCountries).join(',');
 	const response = await axios.get("http://localhost:5000/api/metrics", {
 		params: {
 			countries: preparedCountries,
@@ -24,6 +23,8 @@ const getMetrics = async (dates: Dates) => {
 
 export const Entrypoint = () => {
 	const [queryType, setQueryType] = useState<QueryType>(QueryType.Attribute);
+
+	const [selectedCountries, setSelectedCountries] = useState<Set<string>>(new Set())
 
 	const [dates, setDates] = useState<Dates>({
 		fromDate: new Date('2017-01-07'),
@@ -42,7 +43,7 @@ export const Entrypoint = () => {
 	// The following is the initial query function, which is used to get the initial data. This will contiously be invalidated when parameters change (see the useEffect)
 	const { data, isLoading } = useQuery([queryType, currentParams, dates], () => queryFunction(currentParams, dates));
 
-	const { data: metrics, isLoading: loadingMetrics } = useQuery("metric", () => getMetrics(dates));
+	const { data: metrics, isLoading: loadingMetrics } = useQuery(["metric", selectedCountries, dates], () => getMetrics(dates, selectedCountries));
 
 	const startColor = 'purple'
 	const endColor = 'yellow'
@@ -60,10 +61,26 @@ export const Entrypoint = () => {
 		queryClient.invalidateQueries([queryType, currentParams, dates]);
 	}, [queryClient, queryType, currentParams, dates])
 
+	useEffect(() => {
+		console.log("invalidate") // TODO delete this console.log
+		queryClient.invalidateQueries(["metric", selectedCountries, dates]);
+	}, [queryClient, selectedCountries, dates])
+
+	// TODO delete this, when we are sure that metrics are working
+	useEffect(() => {
+		console.log("Metrics changed:", metrics)
+	}, [metrics])
+
 	return (
 		<>
 			<ColorLegend colorScale={cubehelixScale} width={500} height={50} />
-			<MapContainer data={data} isLoading={isLoading} colorScale={cubehelixScale} />
+			<MapContainer 
+				data={data}
+				isLoading={isLoading}
+				colorScale={cubehelixScale}
+				selectedCountries={selectedCountries}
+				setSelectedCountries={setSelectedCountries}
+			/>
 			<ScatterPlot data={metrics} isLoading={loadingMetrics} />
 			<div style={{ margin: '8px' }}>
 				{queryType === QueryType.Attribute ?

@@ -11,10 +11,11 @@ type WorldMapProps = {
 	colorScale: d3.ScaleSequential<string, string>;
 	width: number;
 	height: number;
+	selectedCountries: Set<string>;
+	setSelectedCountries: React.Dispatch<React.SetStateAction<Set<string>>>;
 }
 
 export const WorldMap: React.FC<WorldMapProps> = (props) => {
-	const [selectedCountries, setSelectedCountries] = useState<Set<string>>(new Set())
 	const [countryScores, setCountryScores] = useState<Map<string, number>>(new Map())
 
 	useEffect(() => {
@@ -68,8 +69,8 @@ export const WorldMap: React.FC<WorldMapProps> = (props) => {
 		.map(countryFeature => <Country
 			key={countryFeature.properties?.name}
 			countryFeature={countryFeature}
-			selectedCountries={selectedCountries}
-			setSelectedCountries={setSelectedCountries}
+			selectedCountries={props.selectedCountries}
+			setSelectedCountries={props.setSelectedCountries}
 			geoPathGenerator={geoPathGenerator}
 			score={getScore(countryFeature.properties?.name)}
 			colorScale={props.colorScale} />
