@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
+import './ScatterPlot.css';
 
 export type DataPoint = {
 	chart_rank: number;
@@ -24,12 +25,15 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountrie
 			return;
 		}
 
+		const totalWidth = width + margin.left + margin.right;
+		const totalHeight = height + margin.top + margin.bottom;
+
 		const svg = d3.select(svgRef.current)
 			.selectAll('svg')
 			.data([null])
 			.join('svg')
-			.attr('width', width + margin.left + margin.right)
-			.attr('height', height + margin.top + margin.bottom);
+			.attr('width', totalWidth)
+			.attr('height', totalHeight);
 
 		svg.selectAll('*').remove(); // Clear the SVG
 
@@ -55,7 +59,7 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountrie
 		g.append('g')
 			.call(d3.axisLeft(y));
 
-		g.selectAll('dot')
+		const circles = g.selectAll('dot')
 			.data(data)
 			.join('circle')
 			.attr('cx', d => x(d.chart_rank))
@@ -63,6 +67,71 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountrie
 			.attr('r', 4) // radius of each point
 			.attr('opacity', 0.5)
 			.style('fill', d => color(d.region) as string);
+
+		// Add brushing functionality
+		const brush = d3.brush()
+			.extent([[margin.left, margin.top], [width + margin.left, height + margin.top]])
+			.on("start", brushstarted)
+			.on("brush", brushed)
+			.on("end", brushended);
+
+		svg.select('.brush').remove(); // Remove previous brush if any
+
+		svg.append("g")
+			.attr("class", "brush")
+			.call(brush);
+
+		function brushstarted() {
+			circles.classed("hidden", true).style('fill', 'grey')
+		}
+
+		function getX(d: DataPoint) {
+			return x(d.chart_rank) + margin.left;
+		}
+
+		function getY(d: DataPoint) {
+			return y(d.danceability) + margin.top;
+		}
+
+		function getXY(d: DataPoint) {
+			return [getX(d), getY(d)];
+		}
+
+		function isBrushed(d: DataPoint, event: d3.D3BrushEvent<SVGRectElement>) {
+			const [[x0, y0], [x1, y1]] = event.selection as [[number, number], [number, number]];
+			const [x_, y_] = getXY(d);
+
+			const isWithinX = x0 <= x_ && x_ <= x1;
+			const isWithinY = y0 <= y_ && y_ <= y1;
+
+			return isWithinX && isWithinY;
+		}
+
+		function isHidden(d: DataPoint, event: d3.D3BrushEvent<SVGRectElement>) {
+			return !isBrushed(d, event);
+		}
+
+		function getColor(d: DataPoint, event: d3.D3BrushEvent<SVGRectElement>) {
+			if (isBrushed(d, event)) {
+				return color(d.region) as string;
+			}
+
+			return 'grey';
+		}
+
+		function brushed(event: d3.D3BrushEvent<SVGRectElement>) {
+			if (event.selection) {
+				circles
+					.classed("hidden", d => isHidden(d, event))
+					.style('fill', d => getColor(d, event) as string)
+			}
+		}
+
+		function brushended(event: d3.D3BrushEvent<SVGRectElement>) {
+			if (!event.selection) {
+				circles.classed("hidden", false).style('fill', d => color(d.region) as string);
+			}
+		}
 
 		// TODO the legend should be added once for all scatter plots, not per component
 		// TODO also, right now the legend is not visible due to the ScatterPlotContainer being too small for it
