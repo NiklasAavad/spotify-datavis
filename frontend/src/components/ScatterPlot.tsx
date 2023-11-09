@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 
-type DataPoint = {
+export type DataPoint = {
 	chart_rank: number;
 	danceability: number;
 	region: string;
@@ -9,11 +9,13 @@ type DataPoint = {
 
 type ScatterPlotProps = {
 	data: DataPoint[];
-	isLoading: boolean;
 	selectedCountries: string[];
+	margin: { top: number, right: number, bottom: number, left: number };
+	width: number;
+	height: number;
 }
 
-export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, isLoading, selectedCountries }) => {
+export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountries, margin, width, height }) => {
 	const svgRef = useRef();
 	const legendRef = useRef();
 
@@ -21,10 +23,6 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, isLoading, selec
 		if (!data) {
 			return;
 		}
-
-		const margin = { top: 10, right: 30, bottom: 30, left: 60 };
-		const width = 460 - margin.left - margin.right;
-		const height = 400 - margin.top - margin.bottom;
 
 		const svg = d3.select(svgRef.current)
 			.selectAll('svg')
@@ -77,11 +75,7 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, isLoading, selec
 			.attr('class', 'legend')
 			.style('color', d => color(d) as string)
 			.text(d => d);
-	}, [data, selectedCountries]);
-
-	if (isLoading) {
-		return <div>Loading...</div>;
-	}
+	}, [data, height, margin.bottom, margin.left, margin.right, margin.top, selectedCountries, width]);
 
 	return <>
 		<div ref={svgRef}></div>

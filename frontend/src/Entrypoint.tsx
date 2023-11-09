@@ -7,8 +7,8 @@ import { QueryType, useQueryFunction } from './hooks/useQueryFunction';
 import { DateChanger, Dates } from './components/DateChanger';
 import { Attribute, AttributeParameterChanger, AttributeParams } from './components/AttributeParameterChanger';
 import { ScoreParameterChanger, ScoreParams } from './components/ScoreParameterChanger';
-import { ScatterPlot } from './components/ScatterPlot';
 import axios from 'axios';
+import { ScatterPlotContainer } from './components/ScatterPlotContainer';
 
 const getMetrics = async (dates: Dates, selectedCountries: string[]) => {
 	const preparedCountries: string = selectedCountries.join(',');
@@ -65,7 +65,7 @@ export const Entrypoint = () => {
 				selectedCountries={selectedCountries}
 				setSelectedCountries={setSelectedCountries}
 			/>
-			<ScatterPlot data={metrics} isLoading={loadingMetrics} selectedCountries={selectedCountries} />
+			<ScatterPlotContainer metrics={metrics} isLoading={loadingMetrics} selectedCountries={selectedCountries} />
 			<div style={{ margin: '8px' }}>
 				{queryType === QueryType.Attribute ?
 					<AttributeParameterChanger attribute={currentAttributeParams.attribute} setParams={setCurrentAttributeParams} /> :
