@@ -1,12 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { DataPoint, ScatterPlot } from './ScatterPlot.tsx';
+import { ScatterPlot, ScatterPlotProps } from './ScatterPlot.tsx';
 import { Spinner } from './Spinner.tsx';
 
 type ScatterPlotContainerProps = {
-	metrics: DataPoint[];
 	isLoading: boolean;
-	selectedCountries: string[];
-}
+} & Omit<ScatterPlotProps, 'height' | 'width' | 'margin'>;
 
 const MARGIN = { top: 20, right: 30, bottom: 30, left: 30 };
 const WIDTH = 400 - MARGIN.left - MARGIN.right;
@@ -20,8 +18,9 @@ export const ScatterPlotContainer: React.FC<ScatterPlotContainerProps> = (props)
 			<div style={{ height: HEIGHT + 60, width: WIDTH + 40, overflow: 'hidden', position: 'relative', border: 'solid' }}>
 				<div style={{ opacity: svgOpacity, height: "100%" }}>
 					<ScatterPlot
-						data={props.metrics}
+						data={props.data}
 						selectedCountries={props.selectedCountries}
+						selectedMetric={props.selectedMetric}
 						margin={MARGIN}
 						width={WIDTH}
 						height={HEIGHT}

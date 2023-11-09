@@ -69,8 +69,8 @@ export const Entrypoint = () => {
 				/>
 				<div>
 					<BrushProvider>
-						<ScatterPlotContainer metrics={metrics} isLoading={loadingMetrics} selectedCountries={selectedCountries} />
-						<ScatterPlotContainer metrics={metrics} isLoading={loadingMetrics} selectedCountries={selectedCountries} />
+						<ScatterPlotContainer data={metrics} isLoading={loadingMetrics} selectedCountries={selectedCountries} selectedMetric={Attribute.Danceability} />
+						<ScatterPlotContainer data={metrics} isLoading={loadingMetrics} selectedCountries={selectedCountries} selectedMetric={Attribute.Liveness} />
 					</BrushProvider>
 				</div>
 			</div>

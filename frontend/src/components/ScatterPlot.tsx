@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef } from 'react';
 import * as d3 from 'd3';
 import './ScatterPlot.css';
 import { useBrushContext } from '../context/BrushContext';
+import { Attribute } from './AttributeParameterChanger';
 
 export type DataPoint = {
 	id: number;
@@ -10,15 +11,16 @@ export type DataPoint = {
 	region: string;
 }
 
-type ScatterPlotProps = {
+export type ScatterPlotProps = {
 	data: DataPoint[];
 	selectedCountries: string[];
+	selectedMetric: Attribute
 	margin: { top: number, right: number, bottom: number, left: number };
 	width: number;
 	height: number;
 }
 
-export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountries, margin, width, height }) => {
+export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountries, selectedMetric, margin, width, height }) => {
 	const svgRef = useRef();
 	const legendRef = useRef();
 	const { brushedIds, setBrushedIds } = useBrushContext();
@@ -68,7 +70,7 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountrie
 			.data(data)
 			.join('circle')
 			.attr('cx', d => x(d.chart_rank))
-			.attr('cy', d => y(d.danceability))
+			.attr('cy', d => y(d[selectedMetric]))
 			.attr('r', 4) // radius of each point
 			.attr('opacity', 0.5)
 			.style('fill', d => color(d.region) as string);
@@ -98,7 +100,7 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountrie
 		}
 
 		function getY(d: DataPoint) {
-			return y(d.danceability) + margin.top;
+			return y(d[selectedMetric]) + margin.top;
 		}
 
 		function getXY(d: DataPoint) {
@@ -144,7 +146,7 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountrie
 			.attr('class', 'legend')
 			.style('color', d => color(d) as string)
 			.text(d => d);
-	}, [color, data, height, margin.bottom, margin.left, margin.right, margin.top, selectedCountries, setBrushedIds, width]);
+	}, [color, data, height, margin.bottom, margin.left, margin.right, margin.top, selectedCountries, selectedMetric, setBrushedIds, width]);
 
 	useEffect(() => {
 		const getColor = (d: DataPoint) => {
