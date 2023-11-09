@@ -66,7 +66,10 @@ export const Entrypoint = () => {
 					selectedCountries={selectedCountries}
 					setSelectedCountries={setSelectedCountries}
 				/>
-				<ScatterPlotContainer metrics={metrics} isLoading={loadingMetrics} selectedCountries={selectedCountries} />
+				<div>
+					<ScatterPlotContainer metrics={metrics} isLoading={loadingMetrics} selectedCountries={selectedCountries} />
+					<ScatterPlotContainer metrics={metrics} isLoading={loadingMetrics} selectedCountries={selectedCountries} />
+				</div>
 			</div>
 			<div style={{ margin: '8px' }}>
 				{queryType === QueryType.Attribute ?

@@ -8,7 +8,7 @@ type ScatterPlotContainerProps = {
 	selectedCountries: string[];
 }
 
-const MARGIN = { top: 30, right: 30, bottom: 30, left: 30 };
+const MARGIN = { top: 20, right: 30, bottom: 30, left: 30 };
 const WIDTH = 400 - MARGIN.left - MARGIN.right;
 const HEIGHT = 300 - MARGIN.top - MARGIN.bottom;
 
@@ -17,7 +17,7 @@ export const ScatterPlotContainer: React.FC<ScatterPlotContainerProps> = (props)
 
 	return (
 		<>
-			<div style={{ height: HEIGHT + 170, width: WIDTH + 100, overflow: 'hidden', position: 'relative', border: 'solid' }}>
+			<div style={{ height: HEIGHT + 60, width: WIDTH + 40, overflow: 'hidden', position: 'relative', border: 'solid' }}>
 				<div style={{ opacity: svgOpacity, height: "100%" }}>
 					<ScatterPlot
 						data={props.metrics}
