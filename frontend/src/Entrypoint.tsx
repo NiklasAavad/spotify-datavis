@@ -9,6 +9,7 @@ import { Attribute, AttributeParameterChanger, AttributeParams } from './compone
 import { ScoreParameterChanger, ScoreParams } from './components/ScoreParameterChanger';
 import axios from 'axios';
 import { ScatterPlotContainer } from './components/ScatterPlotContainer';
+import { BrushProvider } from './context/BrushContext';
 
 const getMetrics = async (dates: Dates, selectedCountries: string[]) => {
 	const preparedCountries: string = selectedCountries.join(',');
@@ -67,8 +68,10 @@ export const Entrypoint = () => {
 					setSelectedCountries={setSelectedCountries}
 				/>
 				<div>
-					<ScatterPlotContainer metrics={metrics} isLoading={loadingMetrics} selectedCountries={selectedCountries} />
-					<ScatterPlotContainer metrics={metrics} isLoading={loadingMetrics} selectedCountries={selectedCountries} />
+					<BrushProvider>
+						<ScatterPlotContainer metrics={metrics} isLoading={loadingMetrics} selectedCountries={selectedCountries} />
+						<ScatterPlotContainer metrics={metrics} isLoading={loadingMetrics} selectedCountries={selectedCountries} />
+					</BrushProvider>
 				</div>
 			</div>
 			<div style={{ margin: '8px' }}>
