@@ -64,6 +64,8 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountrie
 			.attr('opacity', 0.5)
 			.style('fill', d => color(d.region) as string);
 
+		// TODO the legend should be added once for all scatter plots, not per component
+		// TODO also, right now the legend is not visible due to the ScatterPlotContainer being too small for it
 		d3.select(legendRef.current)
 			.selectAll('*')
 			.remove(); // Clear the legend
