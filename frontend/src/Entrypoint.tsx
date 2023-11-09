@@ -58,14 +58,16 @@ export const Entrypoint = () => {
 	return (
 		<>
 			<ColorLegend colorScale={cubehelixScale} width={500} height={50} />
-			<MapContainer
-				data={data}
-				isLoading={isLoading}
-				colorScale={cubehelixScale}
-				selectedCountries={selectedCountries}
-				setSelectedCountries={setSelectedCountries}
-			/>
-			<ScatterPlotContainer metrics={metrics} isLoading={loadingMetrics} selectedCountries={selectedCountries} />
+			<div style={{ display: 'flex', flexDirection: 'row' }}>
+				<MapContainer
+					data={data}
+					isLoading={isLoading}
+					colorScale={cubehelixScale}
+					selectedCountries={selectedCountries}
+					setSelectedCountries={setSelectedCountries}
+				/>
+				<ScatterPlotContainer metrics={metrics} isLoading={loadingMetrics} selectedCountries={selectedCountries} />
+			</div>
 			<div style={{ margin: '8px' }}>
 				{queryType === QueryType.Attribute ?
 					<AttributeParameterChanger attribute={currentAttributeParams.attribute} setParams={setCurrentAttributeParams} /> :
