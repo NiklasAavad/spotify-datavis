@@ -1,8 +1,10 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import * as d3 from 'd3';
 import './ScatterPlot.css';
+import { useBrushContext } from '../context/BrushContext';
 
 export type DataPoint = {
+	id: number;
 	chart_rank: number;
 	danceability: number;
 	region: string;
@@ -19,6 +21,13 @@ type ScatterPlotProps = {
 export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountries, margin, width, height }) => {
 	const svgRef = useRef();
 	const legendRef = useRef();
+	const { brushedIds, setBrushedIds } = useBrushContext();
+
+	const color = useMemo(() => {
+		return d3.scaleOrdinal()
+			.domain(selectedCountries)
+			.range(d3.schemeCategory10)
+	}, [selectedCountries]);
 
 	useEffect(() => {
 		if (!data) {
@@ -47,10 +56,6 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountrie
 		const y = d3.scaleLinear()
 			.domain([0, 1])
 			.range([height, 0]);
-
-		const color = d3.scaleOrdinal()
-			.domain(selectedCountries)
-			.range(d3.schemeCategory10);
 
 		g.append('g')
 			.attr('transform', `translate(0, ${height})`)
@@ -82,10 +87,10 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountrie
 			.call(brush);
 
 		function brushstarted() {
-			const brushSelection = d3.brushSelection(d3.select('.brush').node() as SVGRectElement);
-			if (!brushSelection) {
-				circles.classed("hidden", true).style('fill', 'grey')
-			}
+			console.log("not currently doing anything on brushstarted, consider changing")
+			/* if (brushedIds?.length === 0) { */
+			/* 	circles.classed("hidden", true).style('fill', 'grey') */
+			/* } */
 		}
 
 		function getX(d: DataPoint) {
@@ -110,29 +115,19 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountrie
 			return isWithinX && isWithinY;
 		}
 
-		function isHidden(d: DataPoint, event: d3.D3BrushEvent<SVGRectElement>) {
-			return !isBrushed(d, event);
-		}
-
-		function getColor(d: DataPoint, event: d3.D3BrushEvent<SVGRectElement>) {
-			if (isBrushed(d, event)) {
-				return color(d.region) as string;
-			}
-
-			return 'grey';
-		}
-
 		function brushed(event: d3.D3BrushEvent<SVGRectElement>) {
 			if (event.selection) {
-				circles
-					.classed("hidden", d => isHidden(d, event))
-					.style('fill', d => getColor(d, event) as string)
+				const brushedIds = data
+					.filter(d => isBrushed(d, event))
+					.map(d => d.id);
+
+				setBrushedIds(brushedIds);
 			}
 		}
 
 		function brushended(event: d3.D3BrushEvent<SVGRectElement>) {
 			if (!event.selection) {
-				circles.classed("hidden", false).style('fill', d => color(d.region) as string);
+				setBrushedIds(undefined);
 			}
 		}
 
@@ -149,7 +144,26 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountrie
 			.attr('class', 'legend')
 			.style('color', d => color(d) as string)
 			.text(d => d);
-	}, [data, height, margin.bottom, margin.left, margin.right, margin.top, selectedCountries, width]);
+	}, [color, data, height, margin.bottom, margin.left, margin.right, margin.top, selectedCountries, setBrushedIds, width]);
+
+	useEffect(() => {
+		const getColor = (d: DataPoint) => {
+			if (!brushedIds || brushedIds.includes(d.id)) {
+				return color(d.region) as string;
+			}
+			return 'grey';
+		}
+
+		const isHidden = (d: DataPoint) => {
+			if (!brushedIds || brushedIds.includes(d.id)) {
+				return false;
+			}
+			return true;
+		}
+
+		const circles = d3.selectAll('circle') as d3.Selection<SVGCircleElement, DataPoint, HTMLElement, unknown>;
+		circles.classed("hidden", isHidden).style('fill', getColor);
+	}, [brushedIds, color]);
 
 	return <>
 		<div ref={svgRef}></div>
