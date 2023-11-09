@@ -17,7 +17,7 @@ export const ScatterPlotContainer: React.FC<ScatterPlotContainerProps> = (props)
 
 	return (
 		<>
-			<div style={{ height: HEIGHT + 80, width: WIDTH + 100, overflow: 'hidden', position: 'relative', border: 'solid' }}>
+			<div style={{ height: HEIGHT + 170, width: WIDTH + 100, overflow: 'hidden', position: 'relative', border: 'solid' }}>
 				<div style={{ opacity: svgOpacity, height: "100%" }}>
 					<ScatterPlot
 						data={props.metrics}
