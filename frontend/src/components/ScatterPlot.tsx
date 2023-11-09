@@ -10,7 +10,7 @@ type DataPoint = {
 type ScatterPlotProps = {
 	data: DataPoint[];
 	isLoading: boolean;
-	selectedCountries: Set<string>;
+	selectedCountries: string[];
 }
 
 export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, isLoading, selectedCountries }) => {
@@ -47,7 +47,7 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, isLoading, selec
 			.range([height, 0]);
 
 		const color = d3.scaleOrdinal()
-			.domain(data.map(d => d.region))
+			.domain(selectedCountries)
 			.range(d3.schemeCategory10);
 
 		g.append('g')
@@ -63,7 +63,7 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, isLoading, selec
 			.attr('cx', d => x(d.chart_rank))
 			.attr('cy', d => y(d.danceability))
 			.attr('r', 4) // radius of each point
-			.attr('opacity', 0.7)
+			.attr('opacity', 0.5)
 			.style('fill', d => color(d.region) as string);
 
 		d3.select(legendRef.current)

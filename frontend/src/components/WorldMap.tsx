@@ -11,8 +11,8 @@ type WorldMapProps = {
 	colorScale: d3.ScaleSequential<string, string>;
 	width: number;
 	height: number;
-	selectedCountries: Set<string>;
-	setSelectedCountries: React.Dispatch<React.SetStateAction<Set<string>>>;
+	selectedCountries: string[];
+	setSelectedCountries: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 export const WorldMap: React.FC<WorldMapProps> = (props) => {

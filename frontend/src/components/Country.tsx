@@ -6,8 +6,8 @@ type CountryProps = {
 	countryFeature: Feature<Geometry, {
 		[name: string]: any
 	}>,
-	selectedCountries: Set<string>,
-	setSelectedCountries: (newSet: Set<string>) => void,
+	selectedCountries: string[],
+	setSelectedCountries: (newSet: string[]) => void,
 	geoPathGenerator: d3.GeoPath<any, d3.GeoPermissibleObjects>,
 	score: number | undefined,
 	colorScale: d3.ScaleSequential<string, string>
@@ -28,13 +28,12 @@ export const Country: React.FC<CountryProps> = (props) => {
 			return;
 		}
 
-		const newSet = new Set(selectedCountries)
-		if (selectedCountries.has(country)) {
-			newSet.delete(country)
+		if (selectedCountries.includes(country)) {
+			const filteredCountries = selectedCountries.filter(c => c !== country)
+			setSelectedCountries(filteredCountries)
 		} else {
-			newSet.add(country)
+			setSelectedCountries([...selectedCountries, country])
 		}
-		setSelectedCountries(newSet)
 	}
 
 	const getText = (country: string) => {
@@ -67,7 +66,7 @@ export const Country: React.FC<CountryProps> = (props) => {
 	}
 
 	const getStrokeWidth = () => {
-		if (selectedCountries.has(countryFeature.properties?.name)) {
+		if (selectedCountries.includes(countryFeature.properties?.name)) {
 			return 1.5
 		}
 		return 0.5

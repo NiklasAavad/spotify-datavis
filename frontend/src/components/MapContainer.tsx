@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { SetStateAction } from 'react';
 import { Spinner } from './Spinner.tsx';
 import { WorldMap } from './WorldMap.tsx';
 
@@ -7,8 +6,8 @@ type MapContainerProps = {
 	data: any; // should be a dict of country name -> score (percentage), but we do not validate this yet.
 	isLoading: boolean;
 	colorScale: d3.ScaleSequential<string, string>;
-	selectedCountries: Set<string>;
-	setSelectedCountries: React.Dispatch<React.SetStateAction<Set<string>>>;
+	selectedCountries: string[];
+	setSelectedCountries: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 export const MapContainer: React.FC<MapContainerProps> = (props) => {

@@ -10,8 +10,8 @@ import { ScoreParameterChanger, ScoreParams } from './components/ScoreParameterC
 import { ScatterPlot } from './components/ScatterPlot';
 import axios from 'axios';
 
-const getMetrics = async (dates: Dates, selectedCountries: Set<string>) => {
-	const preparedCountries: string = Array.from(selectedCountries).join(',');
+const getMetrics = async (dates: Dates, selectedCountries: string[]) => {
+	const preparedCountries: string = selectedCountries.join(',');
 	const response = await axios.get("http://localhost:5000/api/metrics", {
 		params: {
 			countries: preparedCountries,
@@ -24,7 +24,7 @@ const getMetrics = async (dates: Dates, selectedCountries: Set<string>) => {
 export const Entrypoint = () => {
 	const [queryType, setQueryType] = useState<QueryType>(QueryType.Attribute);
 
-	const [selectedCountries, setSelectedCountries] = useState<Set<string>>(new Set())
+	const [selectedCountries, setSelectedCountries] = useState<string[]>([])
 
 	const [dates, setDates] = useState<Dates>({
 		fromDate: new Date('2017-01-07'),
@@ -41,7 +41,7 @@ export const Entrypoint = () => {
 	const queryFunction = useQueryFunction(queryType);
 	const { data, isLoading } = useQuery([queryType, currentParams, dates], () => queryFunction(currentParams, dates));
 
-	const { data: metrics, isLoading: loadingMetrics } = useQuery(["metric", Array.from(selectedCountries), dates], () => getMetrics(dates, selectedCountries));
+	const { data: metrics, isLoading: loadingMetrics } = useQuery(["metric", selectedCountries, dates], () => getMetrics(dates, selectedCountries));
 
 	const startColor = 'purple'
 	const endColor = 'yellow'
