@@ -82,7 +82,10 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountrie
 			.call(brush);
 
 		function brushstarted() {
-			circles.classed("hidden", true).style('fill', 'grey')
+			const brushSelection = d3.brushSelection(d3.select('.brush').node() as SVGRectElement);
+			if (!brushSelection) {
+				circles.classed("hidden", true).style('fill', 'grey')
+			}
 		}
 
 		function getX(d: DataPoint) {
