@@ -39,7 +39,7 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, isLoading, selec
 			.attr('transform', `translate(${margin.left}, ${margin.top})`);
 
 		const x = d3.scaleLinear()
-			.domain([200, 1])
+			.domain([210, 1])
 			.range([0, width]);
 
 		const y = d3.scaleLinear()
