@@ -139,7 +139,7 @@ def metrics():
 
         query = f"""
             SELECT
-                region, danceability, chart_rank
+                id, region, danceability, chart_rank
             FROM spotify_chart
             WHERE 
                 date BETWEEN %s AND %s
@@ -152,7 +152,12 @@ def metrics():
         result = cursor.fetchall()
 
         json_objects = [
-            {"region": row[0], "danceability": row[1], "chart_rank": row[2]}
+            {
+                "id": row[0],
+                "region": row[1],
+                "danceability": row[2],
+                "chart_rank": row[3]
+            }
             for row in result
         ]
 
