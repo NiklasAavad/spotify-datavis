@@ -10,15 +10,14 @@ type DataPoint = {
 type ScatterPlotProps = {
 	data: DataPoint[];
 	isLoading: boolean;
+	selectedCountries: Set<string>;
 }
 
-export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, isLoading }) => {
+export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, isLoading, selectedCountries }) => {
 	const svgRef = useRef();
 	const legendRef = useRef();
 
 	useEffect(() => {
-		console.log("data:", data)
-
 		if (!data) {
 			return;
 		}
@@ -29,11 +28,14 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, isLoading }) => 
 
 		const svg = d3.select(svgRef.current)
 			.selectAll('svg')
-			.data([null]) // This is to bind the data to the selection
-			.join('svg') // This will create a new SVG if it doesn't exist
+			.data([null])
+			.join('svg')
 			.attr('width', width + margin.left + margin.right)
-			.attr('height', height + margin.top + margin.bottom)
-			.append('g')
+			.attr('height', height + margin.top + margin.bottom);
+
+		svg.selectAll('*').remove(); // Clear the SVG
+
+		const g = svg.append('g')
 			.attr('transform', `translate(${margin.left}, ${margin.top})`);
 
 		const x = d3.scaleLinear()
@@ -44,45 +46,38 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, isLoading }) => 
 			.domain([0, 1])
 			.range([height, 0]);
 
-		// Create a color scale for different regions
 		const color = d3.scaleOrdinal()
 			.domain(data.map(d => d.region))
 			.range(d3.schemeCategory10);
 
-		// Add X and Y axes
-		svg.append('g')
+		g.append('g')
 			.attr('transform', `translate(0, ${height})`)
 			.call(d3.axisBottom(x));
 
-		svg.append('g')
+		g.append('g')
 			.call(d3.axisLeft(y));
 
-		// Add scatter plot points
-		svg.selectAll('dot')
+		g.selectAll('dot')
 			.data(data)
-			.enter()
-			.append('circle')
+			.join('circle')
 			.attr('cx', d => x(d.chart_rank))
 			.attr('cy', d => y(d.danceability))
 			.attr('r', 4) // radius of each point
 			.attr('opacity', 0.7)
 			.style('fill', d => color(d.region) as string);
 
-		// TODO det her vil formenligt blive byttet ud med selectedCountries
-		const uniqueRegions = [...new Set(data.map(d => d.region))];
-		const sortedUniqueRegions = uniqueRegions.sort((a, b) => a.localeCompare(b));
-		console.log("sortedUniqueRegions", sortedUniqueRegions)
+		d3.select(legendRef.current)
+			.selectAll('*')
+			.remove(); // Clear the legend
 
-		// Add legend
 		d3.select(legendRef.current)
 			.selectAll('legend')
-			.data(sortedUniqueRegions)
-			.enter()
-			.append('div')
+			.data(selectedCountries)
+			.join('div')
 			.attr('class', 'legend')
 			.style('color', d => color(d) as string)
 			.text(d => d);
-	}, [data]);
+	}, [data, selectedCountries]);
 
 	if (isLoading) {
 		return <div>Loading...</div>;
