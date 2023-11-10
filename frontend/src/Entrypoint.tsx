@@ -86,6 +86,7 @@ export const Entrypoint = () => {
 						data={data}
 						selectedCountries={selectedCountries}
 						setSelectedCountries={setSelectedCountries}
+						colorScale={cubehelixScale}
 					/>
 				</div>
 				<div>

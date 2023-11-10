@@ -11,9 +11,10 @@ type BarChartProps = {
 	data: any; // TODO should really try to figure out correct type for this and WorldMap
 	selectedCountries: string[];
 	setSelectedCountries: React.Dispatch<React.SetStateAction<string[]>>;
+	colorScale: d3.ScaleSequential<string, string>;
 }
 
-export const BarChart: React.FC<BarChartProps> = ({ data, selectedCountries, setSelectedCountries }) => {
+export const BarChart: React.FC<BarChartProps> = ({ data, selectedCountries, setSelectedCountries, colorScale }) => {
 	const chartRef = useRef<SVGSVGElement>(null);
 
 	useEffect(() => {
@@ -56,9 +57,17 @@ export const BarChart: React.FC<BarChartProps> = ({ data, selectedCountries, set
 
 		svg.selectAll("*").remove();
 
+		const getBarColor = (d: DataItem) => {
+			const isNotIncludedInSelectedCountries = selectedCountries.length > 0 && !selectedCountries.includes(d.region)
+			if (isNotIncludedInSelectedCountries) {
+				return 'grey';
+			}
+
+			return colorScale(d.score);
+		}
+
 		const bar = svg
 			.append('g')
-			.attr('fill', 'red')
 			.selectAll('rect')
 			.data(dataArray)
 			.join('rect')
@@ -68,6 +77,7 @@ export const BarChart: React.FC<BarChartProps> = ({ data, selectedCountries, set
 			.attr('height', d => y(0) - y(d.score) || 0)
 			.attr('width', x.bandwidth() || 0)
 			.attr('cursor', 'pointer')
+			.attr('fill', d => getBarColor(d))
 
 		bar.on('mouseover', function(_, d) {
 			d3.select(this).attr('fill', 'orange'); // Change color to orange
@@ -80,7 +90,7 @@ export const BarChart: React.FC<BarChartProps> = ({ data, selectedCountries, set
 		});
 
 		bar.on('mouseout', function(_, d) {
-			d3.select(this).attr('fill', 'red'); // Change color back to red
+			d3.select(this).attr('fill', getBarColor(d));
 			svg
 				.selectAll('text')
 				.filter(label => label === d.region)
