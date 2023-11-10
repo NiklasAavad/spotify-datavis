@@ -11,7 +11,7 @@ type MapContainerProps = {
 }
 
 export const MapContainer: React.FC<MapContainerProps> = (props) => {
-	const width = 1200;
+	const width = 1100;
 	const height = 700;
 
 	const svgOpacity = props.isLoading ? 0.1 : 1.0
