@@ -139,7 +139,7 @@ def metrics():
 
         query = f"""
             SELECT
-                id, region, danceability, liveness, chart_rank
+                id, region, danceability, liveness, chart_rank, speechiness
             FROM spotify_chart
             WHERE 
                 date BETWEEN %s AND %s
@@ -157,7 +157,8 @@ def metrics():
                 "region": row[1],
                 "danceability": row[2],
                 "liveness": row[3],
-                "chart_rank": row[4]
+                "chart_rank": row[4],
+                "speechiness": row[5]
             }
             for row in result
         ]
