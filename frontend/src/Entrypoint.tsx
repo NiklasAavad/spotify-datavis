@@ -10,6 +10,7 @@ import { ScoreParameterChanger, ScoreParams } from './components/ScoreParameterC
 import axios from 'axios';
 import { ScatterPlotContainer } from './components/ScatterPlotContainer';
 import { BrushProvider } from './context/BrushContext';
+import { BarChart } from './components/BarChart';
 
 // TODO consider moving the shuffling to the backend, so we cache the results, and the removal of one region will not change the order of the results
 const shuffleArray = (array: unknown[]) => {
@@ -73,13 +74,15 @@ export const Entrypoint = () => {
 		<>
 			<ColorLegend colorScale={cubehelixScale} width={500} height={50} />
 			<div style={{ display: 'flex', flexDirection: 'row' }}>
-				<MapContainer
-					data={data}
-					isLoading={isLoading}
-					colorScale={cubehelixScale}
-					selectedCountries={selectedCountries}
-					setSelectedCountries={setSelectedCountries}
-				/>
+				<div>
+					<MapContainer
+						data={data}
+						isLoading={isLoading}
+						colorScale={cubehelixScale}
+						selectedCountries={selectedCountries}
+						setSelectedCountries={setSelectedCountries}
+					/>
+				</div>
 				<div>
 					<BrushProvider>
 						{
@@ -116,6 +119,7 @@ export const Entrypoint = () => {
 			<div style={{ margin: '8px' }}>
 				<DateChanger setDates={setDates} />
 			</div>
+			<BarChart data={data} />
 		</>
 	)
 }
