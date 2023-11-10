@@ -154,7 +154,7 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountrie
 			.attr('class', 'legend')
 			.style('color', d => color(d) as string)
 			.text(d => d);
-	}, [color, data, height, margin.bottom, margin.left, margin.right, margin.top, selectedCountries, selectedMetric, setBrushedIds, width]);
+	}, [color, data, height, margin.bottom, margin.left, margin.right, margin.top, selectedCountries, selectedMetric, selectedMetric2, setBrushedIds, width]);
 
 	useEffect(() => {
 		const isHidden = (d: DataPoint) => {
