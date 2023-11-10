@@ -73,7 +73,7 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountrie
 		g.append('g')
 			.call(d3.axisLeft(y));
 
-		const circles = g.selectAll('dot')
+		g.selectAll('dot')
 			.data(data)
 			.join('circle')
 			.attr('cx', d => x(d.chart_rank))
