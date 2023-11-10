@@ -65,6 +65,7 @@ export const BarChart: React.FC<BarChartProps> = ({ data }) => {
 			.attr('y', d => y(d.score) || 0)
 			.attr('height', d => y(0) - y(d.score) || 0)
 			.attr('width', x.bandwidth() || 0)
+			.attr('cursor', 'pointer')
 
 		bar.on('mouseover', function(event, d) {
 			d3.select(this).attr('fill', 'orange'); // Change color to orange
@@ -91,6 +92,7 @@ export const BarChart: React.FC<BarChartProps> = ({ data }) => {
 			.selectAll('text') // Select the text elements
 			.attr('transform', 'rotate(-45)') // Rotate the text
 			.attr('x', -5) // Shift the text to the left so the center of the text is aligned with the tick TODO overvej at fjern
+			.attr('font-size', '8px')
 			.style('text-anchor', 'end'); // Align the text to the end
 
 		const gy = svg
