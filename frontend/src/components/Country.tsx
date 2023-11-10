@@ -72,6 +72,13 @@ export const Country: React.FC<CountryProps> = (props) => {
 		return 0.5
 	}
 
+	const getStyles = () => {
+		if (score === undefined) {
+			return {} // no additional styling for countries without data!
+		}
+		return { cursor: 'pointer' }
+	}
+
 	return <path
 		d={geoPathGenerator(countryFeature)}
 		stroke="lightgrey"
@@ -81,5 +88,7 @@ export const Country: React.FC<CountryProps> = (props) => {
 		onClick={() => handleClick(countryFeature.properties?.name)}
 		onMouseOver={() => handleMouseOver(countryFeature.properties?.name)}
 		onMouseLeave={handleMouseLeave}
-		onMouseMove={mouseMove} />
+		onMouseMove={mouseMove}
+		style={getStyles()}
+	/>
 }
