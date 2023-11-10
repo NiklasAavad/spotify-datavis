@@ -7,8 +7,8 @@ type ScatterPlotContainerProps = {
 } & Omit<ScatterPlotProps, 'height' | 'width' | 'margin'>;
 
 const MARGIN = { top: 20, right: 30, bottom: 30, left: 30 };
-const WIDTH = 400 - MARGIN.left - MARGIN.right;
-const HEIGHT = 300 - MARGIN.top - MARGIN.bottom;
+const WIDTH = 250 - MARGIN.left - MARGIN.right;
+const HEIGHT = WIDTH;
 
 export const ScatterPlotContainer: React.FC<ScatterPlotContainerProps> = (props) => {
 	const svgOpacity = props.isLoading ? 0.1 : 1.0
