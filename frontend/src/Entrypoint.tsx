@@ -11,6 +11,14 @@ import axios from 'axios';
 import { ScatterPlotContainer } from './components/ScatterPlotContainer';
 import { BrushProvider } from './context/BrushContext';
 
+const shuffleArray = (array: unknown[]) => {
+	for (let i = array.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		// Swap array[i] and array[j]
+		[array[i], array[j]] = [array[j], array[i]];
+	}
+}
+
 const getMetrics = async (dates: Dates, selectedCountries: string[]) => {
 	const preparedCountries: string = selectedCountries.join(',');
 	const response = await axios.get("http://localhost:5000/api/metrics", {
@@ -19,7 +27,9 @@ const getMetrics = async (dates: Dates, selectedCountries: string[]) => {
 			...dates,
 		}
 	});
-	return response.data;
+	const data = response.data
+	shuffleArray(data)
+	return data;
 }
 
 export const Entrypoint = () => {
