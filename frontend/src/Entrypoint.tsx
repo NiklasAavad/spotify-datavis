@@ -56,6 +56,8 @@ export const Entrypoint = () => {
 		setQueryType(newQueryType);
 	}
 
+	const selectedMetrics = [Attribute.Danceability, Attribute.Liveness, Attribute.Speechiness]
+
 	return (
 		<>
 			<ColorLegend colorScale={cubehelixScale} width={500} height={50} />
@@ -69,11 +71,23 @@ export const Entrypoint = () => {
 				/>
 				<div>
 					<BrushProvider>
-						<div style={{ display: 'flex', flexDirection: 'row' }}>
-							<ScatterPlotContainer data={metrics} isLoading={loadingMetrics} selectedCountries={selectedCountries} selectedMetric={Attribute.Danceability} />
-							<ScatterPlotContainer data={metrics} isLoading={loadingMetrics} selectedCountries={selectedCountries} selectedMetric={Attribute.Liveness} />
-							<ScatterPlotContainer data={metrics} isLoading={loadingMetrics} selectedCountries={selectedCountries} selectedMetric={Attribute.Speechiness} />
-						</div>
+						{
+							selectedMetrics.map((metric1) => (
+								<div style={{ display: 'flex', flexDirection: 'row' }}>
+									{
+										selectedMetrics.map((metric2) => (
+											<ScatterPlotContainer
+												data={metrics}
+												isLoading={loadingMetrics}
+												selectedCountries={selectedCountries}
+												selectedMetric={metric1}
+												selectedMetric2={metric2}
+											/>
+										))
+									}
+								</div>
+							))
+						}
 					</BrushProvider>
 				</div>
 			</div>

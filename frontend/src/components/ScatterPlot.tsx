@@ -21,13 +21,14 @@ export type DataPoint = {
 export type ScatterPlotProps = {
 	data: DataPoint[];
 	selectedCountries: string[];
-	selectedMetric: Attribute
+	selectedMetric: Attribute;
+	selectedMetric2: Attribute;
 	margin: { top: number, right: number, bottom: number, left: number };
 	width: number;
 	height: number;
 }
 
-export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountries, selectedMetric, margin, width, height }) => {
+export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountries, selectedMetric, selectedMetric2, margin, width, height }) => {
 	const svgRef = useRef();
 	const legendRef = useRef();
 	const { brushedIds, setBrushedIds } = useBrushContext();
@@ -76,8 +77,8 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountrie
 		g.selectAll('dot')
 			.data(data)
 			.join('circle')
-			.attr('cx', d => x(d.danceability)) // TODO ændr til en slags selectedMetric
-			.attr('cy', d => y(d[selectedMetric]))
+			.attr('cx', d => x(d[selectedMetric]))
+			.attr('cy', d => y(d[selectedMetric2]))
 			.attr('r', 4) // radius of each point
 			.attr('opacity', 0.5)
 			.attr('fill', d => color(d.region) as string);
@@ -103,11 +104,11 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountrie
 		}
 
 		function getX(d: DataPoint) {
-			return x(d.danceability) + margin.left; // TODO ændr til en slags selectedMetric
+			return x(d[selectedMetric]) + margin.left;
 		}
 
 		function getY(d: DataPoint) {
-			return y(d[selectedMetric]) + margin.top;
+			return y(d[selectedMetric2]) + margin.top;
 		}
 
 		function getXY(d: DataPoint) {
