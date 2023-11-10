@@ -11,6 +11,7 @@ import axios from 'axios';
 import { ScatterPlotContainer } from './components/ScatterPlotContainer';
 import { BrushProvider } from './context/BrushContext';
 
+// TODO consider moving the shuffling to the backend, so we cache the results, and the removal of one region will not change the order of the results
 const shuffleArray = (array: unknown[]) => {
 	for (let i = array.length - 1; i > 0; i--) {
 		const j = Math.floor(Math.random() * (i + 1));
