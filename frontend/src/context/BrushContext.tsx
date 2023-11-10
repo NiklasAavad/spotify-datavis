@@ -1,8 +1,8 @@
 import { createContext, useContext, useState } from "react";
 
 type BrushContextType = {
-	brushedIds: number[] | undefined; // TODO consider using a set if performance is bad
-	setBrushedIds: React.Dispatch<React.SetStateAction<number[] | undefined>>;
+	brushedIds: Set<number> | undefined; // TODO consider using a set if performance is bad
+	setBrushedIds: React.Dispatch<React.SetStateAction<Set<number> | undefined>>;
 }
 
 const BrushContext = createContext<BrushContextType | undefined>(undefined);
@@ -22,7 +22,7 @@ type Props = {
 }
 
 export const BrushProvider: React.FC<Props> = ({ children }) => {
-	const [brushSelection, setBrushSelection] = useState<number[] | undefined>(undefined);
+	const [brushSelection, setBrushSelection] = useState<Set<number> | undefined>(undefined);
 
 	return (
 		<BrushContext.Provider value={{ brushedIds: brushSelection, setBrushedIds: setBrushSelection }}>

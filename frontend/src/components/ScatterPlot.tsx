@@ -131,7 +131,7 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountrie
 					.filter(d => isBrushed(d, event))
 					.map(d => d.id);
 
-				setBrushedIds(brushedIds);
+				setBrushedIds(new Set(brushedIds));
 			}
 		}
 
@@ -158,7 +158,7 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountrie
 
 	useEffect(() => {
 		const isHidden = (d: DataPoint) => {
-			if (!brushedIds || brushedIds.includes(d.id)) {
+			if (!brushedIds || brushedIds.has(d.id)) {
 				return false;
 			}
 			return true;
