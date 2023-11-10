@@ -73,7 +73,7 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountrie
 			.attr('cy', d => y(d[selectedMetric]))
 			.attr('r', 4) // radius of each point
 			.attr('opacity', 0.5)
-			.style('fill', d => color(d.region) as string);
+			.attr('fill', d => color(d.region) as string);
 
 		// Add brushing functionality
 		const brush = d3.brush()
@@ -149,13 +149,6 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountrie
 	}, [color, data, height, margin.bottom, margin.left, margin.right, margin.top, selectedCountries, selectedMetric, setBrushedIds, width]);
 
 	useEffect(() => {
-		const getColor = (d: DataPoint) => {
-			if (!brushedIds || brushedIds.includes(d.id)) {
-				return color(d.region) as string;
-			}
-			return 'grey';
-		}
-
 		const isHidden = (d: DataPoint) => {
 			if (!brushedIds || brushedIds.includes(d.id)) {
 				return false;
@@ -164,8 +157,8 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountrie
 		}
 
 		const circles = d3.selectAll('circle') as d3.Selection<SVGCircleElement, DataPoint, HTMLElement, unknown>;
-		circles.classed("hidden", isHidden).style('fill', getColor);
-	}, [brushedIds, color]);
+		circles.classed("hidden", isHidden)
+	}, [brushedIds]);
 
 	return <>
 		<div ref={svgRef}></div>
