@@ -59,7 +59,7 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountrie
 			.attr('transform', `translate(${margin.left}, ${margin.top})`);
 
 		const x = d3.scaleLinear()
-			.domain([210, 1])
+			.domain([0, 1])
 			.range([0, width]);
 
 		const y = d3.scaleLinear()
@@ -76,7 +76,7 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountrie
 		g.selectAll('dot')
 			.data(data)
 			.join('circle')
-			.attr('cx', d => x(d.chart_rank))
+			.attr('cx', d => x(d.danceability)) // TODO ændr til en slags selectedMetric
 			.attr('cy', d => y(d[selectedMetric]))
 			.attr('r', 4) // radius of each point
 			.attr('opacity', 0.5)
@@ -103,7 +103,7 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountrie
 		}
 
 		function getX(d: DataPoint) {
-			return x(d.chart_rank) + margin.left;
+			return x(d.danceability) + margin.left; // TODO ændr til en slags selectedMetric
 		}
 
 		function getY(d: DataPoint) {
