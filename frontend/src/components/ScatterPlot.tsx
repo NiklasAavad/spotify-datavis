@@ -7,8 +7,15 @@ import { Attribute } from './AttributeParameterChanger';
 export type DataPoint = {
 	id: number;
 	chart_rank: number;
-	danceability: number;
 	region: string;
+	// all the following attributes are between 0 and 1, see AttributeParameterChanger
+	danceability: number;
+	energy: number;
+	valence: number;
+	acousticness: number;
+	instrumentalness: number;
+	liveness: number;
+	speechiness: number;
 }
 
 export type ScatterPlotProps = {
