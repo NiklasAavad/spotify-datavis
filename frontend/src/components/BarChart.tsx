@@ -66,6 +66,15 @@ export const BarChart: React.FC<BarChartProps> = ({ data, selectedCountries, set
 			return colorScale(d.score);
 		}
 
+		const getTextColor = (region: string) => {
+			const isNotIncludedInSelectedCountries = selectedCountries.length > 0 && !selectedCountries.includes(region)
+			if (isNotIncludedInSelectedCountries) {
+				return 'grey';
+			}
+
+			return 'white';
+		}
+
 		const bar = svg
 			.append('g')
 			.selectAll('rect')
@@ -94,11 +103,10 @@ export const BarChart: React.FC<BarChartProps> = ({ data, selectedCountries, set
 			svg
 				.selectAll('text')
 				.filter(label => label === d.region)
-				.attr('fill', 'white');
+				.attr('fill', getTextColor(d.region));
 		});
 
 		bar.on('click', function(_, d) {
-			console.log("region:", d.region)
 			if (selectedCountries.includes(d.region)) {
 				setSelectedCountries(selectedCountries.filter(country => country !== d.region))
 			} else {
@@ -114,6 +122,7 @@ export const BarChart: React.FC<BarChartProps> = ({ data, selectedCountries, set
 			.attr('transform', 'rotate(-45)') // Rotate the text
 			.attr('x', -5) // Shift the text to the left so the center of the text is aligned with the tick TODO overvej at fjern
 			.attr('font-size', '11px')
+			.attr('fill', (region: string) => getTextColor(region))
 			.style('text-anchor', 'end'); // Align the text to the end
 
 		const gy = svg
@@ -143,7 +152,7 @@ export const BarChart: React.FC<BarChartProps> = ({ data, selectedCountries, set
 
 		// Assign the update function to the chartRef
 		/* chartRef.current!.update = updateChart; */
-	}, [data, selectedCountries, setSelectedCountries]);
+	}, [colorScale, data, selectedCountries, setSelectedCountries]);
 
 	return <svg ref={chartRef}></svg>;
 };
