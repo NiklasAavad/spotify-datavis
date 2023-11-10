@@ -9,9 +9,11 @@ type DataItem = {
 type BarChartProps = {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	data: any; // TODO should really try to figure out correct type for this and WorldMap
+	selectedCountries: string[];
+	setSelectedCountries: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
-export const BarChart: React.FC<BarChartProps> = ({ data }) => {
+export const BarChart: React.FC<BarChartProps> = ({ data, selectedCountries, setSelectedCountries }) => {
 	const chartRef = useRef<SVGSVGElement>(null);
 
 	useEffect(() => {
@@ -26,7 +28,7 @@ export const BarChart: React.FC<BarChartProps> = ({ data }) => {
 
 		// Specify the chart’s dimensions.
 		const width = 640;
-		const height = 400;
+		const height = 300;
 		const marginTop = 20;
 		const marginRight = 20;
 		const marginBottom = 80;
@@ -67,7 +69,7 @@ export const BarChart: React.FC<BarChartProps> = ({ data }) => {
 			.attr('width', x.bandwidth() || 0)
 			.attr('cursor', 'pointer')
 
-		bar.on('mouseover', function(event, d) {
+		bar.on('mouseover', function(_, d) {
 			d3.select(this).attr('fill', 'orange'); // Change color to orange
 
 			// Find the corresponding label and change its color
@@ -77,12 +79,21 @@ export const BarChart: React.FC<BarChartProps> = ({ data }) => {
 				.attr('fill', 'orange');
 		});
 
-		bar.on('mouseout', function(event, d) {
+		bar.on('mouseout', function(_, d) {
 			d3.select(this).attr('fill', 'red'); // Change color back to red
 			svg
 				.selectAll('text')
 				.filter(label => label === d.region)
 				.attr('fill', 'white');
+		});
+
+		bar.on('click', function(_, d) {
+			console.log("region:", d.region)
+			if (selectedCountries.includes(d.region)) {
+				setSelectedCountries(selectedCountries.filter(country => country !== d.region))
+			} else {
+				setSelectedCountries([...selectedCountries, d.region])
+			}
 		});
 
 		const gx = svg
@@ -92,7 +103,7 @@ export const BarChart: React.FC<BarChartProps> = ({ data }) => {
 			.selectAll('text') // Select the text elements
 			.attr('transform', 'rotate(-45)') // Rotate the text
 			.attr('x', -5) // Shift the text to the left so the center of the text is aligned with the tick TODO overvej at fjern
-			.attr('font-size', '8px')
+			.attr('font-size', '11px')
 			.style('text-anchor', 'end'); // Align the text to the end
 
 		const gy = svg
@@ -122,7 +133,7 @@ export const BarChart: React.FC<BarChartProps> = ({ data }) => {
 
 		// Assign the update function to the chartRef
 		/* chartRef.current!.update = updateChart; */
-	}, [data]);
+	}, [data, selectedCountries, setSelectedCountries]);
 
 	return <svg ref={chartRef}></svg>;
 };

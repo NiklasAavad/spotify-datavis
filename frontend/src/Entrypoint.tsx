@@ -82,6 +82,11 @@ export const Entrypoint = () => {
 						selectedCountries={selectedCountries}
 						setSelectedCountries={setSelectedCountries}
 					/>
+					<BarChart
+						data={data}
+						selectedCountries={selectedCountries}
+						setSelectedCountries={setSelectedCountries}
+					/>
 				</div>
 				<div>
 					<BrushProvider>
@@ -119,7 +124,6 @@ export const Entrypoint = () => {
 			<div style={{ margin: '8px' }}>
 				<DateChanger setDates={setDates} />
 			</div>
-			<BarChart data={data} />
 		</>
 	)
 }
