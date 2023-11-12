@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as d3 from "d3"
 import { Feature, Geometry } from "geojson"
+import { useState } from "react"
 
 type CountryProps = {
 	countryFeature: Feature<Geometry, {
@@ -21,6 +22,8 @@ export const Country: React.FC<CountryProps> = (props) => {
 		score,
 		colorScale
 	} = props
+
+	const [isHovered, setIsHovered] = useState(false)
 
 	const handleClick = (country: string) => {
 		// Do not add countries with no score! TODO, what if a country suddenly has no data and therefore 'no score'? might need to define the available countries instead
@@ -44,6 +47,7 @@ export const Country: React.FC<CountryProps> = (props) => {
 	}
 
 	const handleMouseOver = (country: string) => {
+		setIsHovered(true)
 		d3.select('#tooltip')
 			.style('opacity', 0.9)
 			.classed('unselectable', true)
@@ -51,6 +55,7 @@ export const Country: React.FC<CountryProps> = (props) => {
 	}
 
 	const handleMouseLeave = () => {
+		setIsHovered(false)
 		d3.select('#tooltip')
 			.style('opacity', 0)
 	}
@@ -62,6 +67,9 @@ export const Country: React.FC<CountryProps> = (props) => {
 	}
 
 	const getFill = () => {
+		if (score && isHovered) {
+			return 'orange'
+		}
 		return colorScale(score)
 	}
 
