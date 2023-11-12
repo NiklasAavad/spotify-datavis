@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 
 type DataItem = {
@@ -14,8 +14,39 @@ type BarChartProps = {
 	colorScale: d3.ScaleSequential<string, string>;
 }
 
+const sortScore = (a: DataItem, b: DataItem) => d3.ascending(a?.score, b?.score);
+const sortAlphabetically = (a: DataItem, b: DataItem) => d3.ascending(a?.region, b?.region);
+
+const orderMap = {
+	"score": sortScore,
+	"alphabetically": sortAlphabetically
+}
+
 export const BarChart: React.FC<BarChartProps> = ({ data, selectedCountries, setSelectedCountries, colorScale }) => {
+	const [order, setOrder] = useState<"score" | "alphabetically">("alphabetically");
+
+	const orderRef = useRef(null);
 	const chartRef = useRef<SVGSVGElement>(null);
+
+	const toggleOrder = useCallback(() => {
+		console.log("toggle order was called")
+		if (order === "alphabetically") {
+			setOrder("score");
+		} else {
+			setOrder("alphabetically");
+		}
+	}, [order]);
+
+	useEffect(() => {
+		console.log("order changed")
+		if (!orderRef.current) {
+			console.log("but nothing happens")
+			return;
+		}
+		console.log("im about to do some things")
+		const orderFunction = orderMap[order];
+		orderRef.current(orderFunction);
+	}, [order])
 
 	useEffect(() => {
 		if (!data) {
@@ -133,26 +164,31 @@ export const BarChart: React.FC<BarChartProps> = ({ data, selectedCountries, set
 
 		// TODO hentet fra https://observablehq.com/@d3/bar-chart-transitions/2?intent=fork
 		// Update function
-		/* const updateChart = (order: (a: DataItem, b: DataItem) => number) => { */
-		/* 	x.domain(data.sort(order).map(d => d.region)); */
-		/**/
-		/* 	const t = svg.transition().duration(750); */
-		/**/
-		/* 	bar.data(data, (d: DataItem) => d.region) */
-		/* 		.order() */
-		/* 		.transition(t) */
-		/* 		.delay((d, i) => i * 20) */
-		/* 		.attr('x', d => x(d.region) || 0); */
-		/**/
-		/* 	gx.transition(t) */
-		/* 		.call(xAxis) */
-		/* 		.selectAll('.tick') */
-		/* 		.delay((d, i) => i * 20); */
-		/* }; */
+		const updateChart = (order: (a: DataItem, b: DataItem) => number) => {
+			console.log("update chart was called")
+			x.domain(dataArray.sort(order).map(d => d.region));
 
-		// Assign the update function to the chartRef
-		/* chartRef.current!.update = updateChart; */
+			const t = svg.transition().duration(750);
+
+			bar.data(dataArray, (d: DataItem) => d.region)
+				.transition(t)
+				.delay((_, i) => i * 20)
+				.attr('x', d => x(d.region) || 0)
+				.attr('y', d => y(d.score) || 0)
+				.attr('height', d => y(0) - y(d.score) || 0);
+
+			gx.transition(t)
+				.call(xAxis)
+				.selectAll('.tick')
+				.delay((d, i) => i * 20);
+		};
+
+		orderRef.current = updateChart
+
 	}, [colorScale, data, selectedCountries, setSelectedCountries]);
 
-	return <svg ref={chartRef}></svg>;
+	return <>
+		<svg ref={chartRef}></svg>
+		<button onClick={toggleOrder}>Toggle order</button>
+	</>
 };
