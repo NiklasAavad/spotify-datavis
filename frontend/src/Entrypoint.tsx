@@ -11,6 +11,7 @@ import axios from 'axios';
 import { ScatterPlotContainer } from './components/ScatterPlotContainer';
 import { BrushProvider } from './context/BrushContext';
 import { BarChart } from './components/BarChart';
+import { HistogramContainer } from './components/HistogramContainer';
 
 // TODO consider moving the shuffling to the backend, so we cache the results, and the removal of one region will not change the order of the results
 const shuffleArray = (array: unknown[]) => {
@@ -96,13 +97,21 @@ export const Entrypoint = () => {
 								<div style={{ display: 'flex', flexDirection: 'row' }}>
 									{
 										selectedMetrics.map((metric2) => (
-											<ScatterPlotContainer
-												data={metrics}
-												isLoading={loadingMetrics}
-												selectedCountries={selectedCountries}
-												selectedMetric={metric1}
-												selectedMetric2={metric2}
-											/>
+											metric1 === metric2 ?
+												<HistogramContainer
+													data={metrics}
+													isLoading={loadingMetrics}
+													selectedCountries={selectedCountries}
+													selectedMetric={metric1}
+												/>
+												:
+												<ScatterPlotContainer
+													data={metrics}
+													isLoading={loadingMetrics}
+													selectedCountries={selectedCountries}
+													selectedMetric={metric1}
+													selectedMetric2={metric2}
+												/>
 										))
 									}
 								</div>
