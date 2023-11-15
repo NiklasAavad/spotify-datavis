@@ -1,6 +1,6 @@
 import { ColorLegend } from './components/ColorLegend';
 import * as d3 from 'd3';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MapContainer } from './components/MapContainer';
 import { useQuery } from 'react-query';
 import { QueryType, useQueryFunction } from './hooks/useQueryFunction';
@@ -71,6 +71,19 @@ export const Entrypoint = () => {
 		const newQueryType = event.target.value as QueryType;
 		setQueryType(newQueryType);
 	}
+
+	useEffect(() => {
+		if (!brushedInterval) {
+			setQueryType(QueryType.Attribute);
+		} else {
+			setQueryType(QueryType.Score);
+			setCurrentScoreParams({
+				lower_bound: brushedInterval[0].value[0],
+				upper_bound: brushedInterval[0].value[1],
+			})
+		}
+
+	}, [brushedInterval])
 
 	const selectedMetrics = [Attribute.Danceability, Attribute.Liveness, Attribute.Speechiness]
 
