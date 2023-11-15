@@ -21,6 +21,7 @@ export const HistogramContainer: React.FC<HistogramContainerProps> = (props) => 
 						data={props.data}
 						selectedCountries={props.selectedCountries}
 						selectedMetric={props.selectedMetric}
+						brushedInterval={props.brushedInterval}
 						margin={MARGIN}
 						width={WIDTH}
 						height={HEIGHT}
