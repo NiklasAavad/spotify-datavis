@@ -165,6 +165,7 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountrie
 		function brushended(event: d3.D3BrushEvent<SVGRectElement>) {
 			if (!event.selection) {
 				setBrushedIds(undefined);
+				setBrushedInterval(undefined);
 			} else {
 				updateBrushedInterval(event); // TODO could do this on brushed, but this is slow and heavy
 			}
