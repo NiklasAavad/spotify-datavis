@@ -1,7 +1,7 @@
 import axios from "axios";
-import { Dates } from "./useData";
-import { AttributeParams } from "./AttributeData";
-import { ScoreParams } from "./ScoreData";
+import { Dates } from "../components/DateChanger";
+import { AttributeParams } from "../components/AttributeParameterChanger";
+import { ScoreParams } from "../components/ScoreParameterChanger";
 
 export enum QueryType {
 	Attribute = 'attribute',
