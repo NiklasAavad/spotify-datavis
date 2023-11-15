@@ -18,17 +18,23 @@ export type DataPoint = {
 	speechiness: number;
 }
 
+export type Interval = {
+	key: Attribute;
+	value: [number, number];
+}
+
 export type ScatterPlotProps = {
 	data: DataPoint[];
 	selectedCountries: string[];
 	selectedMetric: Attribute;
 	selectedMetric2: Attribute;
+	setBrushedInterval: React.Dispatch<React.SetStateAction<Interval[]>>;
 	margin: { top: number, right: number, bottom: number, left: number };
 	width: number;
 	height: number;
 }
 
-export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountries, selectedMetric, selectedMetric2, margin, width, height }) => {
+export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountries, selectedMetric, selectedMetric2, setBrushedInterval, margin, width, height }) => {
 	const svgRef = useRef();
 	const legendRef = useRef();
 	const { brushedIds, setBrushedIds } = useBrushContext();
@@ -125,12 +131,34 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountrie
 			return isWithinX && isWithinY;
 		}
 
+		function updateBrushedInterval(event: d3.D3BrushEvent<SVGRectElement>) {
+			const [[x0, y0], [x1, y1]] = event.selection as [[number, number], [number, number]];
+
+			const selectedIntervalX: [number, number] = [
+				x.invert(x0 - margin.left),
+				x.invert(x1 - margin.left)
+			];
+
+			const selectedIntervalY: [number, number] = [
+				y.invert(y1 - margin.top),
+				y.invert(y0 - margin.top)
+			];
+
+			const brushedInvtervals = [
+				{ key: selectedMetric, value: selectedIntervalX },
+				{ key: selectedMetric2, value: selectedIntervalY }
+			]
+
+			setBrushedInterval(brushedInvtervals);
+		}
+
 		function brushed(event: d3.D3BrushEvent<SVGRectElement>) {
 			if (event.selection) {
 				const brushedIds = data
 					.filter(d => isBrushed(d, event))
 					.map(d => d.id);
 
+				updateBrushedInterval(event);
 				setBrushedIds(new Set(brushedIds));
 			}
 		}

@@ -12,6 +12,7 @@ import { ScatterPlotContainer } from './components/ScatterPlotContainer';
 import { BrushProvider } from './context/BrushContext';
 import { BarChart } from './components/BarChart';
 import { HistogramContainer } from './components/HistogramContainer';
+import { BrushedInterval } from './components/ScatterPlot';
 
 // TODO consider moving the shuffling to the backend, so we cache the results, and the removal of one region will not change the order of the results
 const shuffleArray = (array: unknown[]) => {
@@ -44,6 +45,8 @@ export const Entrypoint = () => {
 		fromDate: new Date('2017-01-07'),
 		toDate: new Date('2017-01-07'),
 	})
+
+	const [brushedInterval, setBrushedInterval] = useState<BrushedInterval>(undefined)
 
 	const [currentAttributeParams, setCurrentAttributeParams] = useState<AttributeParams>({ attribute: Attribute.Danceability });
 	const [currentScoreParams, setCurrentScoreParams] = useState<ScoreParams>({
@@ -111,6 +114,7 @@ export const Entrypoint = () => {
 													selectedCountries={selectedCountries}
 													selectedMetric={metric1}
 													selectedMetric2={metric2}
+													setBrushedInterval={setBrushedInterval}
 												/>
 										))
 									}

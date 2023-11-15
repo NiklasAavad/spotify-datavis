@@ -22,6 +22,7 @@ export const ScatterPlotContainer: React.FC<ScatterPlotContainerProps> = (props)
 						selectedCountries={props.selectedCountries}
 						selectedMetric={props.selectedMetric}
 						selectedMetric2={props.selectedMetric2}
+						setBrushedInterval={props.setBrushedInterval}
 						margin={MARGIN}
 						width={WIDTH}
 						height={HEIGHT}
