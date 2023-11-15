@@ -149,7 +149,7 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountrie
 				{ key: selectedMetric, value: selectedIntervalY }
 			]
 
-			setBrushedInterval(brushedInvtervals);
+			setBrushedInterval(brushedInvtervals); // TODO this is heavy, as it seems that rerendering histograms is slow
 		}
 
 		function brushed(event: d3.D3BrushEvent<SVGRectElement>) {
@@ -158,7 +158,6 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountrie
 					.filter(d => isBrushed(d, event))
 					.map(d => d.id);
 
-				updateBrushedInterval(event);
 				setBrushedIds(new Set(brushedIds));
 			}
 		}
@@ -166,6 +165,8 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountrie
 		function brushended(event: d3.D3BrushEvent<SVGRectElement>) {
 			if (!event.selection) {
 				setBrushedIds(undefined);
+			} else {
+				updateBrushedInterval(event); // TODO could do this on brushed, but this is slow and heavy
 			}
 		}
 
