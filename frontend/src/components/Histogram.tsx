@@ -63,7 +63,7 @@ export const Histogram: React.FC<HistogramProps> = ({ data, selectedCountries, s
 			}
 
 			const isOverlappingBrushedInterval = brushedInterval.some((interval) => {
-				if (interval.key !== selectedMetric) {
+				if (interval.key === selectedMetric) {
 					const [start, end] = interval.value;
 					const isOutsideBrushedInterval = d.x1 < start || d.x0 > end;
 					return !isOutsideBrushedInterval;

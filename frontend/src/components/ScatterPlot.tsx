@@ -145,8 +145,8 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountrie
 			];
 
 			const brushedInvtervals = [
-				{ key: selectedMetric2, value: selectedIntervalX }, // TODO dunno why this is inverted, but it works
-				{ key: selectedMetric, value: selectedIntervalY }
+				{ key: selectedMetric, value: selectedIntervalX },
+				{ key: selectedMetric2, value: selectedIntervalY }
 			]
 
 			setBrushedInterval(brushedInvtervals); // TODO this is heavy, as it seems that rerendering histograms is slow

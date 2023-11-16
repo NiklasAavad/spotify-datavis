@@ -23,6 +23,74 @@ const shuffleArray = (array: unknown[]) => {
 	}
 }
 
+const baseScore: ScoreParams = {
+	dance_lower_bound: 0,
+	dance_upper_bound: 1,
+	energy_lower_bound: 0,
+	energy_upper_bound: 1,
+	valence_lower_bound: 0,
+	valence_upper_bound: 1,
+	acousticness_lower_bound: 0,
+	acousticness_upper_bound: 1,
+	instrumentalness_lower_bound: 0,
+	instrumentalness_upper_bound: 1,
+	liveness_lower_bound: 0,
+	liveness_upper_bound: 1,
+	speechiness_lower_bound: 0,
+	speechiness_upper_bound: 1,
+}
+
+const getScoreParam = (key: Attribute, value: [number, number]) => {
+	switch (key) {
+		case Attribute.Danceability:
+			return {
+				dance_lower_bound: value[0],
+				dance_upper_bound: value[1],
+			}
+		case Attribute.Energy:
+			return {
+				energy_lower_bound: value[0],
+				energy_upper_bound: value[1],
+			}
+		case Attribute.Valence:
+			return {
+				valence_lower_bound: value[0],
+				valence_upper_bound: value[1],
+			}
+		case Attribute.Acousticness:
+			return {
+				acousticness_lower_bound: value[0],
+				acousticness_upper_bound: value[1],
+			}
+		case Attribute.Instrumentalness:
+			return {
+				instrumentalness_lower_bound: value[0],
+				instrumentalness_upper_bound: value[1],
+			}
+		case Attribute.Liveness:
+			return {
+				liveness_lower_bound: value[0],
+				liveness_upper_bound: value[1],
+			}
+		case Attribute.Speechiness:
+			return {
+				speechiness_lower_bound: value[0],
+				speechiness_upper_bound: value[1],
+			}
+	}
+}
+
+const getNewScoreParams = (brushedInterval: Interval[]) => {
+	let newParams = {}
+	for (const interval of brushedInterval) {
+		newParams = {
+			...newParams,
+			...getScoreParam(interval.key, interval.value),
+		}
+	}
+	return newParams;
+}
+
 const getMetrics = async (dates: Dates, selectedCountries: string[]) => {
 	const preparedCountries: string = selectedCountries.join(',');
 	const response = await axios.get("http://localhost:5000/api/metrics", {
@@ -49,10 +117,7 @@ export const Entrypoint = () => {
 	const [brushedInterval, setBrushedInterval] = useState<Interval[]>(undefined)
 
 	const [currentAttributeParams, setCurrentAttributeParams] = useState<AttributeParams>({ attribute: Attribute.Danceability });
-	const [currentScoreParams, setCurrentScoreParams] = useState<ScoreParams>({
-		lower_bound: 0.0,
-		upper_bound: 1.0,
-	});
+	const [currentScoreParams, setCurrentScoreParams] = useState<ScoreParams>(baseScore);
 	const currentParams = queryType === QueryType.Attribute ? currentAttributeParams : currentScoreParams;
 
 	const queryFunction = useQueryFunction(queryType);
@@ -76,10 +141,11 @@ export const Entrypoint = () => {
 		if (!brushedInterval) {
 			setQueryType(QueryType.Attribute);
 		} else {
+			const newParams = getNewScoreParams(brushedInterval);
 			setQueryType(QueryType.Score);
 			setCurrentScoreParams({
-				lower_bound: brushedInterval[0].value[0],
-				upper_bound: brushedInterval[0].value[1],
+				...baseScore,
+				...newParams,
 			})
 		}
 

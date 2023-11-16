@@ -55,21 +55,45 @@ def score():
         if cursor is None:
             raise Exception("No database connection")
 
-        lower_bound = float(request.args.get("lower_bound", 0.0))
-        upper_bound = float(request.args.get("upper_bound", 1.0))
-        
+        dance_lower_bound, dance_upper_bound, \
+        energy_lower_bound, energy_upper_bound, \
+        valence_lower_bound, valence_upper_bound, \
+        acousticness_lower_bound, acousticness_upper_bound, \
+        instrumentalness_lower_bound, instrumentalness_upper_bound, \
+        liveness_lower_bound, liveness_upper_bound, \
+        speechiness_lower_bound, speechiness_upper_bound = _get_score_params(request)
+
         from_date, to_date = get_from_and_to_date()
 
         query = """
             SELECT
                 region,
-                (COUNT(CASE WHEN danceability >= %s AND danceability <= %s THEN 1 END) / COUNT(*))
+                (COUNT(CASE 
+                       WHEN danceability >= %s AND danceability <= %s 
+                       AND energy >= %s AND energy <= %s
+                       AND valence >= %s AND valence <= %s
+                       AND acousticness >= %s AND acousticness <= %s
+                       AND instrumentalness >= %s AND instrumentalness <= %s
+                       AND liveness >= %s AND liveness <= %s
+                       AND speechiness >= %s AND speechiness <= %s
+                       THEN 1 END) / COUNT(*))
             FROM spotify_chart
             WHERE date BETWEEN %s AND %s
             GROUP BY region;
         """
 
-        cursor.execute(query, (lower_bound, upper_bound, from_date, to_date))
+        params = (
+            dance_lower_bound, dance_upper_bound,
+            energy_lower_bound, energy_upper_bound,
+            valence_lower_bound, valence_upper_bound,
+            acousticness_lower_bound, acousticness_upper_bound,
+            instrumentalness_lower_bound, instrumentalness_upper_bound,
+            liveness_lower_bound, liveness_upper_bound,
+            speechiness_lower_bound, speechiness_upper_bound,
+            from_date, to_date
+         )
+
+        cursor.execute(query, params)
 
         # Fetch the result
         result = cursor.fetchall()
@@ -83,6 +107,67 @@ def score():
     finally:
         cursor.close()
         conn.close()
+
+# TODO should probably use default values instead of required params
+def _get_score_params(request):
+        dance_lower_bound = request.args.get("dance_lower_bound")
+        if dance_lower_bound is None:
+            raise Exception("Please remember to add a lower bound on danceability")
+
+        dance_upper_bound = request.args.get("dance_upper_bound")
+        if dance_upper_bound is None:
+            raise Exception("Please remember to add a upper bound on danceability")
+
+        energy_lower_bound = request.args.get("energy_lower_bound")
+        if energy_lower_bound is None:
+            raise Exception("Please remember to add a lower bound on energy")
+
+        energy_upper_bound = request.args.get("energy_upper_bound")
+        if energy_upper_bound is None:
+            raise Exception("Please remember to add a upper bound on energy")
+
+        valence_lower_bound = request.args.get("valence_lower_bound")
+        if valence_lower_bound is None:
+            raise Exception("Please remember to add a lower bound on valence")
+
+        valence_upper_bound = request.args.get("valence_upper_bound")
+        if valence_upper_bound is None:
+            raise Exception("Please remember to add a upper bound on valence")
+
+        acousticness_lower_bound = request.args.get("acousticness_lower_bound")
+        if acousticness_lower_bound is None:
+            raise Exception("Please remember to add a lower bound on acousticness")
+
+        acousticness_upper_bound = request.args.get("acousticness_upper_bound")
+        if acousticness_upper_bound is None:
+            raise Exception("Please remember to add a upper bound on acousticness")
+
+        instrumentalness_lower_bound = request.args.get("instrumentalness_lower_bound")
+        if instrumentalness_lower_bound is None:
+            raise Exception("Please remember to add a lower bound on instrumentalness")
+
+        instrumentalness_upper_bound = request.args.get("instrumentalness_upper_bound")
+        if instrumentalness_upper_bound is None:
+            raise Exception("Please remember to add a upper bound on instrumentalness")
+
+        liveness_lower_bound = request.args.get("liveness_lower_bound")
+        if liveness_lower_bound is None:
+            raise Exception("Please remember to add a lower bound on liveness")
+
+        liveness_upper_bound = request.args.get("liveness_upper_bound")
+        if liveness_upper_bound is None:
+            raise Exception("Please remember to add a upper bound on liveness")
+
+        speechiness_lower_bound = request.args.get("speechiness_lower_bound")
+        if speechiness_lower_bound is None:
+            raise Exception("Please remember to add a lower bound on speechiness")
+
+        speechiness_upper_bound = request.args.get("speechiness_upper_bound")
+        if speechiness_upper_bound is None:
+            raise Exception("Please remember to add a upper bound on speechiness")
+
+        return dance_lower_bound, dance_upper_bound, energy_lower_bound, energy_upper_bound, valence_lower_bound, valence_upper_bound, acousticness_lower_bound, acousticness_upper_bound, instrumentalness_lower_bound, instrumentalness_upper_bound, liveness_lower_bound, liveness_upper_bound, speechiness_lower_bound, speechiness_upper_bound
+
 
 @app.route('/api/attribute')
 def attribute():
