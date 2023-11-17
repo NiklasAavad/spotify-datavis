@@ -154,13 +154,6 @@ export const Entrypoint = () => {
 		.range(d3.quantize(t => d3.interpolateBlues(t), intervals))
 		.unknown('grey');
 
-	/* const startColor = 'purple' */
-	/* const endColor = 'yellow' */
-	/* const cubehelixScale = d3 */
-	/* 	.scaleSequential(d3.interpolateCubehelix.gamma(1)(startColor, endColor)) */
-	/* 	.domain([0, 1]) */
-	/* 	.unknown('grey') */
-
 	const onChangeQueryType = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const newQueryType = event.target.value as QueryType;
 		setQueryType(newQueryType);
