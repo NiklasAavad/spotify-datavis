@@ -9,24 +9,24 @@ type MapContainerProps = {
 	colorScale: ColorScale;
 	selectedCountries: string[];
 	setSelectedCountries: React.Dispatch<React.SetStateAction<string[]>>;
+	height: number;
 }
 
 export const MapContainer: React.FC<MapContainerProps> = (props) => {
 	const width = 1100;
-	const height = 700;
 
 	const svgOpacity = props.isLoading ? 0.1 : 1.0
 
 	return (
 		<>
-			<div style={{ height: height, width: width, overflow: 'hidden', position: 'relative', border: 'solid' }}>
+			<div style={{ height: props.height, width: width, overflow: 'hidden', position: 'relative', border: 'solid' }}>
 				<div style={{ opacity: svgOpacity, height: "100%" }}>
 					<WorldMap
 						data={props.data}
 						isLoading={props.isLoading}
 						colorScale={props.colorScale}
 						width={width}
-						height={height}
+						height={props.height}
 						selectedCountries={props.selectedCountries}
 						setSelectedCountries={props.setSelectedCountries}
 					/>

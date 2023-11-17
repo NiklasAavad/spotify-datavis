@@ -1,6 +1,6 @@
 import { ColorLegend } from './components/ColorLegend';
 import * as d3 from 'd3';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { MapContainer } from './components/MapContainer';
 import { useQuery } from 'react-query';
 import { QueryType, useQueryFunction } from './hooks/useQueryFunction';
@@ -116,6 +116,8 @@ export const Entrypoint = () => {
 		toDate: new Date('2017-01-07'),
 	})
 
+	const [domainType, setDomainType] = useState<'full' | 'cropped'>('full');
+
 	const [brushedInterval, setBrushedInterval] = useState<Interval[]>(undefined)
 
 	const [currentAttributeParams, setCurrentAttributeParams] = useState<AttributeParams>({ attribute: Attribute.Danceability });
@@ -123,17 +125,32 @@ export const Entrypoint = () => {
 	const currentParams = queryType === QueryType.Attribute ? currentAttributeParams : currentScoreParams;
 
 	const queryFunction = useQueryFunction(queryType);
-	const { data, isLoading } = useQuery([queryType, currentParams, dates], () => queryFunction(currentParams, dates));
+	const { data, isLoading } = useQuery<Record<string, number>>([queryType, currentParams, dates], () => queryFunction(currentParams, dates));
 
 	const { data: metrics, isLoading: loadingMetrics } = useQuery(["metric", selectedCountries, dates], () => getMetrics(dates, selectedCountries));
 
-	const startColor = '#1f78b4'; // Blue
-	const endColor = '#ff7f00';   // Orange
-	const intervals = 10; // Adjust the number of intervals as needed
+	const [lowerBound, upperBound] = useMemo(() => {
+		if (!data || domainType === 'full') {
+			return [0, 1]
+		}
 
+		const minValue: number = Math.min(...Object.values(data));
+		const maxValue: number = Math.max(...Object.values(data));
+		return [minValue, maxValue]
+	}, [data, domainType])
+
+	const toggleDomainType = () => {
+		if (domainType === 'full') {
+			setDomainType('cropped');
+		} else {
+			setDomainType('full');
+		}
+	}
+
+	const intervals = 10;
 	const colorScale: ColorScale = d3
 		.scaleQuantize<string>()
-		.domain([0, 1])
+		.domain([lowerBound, upperBound])
 		.range(d3.quantize(t => d3.interpolateBlues(t), intervals))
 		.unknown('grey');
 
@@ -165,18 +182,23 @@ export const Entrypoint = () => {
 
 	const selectedMetrics = [Attribute.Danceability, Attribute.Liveness, Attribute.Speechiness]
 
+	const upperHeight = 700;
+
 	return (
 		<>
-			<ColorLegend colorScale={colorScale} width={500} height={50} />
 			<div style={{ display: 'flex', flexDirection: 'row' }}>
 				<div>
-					<MapContainer
-						data={data}
-						isLoading={isLoading}
-						colorScale={colorScale}
-						selectedCountries={selectedCountries}
-						setSelectedCountries={setSelectedCountries}
-					/>
+					<div style={{ display: 'flex' }}>
+						<ColorLegend colorScale={colorScale} width={50} height={upperHeight} lowerBound={lowerBound} upperBound={upperBound} />
+						<MapContainer
+							data={data}
+							isLoading={isLoading}
+							colorScale={colorScale}
+							selectedCountries={selectedCountries}
+							setSelectedCountries={setSelectedCountries}
+							height={upperHeight}
+						/>
+					</div>
 					<BarChart
 						data={data}
 						selectedCountries={selectedCountries}
@@ -216,6 +238,7 @@ export const Entrypoint = () => {
 					</BrushProvider>
 				</div>
 			</div>
+			<button onClick={toggleDomainType}>Toggle domain (full, cropped)</button>
 			<div style={{ margin: '8px' }}>
 				{queryType === QueryType.Attribute ?
 					<AttributeParameterChanger attribute={currentAttributeParams.attribute} setParams={setCurrentAttributeParams} /> :

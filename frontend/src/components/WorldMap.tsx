@@ -4,11 +4,12 @@ import { useEffect, useRef, useState } from 'react';
 import './WorldMap.css'
 import { countries } from '../data/countries.ts'
 import { Country } from './Country.tsx';
+import { ColorScale } from '../Entrypoint.tsx';
 
 type WorldMapProps = {
 	data: any; // should be a dict of country name -> score (percentage), but we do not validate this yet.
 	isLoading: boolean;
-	colorScale: d3.ScaleSequential<string, string>;
+	colorScale: ColorScale;
 	width: number;
 	height: number;
 	selectedCountries: string[];

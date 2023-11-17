@@ -5,16 +5,22 @@ type ColorLegendProps = {
 	colorScale: ColorScale;
 	width: number;
 	height: number;
+	lowerBound: number;
+	upperBound: number;
 }
 
-export const ColorLegend: React.FC<ColorLegendProps> = ({ colorScale, width, height }) => {
+export const ColorLegend: React.FC<ColorLegendProps> = ({ colorScale, width, height, lowerBound, upperBound }) => {
 	const gradientId = 'colorGradient';
 
 	const colorStep = 100;
-	const colorStops = Array.from({ length: 101 }, (_, i) => colorScale(i / colorStep));
+	// const colorStops = Array.from({ length: 101 }, (_, i) => colorScale(i / colorStep));
+	const colorStops = Array.from(
+		{ length: colorStep + 1 },
+		(_, i) => colorScale(lowerBound + (i / colorStep) * (upperBound - lowerBound))
+	);
 
 	const linearGradient = (
-		<linearGradient id={gradientId}>
+		<linearGradient id={gradientId} x1="0%" y1="100%" x2="0%" y2="0%">
 			{colorStops.map((color, i) => (
 				<stop key={i} offset={`${i}%`} stopColor={color} />
 			))}
