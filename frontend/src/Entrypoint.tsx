@@ -177,6 +177,8 @@ export const Entrypoint = () => {
 
 	const upperHeight = 700;
 
+	const upperRightWidth = 750;
+
 	return (
 		<>
 			<div style={{ display: 'flex', flexDirection: 'row' }}>
@@ -199,7 +201,7 @@ export const Entrypoint = () => {
 						colorScale={colorScale}
 					/>
 				</div>
-				<div>
+				<div style={{ marginLeft: "32px" }}>
 					<BrushProvider>
 						{
 							selectedMetrics.map((metric1) => (
@@ -213,6 +215,8 @@ export const Entrypoint = () => {
 													selectedCountries={selectedCountries}
 													selectedMetric={metric1}
 													brushedInterval={brushedInterval}
+													totalHeight={upperHeight / 3}
+													totalWidth={upperRightWidth / 3}
 												/>
 												:
 												<ScatterPlotContainer
@@ -222,6 +226,8 @@ export const Entrypoint = () => {
 													selectedMetric={metric1}
 													selectedMetric2={metric2}
 													setBrushedInterval={setBrushedInterval}
+													totalHeight={upperHeight / 3}
+													totalWidth={upperRightWidth / 3}
 												/>
 										))
 									}

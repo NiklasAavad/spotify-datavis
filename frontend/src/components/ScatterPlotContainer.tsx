@@ -4,18 +4,20 @@ import { Spinner } from './Spinner.tsx';
 
 type ScatterPlotContainerProps = {
 	isLoading: boolean;
+	totalWidth: number;
+	totalHeight: number;
 } & Omit<ScatterPlotProps, 'height' | 'width' | 'margin'>;
-
-const MARGIN = { top: 20, right: 30, bottom: 30, left: 30 };
-const WIDTH = 250 - MARGIN.left - MARGIN.right;
-const HEIGHT = WIDTH;
 
 export const ScatterPlotContainer: React.FC<ScatterPlotContainerProps> = (props) => {
 	const svgOpacity = props.isLoading ? 0.1 : 1.0
 
+	const MARGIN = { top: 20, right: 30, bottom: 30, left: 30 };
+	const WIDTH = 250 - MARGIN.left - MARGIN.right;
+	const HEIGHT = WIDTH;
+
 	return (
 		<>
-			<div style={{ height: HEIGHT + 60, width: WIDTH + 40, overflow: 'hidden', position: 'relative', border: 'solid' }}>
+			<div style={{ height: props.totalHeight, width: props.totalWidth, overflow: 'hidden', position: 'relative' }}>
 				<div style={{ opacity: svgOpacity, height: "100%" }}>
 					<ScatterPlot
 						data={props.data}
