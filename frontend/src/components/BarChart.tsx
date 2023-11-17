@@ -61,7 +61,7 @@ export const BarChart: React.FC<BarChartProps> = ({ data, selectedCountries, set
 
 		// Specify the chart’s dimensions.
 		const width = 640;
-		const height = 300;
+		const height = 250;
 		const marginTop = 20;
 		const marginRight = 20;
 		const marginBottom = 80;
