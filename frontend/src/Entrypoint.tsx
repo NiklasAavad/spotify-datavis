@@ -104,6 +104,8 @@ const getMetrics = async (dates: Dates, selectedCountries: string[]) => {
 	return data;
 }
 
+export type ColorScale = d3.ScaleQuantize<string, string>;
+
 export const Entrypoint = () => {
 	const [queryType, setQueryType] = useState<QueryType>(QueryType.Attribute);
 
@@ -125,12 +127,22 @@ export const Entrypoint = () => {
 
 	const { data: metrics, isLoading: loadingMetrics } = useQuery(["metric", selectedCountries, dates], () => getMetrics(dates, selectedCountries));
 
-	const startColor = 'purple'
-	const endColor = 'yellow'
-	const cubehelixScale = d3
-		.scaleSequential(d3.interpolateCubehelix.gamma(1)(startColor, endColor))
+	const startColor = '#1f78b4'; // Blue
+	const endColor = '#ff7f00';   // Orange
+	const intervals = 10; // Adjust the number of intervals as needed
+
+	const colorScale: ColorScale = d3
+		.scaleQuantize<string>()
 		.domain([0, 1])
-		.unknown('grey')
+		.range(d3.quantize(t => d3.interpolateBlues(t), intervals))
+		.unknown('grey');
+
+	/* const startColor = 'purple' */
+	/* const endColor = 'yellow' */
+	/* const cubehelixScale = d3 */
+	/* 	.scaleSequential(d3.interpolateCubehelix.gamma(1)(startColor, endColor)) */
+	/* 	.domain([0, 1]) */
+	/* 	.unknown('grey') */
 
 	const onChangeQueryType = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const newQueryType = event.target.value as QueryType;
@@ -155,13 +167,13 @@ export const Entrypoint = () => {
 
 	return (
 		<>
-			<ColorLegend colorScale={cubehelixScale} width={500} height={50} />
+			<ColorLegend colorScale={colorScale} width={500} height={50} />
 			<div style={{ display: 'flex', flexDirection: 'row' }}>
 				<div>
 					<MapContainer
 						data={data}
 						isLoading={isLoading}
-						colorScale={cubehelixScale}
+						colorScale={colorScale}
 						selectedCountries={selectedCountries}
 						setSelectedCountries={setSelectedCountries}
 					/>
@@ -169,7 +181,7 @@ export const Entrypoint = () => {
 						data={data}
 						selectedCountries={selectedCountries}
 						setSelectedCountries={setSelectedCountries}
-						colorScale={cubehelixScale}
+						colorScale={colorScale}
 					/>
 				</div>
 				<div>

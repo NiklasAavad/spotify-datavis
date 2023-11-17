@@ -1,7 +1,8 @@
 import * as d3 from 'd3';
+import { ColorScale } from '../Entrypoint';
 
 type ColorLegendProps = {
-	colorScale: d3.ScaleSequential<string, string>;
+	colorScale: ColorScale;
 	width: number;
 	height: number;
 }

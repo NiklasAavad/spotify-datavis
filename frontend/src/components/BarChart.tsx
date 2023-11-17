@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
+import { ColorScale } from '../Entrypoint';
 
 type DataItem = {
 	region: string;
@@ -11,7 +12,7 @@ type BarChartProps = {
 	data: any; // TODO should really try to figure out correct type for this and WorldMap
 	selectedCountries: string[];
 	setSelectedCountries: React.Dispatch<React.SetStateAction<string[]>>;
-	colorScale: d3.ScaleSequential<string, string>;
+	colorScale: ColorScale;
 }
 
 const sortScore = (a: DataItem, b: DataItem) => d3.ascending(a?.score, b?.score);
