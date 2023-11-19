@@ -147,6 +147,13 @@ export const Entrypoint = () => {
 		}
 	}
 
+	/* const intervals = 10; */
+	/* const colorScale: ColorScale = d3 */
+	/* 	.scaleQuantize<string>() */
+	/* 	.domain([lowerBound, upperBound]) */
+	/* 	.range(d3.quantize(t => d3.interpolateGreens(t), intervals)) */
+	/* 	.unknown('grey'); */
+
 	const colorScale: ColorScale = d3
 		.scaleSequential(t => d3.interpolateGreens(t))
 		.domain([lowerBound, upperBound])
