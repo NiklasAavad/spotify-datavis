@@ -185,6 +185,7 @@ export const Entrypoint = () => {
 				<div>
 					<div style={{ display: 'flex' }}>
 						<ColorLegend colorScale={colorScale} width={50} height={upperHeight} lowerBound={lowerBound} upperBound={upperBound} />
+						<ColorLegend colorScale={colorScale} width={50} height={upperHeight + 4} lowerBound={lowerBound} upperBound={upperBound} />
 						<MapContainer
 							data={data}
 							isLoading={isLoading}
