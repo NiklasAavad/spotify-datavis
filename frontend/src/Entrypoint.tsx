@@ -104,7 +104,7 @@ const getMetrics = async (dates: Dates, selectedCountries: string[]) => {
 	return data;
 }
 
-export type ColorScale = d3.ScaleQuantize<string, string>;
+export type ColorScale = d3.ScaleSequential<string, string>;
 
 export const Entrypoint = () => {
 	const [queryType, setQueryType] = useState<QueryType>(QueryType.Attribute);
@@ -147,11 +147,9 @@ export const Entrypoint = () => {
 		}
 	}
 
-	const intervals = 10;
 	const colorScale: ColorScale = d3
-		.scaleQuantize<string>()
+		.scaleSequential(t => d3.interpolateGreens(t))
 		.domain([lowerBound, upperBound])
-		.range(d3.quantize(t => d3.interpolateGreens(t), intervals))
 		.unknown('grey');
 
 	const onChangeQueryType = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -184,8 +182,7 @@ export const Entrypoint = () => {
 			<div style={{ display: 'flex', flexDirection: 'row' }}>
 				<div>
 					<div style={{ display: 'flex' }}>
-						<ColorLegend colorScale={colorScale} width={50} height={upperHeight} lowerBound={lowerBound} upperBound={upperBound} />
-						<ColorLegend colorScale={colorScale} width={50} height={upperHeight + 4} lowerBound={lowerBound} upperBound={upperBound} />
+						<ColorLegend colorScale={colorScale} width={40} height={upperHeight + 4} lowerBound={lowerBound} upperBound={upperBound} />
 						<MapContainer
 							data={data}
 							isLoading={isLoading}
