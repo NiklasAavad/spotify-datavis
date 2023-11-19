@@ -151,7 +151,7 @@ export const Entrypoint = () => {
 	const colorScale: ColorScale = d3
 		.scaleQuantize<string>()
 		.domain([lowerBound, upperBound])
-		.range(d3.quantize(t => d3.interpolateBlues(t), intervals))
+		.range(d3.quantize(t => d3.interpolateGreens(t), intervals))
 		.unknown('grey');
 
 	const onChangeQueryType = (event: React.ChangeEvent<HTMLInputElement>) => {
