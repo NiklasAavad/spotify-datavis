@@ -2,6 +2,7 @@
 import * as d3 from "d3"
 import { Feature, Geometry } from "geojson"
 import { useState } from "react"
+import { ColorScale } from "../Entrypoint"
 
 type CountryProps = {
 	countryFeature: Feature<Geometry, {
@@ -11,7 +12,7 @@ type CountryProps = {
 	setSelectedCountries: (newSet: string[]) => void,
 	geoPathGenerator: d3.GeoPath<any, d3.GeoPermissibleObjects>,
 	score: number | undefined,
-	colorScale: d3.ScaleSequential<string, string>
+	colorScale: ColorScale,
 }
 
 export const Country: React.FC<CountryProps> = (props) => {
