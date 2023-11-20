@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
+import { QueryType } from '../hooks/useQueryFunction';
 
 type DataPoint = {
 	avg_danceability: number;
@@ -16,9 +17,10 @@ export type TimeSeriesProps = {
 	width: number;
 	margin: { top: number; right: number; bottom: number; left: number; }
 	domainType: 'full' | 'cropped';
+	queryType: QueryType;
 };
 
-export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, width, margin, domainType }) => {
+export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, width, margin, domainType, queryType }) => {
 	const chartRef = useRef<null | HTMLDivElement>(null);
 
 	useEffect(() => {
@@ -63,12 +65,19 @@ export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, wid
 
 		const dataByRegion = d3.group(data, d => d.region);
 
+		const getColor = (region: string) => {
+			if (queryType === QueryType.Score) {
+				return 'grey';
+			}
+			return color(region);
+		}
+
 		// Add the valueline paths.
 		dataByRegion.forEach((regionData, i) => {
 			svg.append('path')
 				.data([Array.from(regionData)])
 				.attr('fill', 'none')
-				.attr('stroke', color(i))
+				.attr('stroke', getColor(i))
 				.attr('stroke-width', 3)
 				.attr('d', valueline);
 		});
@@ -83,7 +92,7 @@ export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, wid
 		svg.append('g')
 			.call(d3.axisLeft(y))
 			.style('font-size', '14px')
-	}, [color, data, domainType, height, margin.bottom, margin.left, margin.right, margin.top, width]);
+	}, [color, data, domainType, height, margin.bottom, margin.left, margin.right, margin.top, queryType, width]);
 
 	return <div ref={chartRef}></div>;
 };

@@ -18,6 +18,7 @@ export const TimeSeriesContainer: React.FC<TimeSeriesContainerProps> = (props) =
 						width={props.width}
 						height={props.height}
 						domainType={props.domainType}
+						queryType={props.queryType}
 					/>
 				</div>
 				<Spinner isLoading={props.isLoading} />

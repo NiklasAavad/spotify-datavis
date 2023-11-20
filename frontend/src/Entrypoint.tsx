@@ -268,6 +268,7 @@ export const Entrypoint = () => {
 						width={800}
 						margin={{ top: 20, right: 30, bottom: 30, left: 50 }}
 						domainType={domainType}
+						queryType={queryType}
 					/>
 				</div>
 			</div>
