@@ -14,6 +14,7 @@ import { BarChart } from './components/BarChart';
 import { HistogramContainer } from './components/HistogramContainer';
 import { Interval } from './components/ScatterPlot';
 import { TimeSeries } from './components/TimeSeries';
+import { TimeSeriesContainer } from './components/TimeSeriesContainer';
 
 // TODO consider moving the shuffling to the backend, so we cache the results, and the removal of one region will not change the order of the results
 const shuffleArray = (array: unknown[]) => {
@@ -263,6 +264,14 @@ export const Entrypoint = () => {
 							))
 						}
 					</BrushProvider>
+					<TimeSeriesContainer
+						data={timeSeries}
+						color={rightSideColorScale}
+						isLoading={loadingTimeSeries}
+						height={300}
+						width={800}
+						margin={{ top: 20, right: 30, bottom: 30, left: 40 }}
+					/>
 				</div>
 			</div>
 			<button onClick={toggleDomainType}>Toggle domain (full, cropped)</button>
@@ -280,7 +289,6 @@ export const Entrypoint = () => {
 			<div style={{ margin: '8px' }}>
 				<DateChanger setDates={setDates} />
 			</div>
-			<TimeSeries data={timeSeries} color={rightSideColorScale} />
 		</>
 	)
 }

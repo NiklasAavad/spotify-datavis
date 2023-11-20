@@ -9,16 +9,15 @@ type DataPoint = {
 
 type TimeSeriesData = DataPoint[];
 
-type TimeSeriesProps = {
+export type TimeSeriesProps = {
 	data: TimeSeriesData;
 	color: d3.ScaleOrdinal<string, unknown, never>;
+	height: number;
+	width: number;
+	margin: { top: number; right: number; bottom: number; left: number; }
 };
 
-const margin = { top: 20, right: 20, bottom: 30, left: 50 };
-const width = 960 - margin.left - margin.right;
-const height = 500 - margin.top - margin.bottom;
-
-export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color }) => {
+export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, width, margin }) => {
 	const chartRef = useRef<null | HTMLDivElement>(null);
 
 	useEffect(() => {
@@ -73,7 +72,7 @@ export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color }) => {
 		// Add the Y Axis
 		svg.append('g')
 			.call(d3.axisLeft(y));
-	}, [color, data]);
+	}, [color, data, height, margin.bottom, margin.left, margin.right, margin.top, width]);
 
 	return <div ref={chartRef}></div>;
 };
