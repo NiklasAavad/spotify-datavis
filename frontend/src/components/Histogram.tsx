@@ -97,7 +97,7 @@ export const Histogram: React.FC<HistogramProps> = ({ data, selectedCountries, s
 		svg
 			.append("g")
 			.call(d3.axisLeft(y)
-				.tickFormat((d, i) => i % 2 === 0 ? d.toFixed(1) : "") // Show every other label
+				.tickFormat((d, i) => i % 2 === 0 ? d : "") // Show every other label
 				.tickSizeOuter(0) // Optional: remove outer ticks
 			)
 			.selectAll('text') // Select all text elements of y-axis
