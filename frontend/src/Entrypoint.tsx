@@ -13,7 +13,6 @@ import { BrushProvider } from './context/BrushContext';
 import { BarChart } from './components/BarChart';
 import { HistogramContainer } from './components/HistogramContainer';
 import { Interval } from './components/ScatterPlot';
-import { TimeSeries } from './components/TimeSeries';
 import { TimeSeriesContainer } from './components/TimeSeriesContainer';
 
 // TODO consider moving the shuffling to the backend, so we cache the results, and the removal of one region will not change the order of the results
