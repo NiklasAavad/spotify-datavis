@@ -15,7 +15,7 @@ type BarChartProps = {
 	colorScale: ColorScale;
 }
 
-const sortScore = (a: DataItem, b: DataItem) => d3.ascending(a?.score, b?.score);
+const sortScore = (a: DataItem, b: DataItem) => d3.descending(a?.score, b?.score);
 const sortAlphabetically = (a: DataItem, b: DataItem) => d3.ascending(a?.region, b?.region);
 
 const orderMap = {
