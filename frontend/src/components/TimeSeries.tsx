@@ -15,9 +15,10 @@ export type TimeSeriesProps = {
 	height: number;
 	width: number;
 	margin: { top: number; right: number; bottom: number; left: number; }
+	domainType: 'full' | 'cropped';
 };
 
-export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, width, margin }) => {
+export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, width, margin, domainType }) => {
 	const chartRef = useRef<null | HTMLDivElement>(null);
 
 	useEffect(() => {
@@ -50,7 +51,15 @@ export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, wid
 
 		// Scale the range of the data
 		x.domain(d3.extent(data, d => parseTime(d.date)));
-		y.domain([0, d3.max(data, d => d.avg_danceability)]);
+
+		const getDomainY = () => {
+			if (domainType === 'full') {
+				return [0, 1];
+			}
+			return d3.extent(data, d => d.avg_danceability);
+		}
+
+		y.domain(getDomainY());
 
 		const dataByRegion = d3.group(data, d => d.region);
 
@@ -72,7 +81,7 @@ export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, wid
 		// Add the Y Axis
 		svg.append('g')
 			.call(d3.axisLeft(y));
-	}, [color, data, height, margin.bottom, margin.left, margin.right, margin.top, width]);
+	}, [color, data, domainType, height, margin.bottom, margin.left, margin.right, margin.top, width]);
 
 	return <div ref={chartRef}></div>;
 };

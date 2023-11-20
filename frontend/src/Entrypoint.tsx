@@ -148,10 +148,7 @@ export const Entrypoint = () => {
 		if (!data || domainType === 'full') {
 			return [0, 1]
 		}
-
-		const minValue: number = Math.min(...Object.values(data));
-		const maxValue: number = Math.max(...Object.values(data));
-		return [minValue, maxValue]
+		return d3.extent(Object.values(data));
 	}, [data, domainType])
 
 	const toggleDomainType = () => {
@@ -270,6 +267,7 @@ export const Entrypoint = () => {
 						height={300}
 						width={800}
 						margin={{ top: 20, right: 30, bottom: 30, left: 40 }}
+						domainType={domainType}
 					/>
 				</div>
 			</div>
