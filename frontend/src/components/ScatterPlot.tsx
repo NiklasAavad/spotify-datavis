@@ -69,10 +69,24 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedMetric, 
 
 		g.append('g')
 			.attr('transform', `translate(0, ${height})`)
-			.call(d3.axisBottom(x));
+			.call(d3.axisBottom(x)
+				.ticks(10) // Set the number of ticks you want
+				.tickFormat((d, i) => i % 2 === 0 ? d.toFixed(1) : "") // Show every other label
+				.tickSizeOuter(0) // Optional: remove outer ticks
+			)
+			.selectAll('text')
+			.style('font-size', '13px')
+
+
 
 		g.append('g')
-			.call(d3.axisLeft(y));
+			.call(d3.axisLeft(y)
+				.ticks(10) // Set the number of ticks you want
+				.tickFormat((d, i) => i % 2 === 0 ? d.toFixed(1) : "") // Show every other label
+				.tickSizeOuter(10) // Optional: remove outer ticks
+			)
+			.selectAll('text')
+			.style('font-size', '13px')
 
 		g.selectAll('dot')
 			.data(data)

@@ -38,7 +38,13 @@ export const Histogram: React.FC<HistogramProps> = ({ data, selectedCountries, s
 		svg
 			.append("g")
 			.attr("transform", `translate(0,${height})`)
-			.call(d3.axisBottom(x));
+			.call(d3.axisBottom(x)
+				.ticks(10) // Set the number of ticks you want
+				.tickFormat((d, i) => i % 2 === 0 ? d.toFixed(1) : "") // Show every other label
+				.tickSizeOuter(0) // Optional: remove outer ticks
+			)
+			.selectAll('text') // Select all text elements of x-axis
+			.style('font-size', '13px') // Adjust the font size as needed
 
 		// set the parameters for the histogram
 		const histogram = d3
@@ -88,7 +94,14 @@ export const Histogram: React.FC<HistogramProps> = ({ data, selectedCountries, s
 
 		// Y axis: scale and draw
 		const y = d3.scaleLinear().range([height, 0]).domain([0, maxBinCount]);
-		svg.append("g").call(d3.axisLeft(y));
+		svg
+			.append("g")
+			.call(d3.axisLeft(y)
+				.tickFormat((d, i) => i % 2 === 0 ? d.toFixed(1) : "") // Show every other label
+				.tickSizeOuter(0) // Optional: remove outer ticks
+			)
+			.selectAll('text') // Select all text elements of y-axis
+			.style('font-size', '13px') // Adjust the font size as needed
 
 		// create a histogram for each region
 		selectedCountries.forEach((region, index) => {
@@ -109,7 +122,7 @@ export const Histogram: React.FC<HistogramProps> = ({ data, selectedCountries, s
 				.style("fill", (d) => getColor(region, d))
 				.style("opacity", 0.5);
 		});
-	}, [brushedInterval, data, height, margin.bottom, margin.left, margin.right, margin.top, selectedCountries, selectedMetric, width]);
+	}, [brushedInterval, colorScale, data, height, margin.bottom, margin.left, margin.right, margin.top, selectedCountries, selectedMetric, width]);
 
 	return <svg ref={svgRef}></svg>;
 };
