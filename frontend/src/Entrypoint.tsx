@@ -170,7 +170,7 @@ export const Entrypoint = () => {
 	/* 	.unknown('grey'); */
 
 	const leftSideColorScale: ColorScale = d3
-		.scaleSequential(t => d3.interpolateGreens(t))
+		.scaleSequential(t => d3.interpolateBlues(t))
 		.domain([lowerBound, upperBound])
 		.unknown('grey');
 
