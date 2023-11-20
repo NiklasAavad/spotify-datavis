@@ -76,11 +76,13 @@ export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, wid
 		// Add the X Axis
 		svg.append('g')
 			.attr('transform', `translate(0, ${height})`)
-			.call(d3.axisBottom(x));
+			.call(d3.axisBottom(x))
+			.style('font-size', '14px')
 
 		// Add the Y Axis
 		svg.append('g')
-			.call(d3.axisLeft(y));
+			.call(d3.axisLeft(y))
+			.style('font-size', '14px')
 	}, [color, data, domainType, height, margin.bottom, margin.left, margin.right, margin.top, width]);
 
 	return <div ref={chartRef}></div>;

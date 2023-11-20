@@ -266,7 +266,7 @@ export const Entrypoint = () => {
 						isLoading={loadingTimeSeries}
 						height={300}
 						width={800}
-						margin={{ top: 20, right: 30, bottom: 30, left: 40 }}
+						margin={{ top: 20, right: 30, bottom: 30, left: 50 }}
 						domainType={domainType}
 					/>
 				</div>
