@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import { ColorScale } from '../Entrypoint';
 
@@ -26,28 +26,15 @@ const orderMap = {
 export const BarChart: React.FC<BarChartProps> = ({ data, selectedCountries, setSelectedCountries, colorScale }) => {
 	const [order, setOrder] = useState<"score" | "alphabetically">("alphabetically");
 
-	const orderRef = useRef(null);
 	const chartRef = useRef<SVGSVGElement>(null);
 
-	const toggleOrder = useCallback(() => {
-		console.log("toggle order was called")
+	const toggleOrder = () => {
 		if (order === "alphabetically") {
 			setOrder("score");
 		} else {
 			setOrder("alphabetically");
 		}
-	}, [order]);
-
-	useEffect(() => {
-		console.log("order changed")
-		if (!orderRef.current) {
-			console.log("but nothing happens")
-			return;
-		}
-		console.log("im about to do some things")
-		const orderFunction = orderMap[order];
-		orderRef.current(orderFunction);
-	}, [order])
+	};
 
 	useEffect(() => {
 		if (!data) {
@@ -58,6 +45,9 @@ export const BarChart: React.FC<BarChartProps> = ({ data, selectedCountries, set
 			region,
 			score
 		})) as DataItem[];
+
+		const orderFunction = orderMap[order];
+		dataArray.sort(orderFunction);
 
 		// Specify the chart’s dimensions.
 		const width = 640;
@@ -163,30 +153,7 @@ export const BarChart: React.FC<BarChartProps> = ({ data, selectedCountries, set
 			.call(d3.axisLeft(y))
 			.call(g => g.select('.domain').remove());
 
-		// TODO hentet fra https://observablehq.com/@d3/bar-chart-transitions/2?intent=fork
-		// Update function
-		const updateChart = (order: (a: DataItem, b: DataItem) => number) => {
-			console.log("update chart was called")
-			x.domain(dataArray.sort(order).map(d => d.region));
-
-			const t = svg.transition().duration(750);
-
-			bar.data(dataArray, (d: DataItem) => d.region)
-				.transition(t)
-				.delay((_, i) => i * 20)
-				.attr('x', d => x(d.region) || 0)
-				.attr('y', d => y(d.score) || 0)
-				.attr('height', d => y(0) - y(d.score) || 0);
-
-			gx.transition(t)
-				.call(xAxis)
-				.selectAll('.tick')
-				.delay((d, i) => i * 20);
-		};
-
-		orderRef.current = updateChart
-
-	}, [colorScale, data, selectedCountries, setSelectedCountries]);
+	}, [colorScale, data, order, selectedCountries, setSelectedCountries]);
 
 	return <>
 		<svg ref={chartRef}></svg>
