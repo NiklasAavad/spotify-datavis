@@ -13,6 +13,7 @@ import { BrushProvider } from './context/BrushContext';
 import { BarChart } from './components/BarChart';
 import { HistogramContainer } from './components/HistogramContainer';
 import { Interval } from './components/ScatterPlot';
+import { TimeSeries } from './components/TimeSeries';
 
 // TODO consider moving the shuffling to the backend, so we cache the results, and the removal of one region will not change the order of the results
 const shuffleArray = (array: unknown[]) => {
@@ -104,6 +105,18 @@ const getMetrics = async (dates: Dates, selectedCountries: string[]) => {
 	return data;
 }
 
+const getTimeSeries = async (selectedCountries: string[], attribute: Attribute) => {
+	const preparedCountries: string = selectedCountries.join(',');
+	const response = await axios.get("http://localhost:5000/api/timeseries", {
+		params: {
+			countries: preparedCountries,
+			attribute,
+		}
+	});
+	const data = response.data
+	return data;
+}
+
 export type ColorScale = d3.ScaleSequential<string, string>;
 
 export const Entrypoint = () => {
@@ -128,6 +141,8 @@ export const Entrypoint = () => {
 	const { data, isLoading } = useQuery<Record<string, number>>([queryType, currentParams, dates], () => queryFunction(currentParams, dates));
 
 	const { data: metrics, isLoading: loadingMetrics } = useQuery(["metric", selectedCountries, dates], () => getMetrics(dates, selectedCountries));
+
+	const { data: timeSeries, isLoading: loadingTimeSeries } = useQuery(["timeSeries", selectedCountries], () => getTimeSeries(selectedCountries, currentAttributeParams.attribute));
 
 	const [lowerBound, upperBound] = useMemo(() => {
 		if (!data || domainType === 'full') {
@@ -265,6 +280,7 @@ export const Entrypoint = () => {
 			<div style={{ margin: '8px' }}>
 				<DateChanger setDates={setDates} />
 			</div>
+			<TimeSeries data={timeSeries} color={rightSideColorScale} />
 		</>
 	)
 }

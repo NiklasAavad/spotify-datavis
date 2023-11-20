@@ -224,7 +224,7 @@ def metrics():
 
         query = f"""
             SELECT
-                id, region, danceability, liveness, chart_rank, speechiness
+                id, region, danceability, energy, valence, acousticness, instrumentalness, liveness, speechiness
             FROM spotify_chart
             WHERE 
                 date BETWEEN %s AND %s
@@ -241,9 +241,62 @@ def metrics():
                 "id": row[0],
                 "region": row[1],
                 "danceability": row[2],
-                "liveness": row[3],
-                "chart_rank": row[4],
-                "speechiness": row[5]
+                "energy": row[3],
+                "valence": row[4],
+                "acousticness": row[5],
+                "instrumentalness": row[6],
+                "liveness": row[7],
+                "speechiness": row[8]
+            }
+            for row in result
+        ]
+
+        return jsonify(json_objects)
+    except Exception as e:
+        print(e)
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route('/api/timeseries')
+def timeseries():
+    conn, cursor = connect_to_db()
+
+    try:
+        if cursor is None:
+            raise Exception("No database connection")
+
+        countries = request.args.get("countries")
+        if countries is None:
+            raise Exception("No countries specified")
+        country_list = [country.strip() for country in countries.split(',')]
+        print("country_list", country_list)
+
+        attribute = request.args.get("attribute")
+        if attribute is None:
+            raise Exception("No attribute specified")
+        print("attribute", attribute)
+
+        query = f"""
+            SELECT
+                region, date, avg(danceability)
+            FROM spotify_chart
+            WHERE 
+                region IN ({', '.join(['%s' for _ in country_list])})
+            GROUP BY region, date
+        """
+
+        cursor.execute(query, tuple(country_list))
+
+        result = cursor.fetchall()
+
+        print(result)
+
+        json_objects = [
+            {
+                "region": row[0],
+                "date": row[1].strftime('%Y-%m-%d'),
+                "avg_danceability": row[2]
             }
             for row in result
         ]
