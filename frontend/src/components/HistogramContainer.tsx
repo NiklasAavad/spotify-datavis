@@ -26,6 +26,7 @@ export const HistogramContainer: React.FC<HistogramContainerProps> = (props) => 
 						margin={MARGIN}
 						width={WIDTH}
 						height={HEIGHT}
+						colorScale={props.colorScale}
 					/>
 				</div>
 				<Spinner isLoading={props.isLoading} />

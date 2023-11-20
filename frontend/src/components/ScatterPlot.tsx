@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import './ScatterPlot.css';
 import { useBrushContext } from '../context/BrushContext';
@@ -25,25 +25,19 @@ export type Interval = {
 
 export type ScatterPlotProps = {
 	data: DataPoint[];
-	selectedCountries: string[];
 	selectedMetric: Attribute;
 	selectedMetric2: Attribute;
 	setBrushedInterval: React.Dispatch<React.SetStateAction<Interval[]>>;
 	margin: { top: number, right: number, bottom: number, left: number };
 	width: number;
 	height: number;
+	colorScale: d3.ScaleOrdinal<string, unknown, never>;
 }
 
-export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountries, selectedMetric, selectedMetric2, setBrushedInterval, margin, width, height }) => {
+export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedMetric, selectedMetric2, setBrushedInterval, margin, width, height, colorScale }) => {
 	const svgRef = useRef();
 	const legendRef = useRef();
 	const { brushedIds, setBrushedIds } = useBrushContext();
-
-	const color = useMemo(() => {
-		return d3.scaleOrdinal()
-			.domain(selectedCountries)
-			.range(d3.schemeCategory10)
-	}, [selectedCountries]);
 
 	useEffect(() => {
 		if (!data) {
@@ -87,7 +81,7 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountrie
 			.attr('cy', d => y(d[selectedMetric2]))
 			.attr('r', 4) // radius of each point
 			.attr('opacity', 0.5)
-			.attr('fill', d => color(d.region) as string);
+			.attr('fill', d => colorScale(d.region) as string);
 
 		// Add brushing functionality
 		const brush = d3.brush()
@@ -170,21 +164,7 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedCountrie
 				updateBrushedInterval(event); // TODO could do this on brushed, but this is slow and heavy
 			}
 		}
-
-		// TODO the legend should be added once for all scatter plots, not per component
-		// TODO also, right now the legend is not visible due to the ScatterPlotContainer being too small for it
-		d3.select(legendRef.current)
-			.selectAll('*')
-			.remove(); // Clear the legend
-
-		d3.select(legendRef.current)
-			.selectAll('legend')
-			.data(selectedCountries)
-			.join('div')
-			.attr('class', 'legend')
-			.style('color', d => color(d) as string)
-			.text(d => d);
-	}, [color, data, height, margin.bottom, margin.left, margin.right, margin.top, selectedCountries, selectedMetric, selectedMetric2, setBrushedIds, setBrushedInterval, width]);
+	}, [colorScale, data, height, margin.bottom, margin.left, margin.right, margin.top, selectedMetric, selectedMetric2, setBrushedIds, setBrushedInterval, width]);
 
 	useEffect(() => {
 		const isHidden = (d: DataPoint) => {

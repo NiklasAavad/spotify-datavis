@@ -154,10 +154,16 @@ export const Entrypoint = () => {
 	/* 	.range(d3.quantize(t => d3.interpolateGreens(t), intervals)) */
 	/* 	.unknown('grey'); */
 
-	const colorScale: ColorScale = d3
+	const leftSideColorScale: ColorScale = d3
 		.scaleSequential(t => d3.interpolateGreens(t))
 		.domain([lowerBound, upperBound])
 		.unknown('grey');
+
+	const rightSideColorScale = useMemo(() => {
+		return d3.scaleOrdinal()
+			.domain(selectedCountries)
+			.range(d3.schemeCategory10)
+	}, [selectedCountries]);
 
 	const onChangeQueryType = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const newQueryType = event.target.value as QueryType;
@@ -189,11 +195,11 @@ export const Entrypoint = () => {
 			<div style={{ display: 'flex', flexDirection: 'row' }}>
 				<div>
 					<div style={{ display: 'flex' }}>
-						<ColorLegend colorScale={colorScale} width={40} height={upperHeight + 4} lowerBound={lowerBound} upperBound={upperBound} />
+						<ColorLegend colorScale={leftSideColorScale} width={40} height={upperHeight + 4} lowerBound={lowerBound} upperBound={upperBound} />
 						<MapContainer
 							data={data}
 							isLoading={isLoading}
-							colorScale={colorScale}
+							colorScale={leftSideColorScale}
 							selectedCountries={selectedCountries}
 							setSelectedCountries={setSelectedCountries}
 							height={upperHeight}
@@ -203,7 +209,8 @@ export const Entrypoint = () => {
 						data={data}
 						selectedCountries={selectedCountries}
 						setSelectedCountries={setSelectedCountries}
-						colorScale={colorScale}
+						leftSideColorScale={leftSideColorScale}
+						rightSideColorScale={rightSideColorScale}
 					/>
 				</div>
 				<div style={{ marginLeft: "32px" }}>
@@ -222,17 +229,18 @@ export const Entrypoint = () => {
 													brushedInterval={brushedInterval}
 													totalHeight={upperHeight / 3}
 													totalWidth={upperRightWidth / 3}
+													colorScale={rightSideColorScale}
 												/>
 												:
 												<ScatterPlotContainer
 													data={metrics}
 													isLoading={loadingMetrics}
-													selectedCountries={selectedCountries}
 													selectedMetric={metric1}
 													selectedMetric2={metric2}
 													setBrushedInterval={setBrushedInterval}
 													totalHeight={upperHeight / 3}
 													totalWidth={upperRightWidth / 3}
+													colorScale={rightSideColorScale}
 												/>
 										))
 									}

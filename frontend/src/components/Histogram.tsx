@@ -11,9 +11,10 @@ export type HistogramProps = {
 	margin: { top: number, right: number, bottom: number, left: number };
 	width: number;
 	height: number;
+	colorScale: d3.ScaleOrdinal<string, unknown, never>;
 }
 
-export const Histogram: React.FC<HistogramProps> = ({ data, selectedCountries, selectedMetric, brushedInterval, margin, width, height }) => {
+export const Histogram: React.FC<HistogramProps> = ({ data, selectedCountries, selectedMetric, brushedInterval, margin, width, height, colorScale }) => {
 	const svgRef = useRef<SVGSVGElement>(null);
 
 	useEffect(() => {
@@ -49,12 +50,9 @@ export const Histogram: React.FC<HistogramProps> = ({ data, selectedCountries, s
 		// get the unique regions
 		const regions = Array.from(new Set(data.map((d) => d.region)));
 
-		// create a color scale
-		const color = d3.scaleOrdinal<string>().domain(regions).range(d3.schemeCategory10);
-
 		const getColor = (region: string, d: d3.Bin<number, number>) => {
 			if (!brushedInterval) {
-				return color(region);
+				return colorScale(region);
 			}
 
 			const isSelectedMetricBrushed = brushedInterval.some((interval) => interval.key === selectedMetric);
@@ -72,7 +70,7 @@ export const Histogram: React.FC<HistogramProps> = ({ data, selectedCountries, s
 			});
 
 			if (isOverlappingBrushedInterval) {
-				return color(region);
+				return colorScale(region);
 			}
 
 			return "grey";

@@ -21,13 +21,13 @@ export const ScatterPlotContainer: React.FC<ScatterPlotContainerProps> = (props)
 				<div style={{ opacity: svgOpacity, height: "100%" }}>
 					<ScatterPlot
 						data={props.data}
-						selectedCountries={props.selectedCountries}
 						selectedMetric={props.selectedMetric}
 						selectedMetric2={props.selectedMetric2}
 						setBrushedInterval={props.setBrushedInterval}
 						margin={MARGIN}
 						width={WIDTH}
 						height={HEIGHT}
+						colorScale={props.colorScale}
 					/>
 				</div>
 				<Spinner isLoading={props.isLoading} />

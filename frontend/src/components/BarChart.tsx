@@ -12,7 +12,8 @@ type BarChartProps = {
 	data: any; // TODO should really try to figure out correct type for this and WorldMap
 	selectedCountries: string[];
 	setSelectedCountries: React.Dispatch<React.SetStateAction<string[]>>;
-	colorScale: ColorScale;
+	leftSideColorScale: ColorScale;
+	rightSideColorScale: d3.ScaleOrdinal<string, unknown, never>;
 }
 
 const sortScore = (a: DataItem, b: DataItem) => d3.descending(a?.score, b?.score);
@@ -23,7 +24,7 @@ const orderMap = {
 	"alphabetically": sortAlphabetically
 }
 
-export const BarChart: React.FC<BarChartProps> = ({ data, selectedCountries, setSelectedCountries, colorScale }) => {
+export const BarChart: React.FC<BarChartProps> = ({ data, selectedCountries, setSelectedCountries, leftSideColorScale, rightSideColorScale }) => {
 	const [order, setOrder] = useState<"score" | "alphabetically">("alphabetically");
 
 	const chartRef = useRef<SVGSVGElement>(null);
@@ -80,12 +81,17 @@ export const BarChart: React.FC<BarChartProps> = ({ data, selectedCountries, set
 		svg.selectAll("*").remove();
 
 		const getBarColor = (d: DataItem) => {
+			const isNoCountriesSelected = selectedCountries.length === 0;
+			if (isNoCountriesSelected) {
+				return leftSideColorScale(d.score);
+			}
+
 			const isNotIncludedInSelectedCountries = selectedCountries.length > 0 && !selectedCountries.includes(d.region)
 			if (isNotIncludedInSelectedCountries) {
 				return 'grey';
 			}
 
-			return colorScale(d.score);
+			return rightSideColorScale(d.region);
 		}
 
 		const getTextColor = (region: string) => {
@@ -153,7 +159,7 @@ export const BarChart: React.FC<BarChartProps> = ({ data, selectedCountries, set
 			.call(d3.axisLeft(y))
 			.call(g => g.select('.domain').remove());
 
-	}, [colorScale, data, order, selectedCountries, setSelectedCountries]);
+	}, [data, leftSideColorScale, order, selectedCountries, setSelectedCountries]);
 
 	return <div style={{ position: 'relative' }}>
 		<svg ref={chartRef}></svg>
