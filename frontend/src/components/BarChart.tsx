@@ -155,8 +155,16 @@ export const BarChart: React.FC<BarChartProps> = ({ data, selectedCountries, set
 
 	}, [colorScale, data, order, selectedCountries, setSelectedCountries]);
 
-	return <>
+	return <div style={{ position: 'relative' }}>
 		<svg ref={chartRef}></svg>
-		<button onClick={toggleOrder}>Toggle order</button>
-	</>
+		<button style={{
+			position: 'absolute',
+			top: 30,
+			right: 30,
+			zIndex: 1
+		}}
+			onClick={toggleOrder}>
+			Toggle order
+		</button>
+	</div>
 };
