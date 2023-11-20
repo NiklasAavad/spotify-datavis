@@ -69,7 +69,7 @@ export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, wid
 				.data([Array.from(regionData)])
 				.attr('fill', 'none')
 				.attr('stroke', color(i))
-				.attr('stroke-width', 5)
+				.attr('stroke-width', 3)
 				.attr('d', valueline);
 		});
 
