@@ -148,7 +148,9 @@ export const Entrypoint = () => {
 		if (!data || domainType === 'full') {
 			return [0, 1]
 		}
-		return d3.extent(Object.values(data));
+		const minValue: number = Math.min(...Object.values(data));
+		const maxValue: number = Math.max(...Object.values(data));
+		return [minValue, maxValue]
 	}, [data, domainType])
 
 	const toggleDomainType = () => {
