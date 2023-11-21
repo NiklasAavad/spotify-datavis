@@ -106,7 +106,7 @@ export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, wid
 				.data([Array.from(regionData)])
 				.attr('fill', 'none')
 				.attr('stroke', 'grey')
-				.attr('stroke-width', 1.5)
+				.attr('stroke-width', 1)
 				.attr('d', valueline);
 		});
 
@@ -115,7 +115,7 @@ export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, wid
 				.data([Array.from(regionData)])
 				.attr('fill', 'none')
 				.attr('stroke', getColor(i))
-				.attr('stroke-width', 3)
+				.attr('stroke-width', 2)
 				.attr('d', valueline);
 		});
 
