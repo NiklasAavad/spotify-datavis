@@ -310,6 +310,20 @@ export const Entrypoint = () => {
 								{'>>'}
 							</button>
 						</div>
+						<div style={{ display: 'flex', paddingTop: '8px', paddingLeft: '8px' }}>
+							<button
+								style={{ zIndex: 10, marginRight: '8px' }}
+								onClick={() => updateDates(-30)}
+							>
+								{'<<<'}
+							</button>
+							<button
+								style={{ zIndex: 10 }}
+								onClick={() => updateDates(30)}
+							>
+								{'>>>'}
+							</button>
+						</div>
 						Current date is {dates.fromDate.toISOString().slice(0, 10)}
 					</div>
 				</div>
