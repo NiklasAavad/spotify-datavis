@@ -48,6 +48,7 @@ export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, wid
 
 		// Define the line
 		const valueline = d3.line<DataPoint>()
+			.defined(d => d.avg !== null)
 			.x(d => x(parseTime(d.date)))
 			.y(d => y(d.avg));
 
@@ -63,7 +64,19 @@ export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, wid
 
 		y.domain(getDomainY());
 
+		const startDate = new Date('2017-01-01')
+		const endDate = new Date('2021-12-31')
+		const allDates = d3.timeDays(startDate, endDate)
+
 		const dataByRegion = d3.group(data, d => d.region);
+		const modifiedDataByRegion = new Map();
+
+		dataByRegion.forEach((value, key) => {
+			modifiedDataByRegion.set(key, allDates.map(date => {
+				const dataPoint = value.find(d => parseTime(d.date).getTime() === date.getTime());
+				return dataPoint ? dataPoint : { date: date.toISOString().slice(0, 10), avg: null, region: key };
+			}));
+		});
 
 		const getColor = (region: string) => {
 			if (queryType === QueryType.Score) {
@@ -72,8 +85,20 @@ export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, wid
 			return color(region);
 		}
 
+		console.log("data by region:", dataByRegion)
+		console.log("modified data by region:", modifiedDataByRegion)
+
 		// Add the valueline paths.
 		dataByRegion.forEach((regionData, i) => {
+			svg.append('path')
+				.data([Array.from(regionData)])
+				.attr('fill', 'none')
+				.attr('stroke', 'grey')
+				.attr('stroke-width', 1.5)
+				.attr('d', valueline);
+		});
+
+		modifiedDataByRegion.forEach((regionData, i) => {
 			svg.append('path')
 				.data([Array.from(regionData)])
 				.attr('fill', 'none')
