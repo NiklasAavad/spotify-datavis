@@ -122,11 +122,11 @@ export type ColorScale = d3.ScaleSequential<string, string>;
 export const Entrypoint = () => {
 	const [queryType, setQueryType] = useState<QueryType>(QueryType.Attribute);
 
-	const [selectedCountries, setSelectedCountries] = useState<string[]>([])
+	const [selectedCountries, setSelectedCountries] = useState<string[]>(["Global"])
 
 	const [dates, setDates] = useState<Dates>({
-		fromDate: new Date('2017-01-07'),
-		toDate: new Date('2017-01-07'),
+		fromDate: new Date('2020-08-30'),
+		toDate: new Date('2020-08-30'),
 	})
 
 	const updateDates = (delta: number) => {
