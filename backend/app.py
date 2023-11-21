@@ -270,12 +270,10 @@ def timeseries():
         if countries is None:
             raise Exception("No countries specified")
         country_list = [country.strip() for country in countries.split(',')]
-        print("country_list", country_list)
 
         attribute = request.args.get("attribute")
         if attribute is None:
             raise Exception("No attribute specified")
-        print("attribute", attribute)
 
         query = f"""
             SELECT region, date, avg
@@ -286,8 +284,6 @@ def timeseries():
         cursor.execute(query, tuple(country_list))
 
         result = cursor.fetchall()
-
-        print(result)
 
         json_objects = [
             {
