@@ -54,8 +54,8 @@ export const BarChart: React.FC<BarChartProps> = ({ data, selectedCountries, set
 		const width = 640;
 		const height = 250;
 		const marginTop = 20;
-		const marginRight = 20;
-		const marginBottom = 80;
+		const marginRight = 0;
+		const marginBottom = 100;
 		const marginLeft = 40;
 
 		// Declare the x (horizontal position) scale and the corresponding axis generator.
