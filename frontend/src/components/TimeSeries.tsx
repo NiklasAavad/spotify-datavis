@@ -68,12 +68,24 @@ export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, wid
 		const endDate = new Date('2021-12-31')
 		const allDates = d3.timeDays(startDate, endDate)
 
+		const dataByDate = new Map();
+
+		data.forEach(d => {
+			const date = parseTime(d.date).getTime();
+			if (!dataByDate.has(date)) {
+				dataByDate.set(date, []);
+			}
+			dataByDate.get(date).push(d);
+		});
+
+
 		const dataByRegion = d3.group(data, d => d.region);
 		const modifiedDataByRegion = new Map();
 
 		dataByRegion.forEach((value, key) => {
 			modifiedDataByRegion.set(key, allDates.map(date => {
-				const dataPoint = value.find(d => parseTime(d.date).getTime() === date.getTime());
+				const dataPoints = dataByDate.get(date.getTime()) || [];
+				const dataPoint = dataPoints.find(d => d.region === key);
 				return dataPoint ? dataPoint : { date: date.toISOString().slice(0, 10), avg: null, region: key };
 			}));
 		});
