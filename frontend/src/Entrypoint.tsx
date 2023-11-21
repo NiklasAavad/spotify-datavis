@@ -151,7 +151,7 @@ export const Entrypoint = () => {
 
 	const { data: metrics, isLoading: loadingMetrics } = useQuery(["metric", selectedCountries, dates], () => getMetrics(dates, selectedCountries));
 
-	const { data: timeSeries, isLoading: loadingTimeSeries } = useQuery(["timeSeries", selectedCountries], () => getTimeSeries(selectedCountries, currentAttributeParams.attribute));
+	const { data: timeSeries, isLoading: loadingTimeSeries } = useQuery(["timeSeries", selectedCountries, currentAttributeParams.attribute], () => getTimeSeries(selectedCountries, currentAttributeParams.attribute));
 
 	const [lowerBound, upperBound] = useMemo(() => {
 		if (!data || domainType === 'full') {

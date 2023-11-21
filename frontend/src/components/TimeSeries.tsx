@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 import { QueryType } from '../hooks/useQueryFunction';
 
 type DataPoint = {
-	avg_danceability: number;
+	avg: number;
 	date: string;
 	region: string;
 };
@@ -49,7 +49,7 @@ export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, wid
 		// Define the line
 		const valueline = d3.line<DataPoint>()
 			.x(d => x(parseTime(d.date)))
-			.y(d => y(d.avg_danceability));
+			.y(d => y(d.avg));
 
 		// Scale the range of the data
 		x.domain(d3.extent(data, d => parseTime(d.date)));
@@ -58,7 +58,7 @@ export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, wid
 			if (domainType === 'full') {
 				return [0, 1];
 			}
-			return d3.extent(data, d => d.avg_danceability);
+			return d3.extent(data, d => d.avg);
 		}
 
 		y.domain(getDomainY());

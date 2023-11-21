@@ -279,7 +279,7 @@ def timeseries():
 
         query = f"""
             SELECT
-                region, date, avg(danceability)
+                region, date, AVG({attribute})
             FROM spotify_chart
             WHERE 
                 region IN ({', '.join(['%s' for _ in country_list])})
@@ -296,7 +296,7 @@ def timeseries():
             {
                 "region": row[0],
                 "date": row[1].strftime('%Y-%m-%d'),
-                "avg_danceability": row[2]
+                "avg": row[2]
             }
             for row in result
         ]
