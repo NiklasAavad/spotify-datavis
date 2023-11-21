@@ -452,7 +452,7 @@ def remove_rows_without_audio_features(file_path, output_file_path):
     print('Saving top200 rows to file')
     filtered_rows.to_csv(output_file_path, index=False)  # index=False to exclude the index column
 
-def write_csv_to_mysql_db():
+def write_csv_to_mysql_db(chunk_i):
     import mysql.connector
     import os
     from dotenv import load_dotenv
@@ -481,7 +481,7 @@ def write_csv_to_mysql_db():
         if conn.is_connected():
             print("Connected to MySQL")
 
-            chunk_i = 0
+            print("Currently processing chunk_i:", chunk_i)
 
             csv_file_path = f'./chunks/chunk_{chunk_i}.csv'
             chunk_size = 10_000
@@ -519,4 +519,5 @@ if __name__ == "__main__":
     # transform_url_to_id('../../top200_charts_no_category.csv', '../../top200_charts_no_category_id_no_url.csv')
     # remove_rows_without_audio_features('../../top200_charts_no_category_id_no_url.csv', '../../top200_only_songs_with_audio_features.csv')
     # append_audio_features_to_rows('../../top200_only_songs_with_audio_features.csv')
-    write_csv_to_mysql_db()
+    for i in range(3, 21):
+        write_csv_to_mysql_db(i)
