@@ -278,12 +278,9 @@ def timeseries():
         print("attribute", attribute)
 
         query = f"""
-            SELECT
-                region, date, AVG({attribute})
-            FROM spotify_chart
-            WHERE 
-                region IN ({', '.join(['%s' for _ in country_list])})
-            GROUP BY region, date
+            SELECT region, date, avg
+            FROM {attribute}
+            WHERE region IN ({', '.join(['%s' for _ in country_list])})
         """
 
         cursor.execute(query, tuple(country_list))
