@@ -88,7 +88,7 @@ export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, wid
 		console.log("data by region:", dataByRegion)
 		console.log("modified data by region:", modifiedDataByRegion)
 
-		// Add the valueline paths.
+		// Add the valueline paths. TODO: delete if we want to ampute instead of impute
 		dataByRegion.forEach((regionData, i) => {
 			svg.append('path')
 				.data([Array.from(regionData)])
