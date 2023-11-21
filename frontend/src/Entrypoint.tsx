@@ -129,6 +129,15 @@ export const Entrypoint = () => {
 		toDate: new Date('2017-01-07'),
 	})
 
+	const updateDates = (delta: number) => {
+		const newFromDate = new Date(dates.fromDate);
+		newFromDate.setDate(newFromDate.getDate() + delta);
+		setDates({
+			fromDate: newFromDate,
+			toDate: newFromDate,
+		})
+	}
+
 	const [domainType, setDomainType] = useState<'full' | 'cropped'>('full');
 
 	const [brushedInterval, setBrushedInterval] = useState<Interval[]>(undefined)
@@ -262,16 +271,47 @@ export const Entrypoint = () => {
 							))
 						}
 					</BrushProvider>
-					<TimeSeriesContainer
-						data={timeSeries}
-						color={rightSideColorScale}
-						isLoading={loadingTimeSeries}
-						height={300}
-						width={800}
-						margin={{ top: 20, right: 30, bottom: 30, left: 50 }}
-						domainType={domainType}
-						queryType={queryType}
-					/>
+					<div style={{ position: 'relative' }}>
+						<TimeSeriesContainer
+							data={timeSeries}
+							color={rightSideColorScale}
+							isLoading={loadingTimeSeries}
+							height={300}
+							width={800}
+							margin={{ top: 20, right: 30, bottom: 30, left: 40 }}
+							domainType={domainType}
+							queryType={queryType}
+						/>
+						<div style={{ display: 'flex', paddingTop: '50px', paddingLeft: '8px' }}>
+							<button
+								style={{ zIndex: 10, marginRight: '8px' }}
+								onClick={() => updateDates(-1)}
+							>
+								{'<'}
+							</button>
+							<button
+								style={{ zIndex: 10 }}
+								onClick={() => updateDates(1)}
+							>
+								{'>'}
+							</button>
+						</div>
+						<div style={{ display: 'flex', paddingTop: '8px', paddingLeft: '8px' }}>
+							<button
+								style={{ zIndex: 10, marginRight: '8px' }}
+								onClick={() => updateDates(-7)}
+							>
+								{'<<'}
+							</button>
+							<button
+								style={{ zIndex: 10 }}
+								onClick={() => updateDates(7)}
+							>
+								{'>>'}
+							</button>
+						</div>
+						Current date is {dates.fromDate.toISOString().slice(0, 10)}
+					</div>
 				</div>
 			</div>
 			<button onClick={toggleDomainType}>Toggle domain (full, cropped)</button>
