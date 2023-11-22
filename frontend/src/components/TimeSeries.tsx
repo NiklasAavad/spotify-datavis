@@ -102,6 +102,24 @@ export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, wid
 		console.log("data by region:", dataByRegion)
 		console.log("modified data by region:", modifiedDataByRegion)
 
+		// Draggable vertical line to select date
+		const drag = d3.drag()
+			.on('start', dragStarted)
+			.on('drag', dragged)
+			.on('end', dragEnded);
+
+		const verticalLine = svg.append('line')
+			.attr('x1', x(date)) // Assuming startDate is the initial position of the line
+			.attr('y1', 0)
+			.attr('x2', x(date))
+			.attr('y2', height)
+			.attr('stroke', 'white')
+			.attr('cursor', 'pointer')
+			.attr('stroke-width', 8)
+			.attr('stroke-dasharray', '2, 2')
+			.attr('opacity', 0.5)
+			.call(drag); // Attach the drag behavior 
+
 		// Add the valueline paths. TODO: delete if we want to ampute instead of impute
 		dataByRegion.forEach((regionData, i) => {
 			svg.append('path')
@@ -131,12 +149,6 @@ export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, wid
 		svg.append('g')
 			.call(d3.axisLeft(y))
 			.style('font-size', '14px')
-
-		// Draggable vertical line to select date
-		const drag = d3.drag()
-			.on('start', dragStarted)
-			.on('drag', dragged)
-			.on('end', dragEnded);
 
 		let tooltip = d3.select("body").append("div")
 			.attr("class", "tooltip")
@@ -169,7 +181,6 @@ export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, wid
 				.style("left", (event.x + chartBoundingBox.left) + "px") // Adjust left position
 				.style("top", (chartBoundingBox.top - 8) + "px") // Adjust top position
 				.style('position', 'absolute')
-
 		}
 
 		function dragEnded(event, d) {
@@ -186,17 +197,6 @@ export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, wid
 			setDate(newDate);
 		}
 
-		const verticalLine = svg.append('line')
-			.attr('x1', x(date)) // Assuming startDate is the initial position of the line
-			.attr('y1', 0)
-			.attr('x2', x(date))
-			.attr('y2', height)
-			.attr('stroke', 'white')
-			.attr('cursor', 'pointer')
-			.attr('stroke-width', 8)
-			.attr('stroke-dasharray', '2, 2')
-			.attr('opacity', 0.5)
-			.call(drag); // Attach the drag behavior 
 	}, [color, data, date, domainType, height, margin.bottom, margin.left, margin.right, margin.top, queryType, setDate, width]);
 
 	return <div ref={chartRef} style={{ position: 'relative' }}></div>;
