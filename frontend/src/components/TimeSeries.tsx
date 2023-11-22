@@ -141,6 +141,15 @@ export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, wid
 			.style("opacity", 0);
 
 		function dragStarted(event, d) {
+			const chartBoundingBox = chartRef.current.getBoundingClientRect();
+			tooltip.transition()
+				.duration(100)
+				.style("opacity", 0.8);
+
+			tooltip.html(formatTime(x.invert(event.x)))
+				.style("left", (event.x + chartBoundingBox.left) + "px") // Adjust left position
+				.style("top", (chartBoundingBox.top - 8) + "px") // Adjust top position
+				.style('position', 'absolute')
 			d3.select(this).raise();
 		}
 
@@ -154,10 +163,6 @@ export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, wid
 				.attr('x2', event.x);
 
 			// Update tooltip content and position
-			tooltip.transition()
-				.duration(50)
-				.style("opacity", 0.8);
-
 			tooltip.html(formatTime(x.invert(event.x)))
 				.style("left", (event.x + chartBoundingBox.left) + "px") // Adjust left position
 				.style("top", (chartBoundingBox.top - 8) + "px") // Adjust top position

@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { MapContainer } from './components/MapContainer';
 import { useQuery } from 'react-query';
 import { QueryType, useQueryFunction } from './hooks/useQueryFunction';
-import { DateChanger, Dates } from './components/DateChanger';
 import { Attribute, AttributeParameterChanger, AttributeParams } from './components/AttributeParameterChanger';
 import { ScoreParameterChanger, ScoreParams } from './components/ScoreParameterChanger';
 import axios from 'axios';
@@ -92,12 +91,13 @@ const getNewScoreParams = (brushedInterval: Interval[]) => {
 	return newParams;
 }
 
-const getMetrics = async (dates: Dates, selectedCountries: string[]) => {
+const getMetrics = async (date: Date, selectedCountries: string[]) => {
 	const preparedCountries: string = selectedCountries.join(',');
+	console.log("date:", date)
 	const response = await axios.get("http://localhost:5000/api/metrics", {
 		params: {
 			countries: preparedCountries,
-			...dates,
+			date: date,
 		}
 	});
 	const data = response.data
@@ -124,18 +124,12 @@ export const Entrypoint = () => {
 
 	const [selectedCountries, setSelectedCountries] = useState<string[]>(["Global"])
 
-	const [dates, setDates] = useState<Dates>({
-		fromDate: new Date('2020-08-30'),
-		toDate: new Date('2020-08-30'),
-	})
+	const [date, setDate] = useState<Date>(new Date('2020-08-30'))
 
 	const updateDates = (delta: number) => {
-		const newFromDate = new Date(dates.fromDate);
-		newFromDate.setDate(newFromDate.getDate() + delta);
-		setDates({
-			fromDate: newFromDate,
-			toDate: newFromDate,
-		})
+		const newDate = new Date(date);
+		newDate.setDate(newDate.getDate() + delta);
+		setDate(newDate)
 	}
 
 	const [domainType, setDomainType] = useState<'full' | 'cropped'>('full');
@@ -147,9 +141,9 @@ export const Entrypoint = () => {
 	const currentParams = queryType === QueryType.Attribute ? currentAttributeParams : currentScoreParams;
 
 	const queryFunction = useQueryFunction(queryType);
-	const { data, isLoading } = useQuery<Record<string, number>>([queryType, currentParams, dates], () => queryFunction(currentParams, dates));
+	const { data, isLoading } = useQuery<Record<string, number>>([queryType, currentParams, date], () => queryFunction(currentParams, date));
 
-	const { data: metrics, isLoading: loadingMetrics } = useQuery(["metric", selectedCountries, dates], () => getMetrics(dates, selectedCountries));
+	const { data: metrics, isLoading: loadingMetrics } = useQuery(["metric", selectedCountries, date], () => getMetrics(date, selectedCountries));
 
 	const { data: timeSeries, isLoading: loadingTimeSeries } = useQuery(["timeSeries", selectedCountries, currentAttributeParams.attribute], () => getTimeSeries(selectedCountries, currentAttributeParams.attribute));
 
@@ -324,7 +318,7 @@ export const Entrypoint = () => {
 								{'>>>'}
 							</button>
 						</div>
-						Current date is {dates.fromDate.toISOString().slice(0, 10)}
+						Current date is {date.toISOString().slice(0, 10)}
 					</div>
 				</div>
 			</div>
@@ -339,9 +333,6 @@ export const Entrypoint = () => {
 			<div>
 				<input type="radio" value={QueryType.Attribute} checked={queryType === QueryType.Attribute} onChange={onChangeQueryType} /> Attribute
 				<input type="radio" value={QueryType.Score} checked={queryType === QueryType.Score} onChange={onChangeQueryType} /> Score
-			</div>
-			<div style={{ margin: '8px' }}>
-				<DateChanger setDates={setDates} />
 			</div>
 		</>
 	)

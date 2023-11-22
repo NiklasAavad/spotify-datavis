@@ -63,7 +63,7 @@ def score():
         liveness_lower_bound, liveness_upper_bound, \
         speechiness_lower_bound, speechiness_upper_bound = _get_score_params(request)
 
-        from_date, to_date = get_from_and_to_date()
+        date = get_date()
 
         query = """
             SELECT
@@ -78,7 +78,7 @@ def score():
                        AND speechiness >= %s AND speechiness <= %s
                        THEN 1 END) / COUNT(*))
             FROM spotify_chart
-            WHERE date BETWEEN %s AND %s
+            WHERE date = %s
             GROUP BY region;
         """
 
@@ -90,7 +90,7 @@ def score():
             instrumentalness_lower_bound, instrumentalness_upper_bound,
             liveness_lower_bound, liveness_upper_bound,
             speechiness_lower_bound, speechiness_upper_bound,
-            from_date, to_date
+            date
          )
 
         cursor.execute(query, params)
@@ -181,18 +181,19 @@ def attribute():
         if attribute is None:
             raise Exception("No attribute specified")
 
-        from_date, to_date = get_from_and_to_date()
+        date = get_date()
+        print("date in attribute:", date)
 
         query = f"""
             SELECT
                 region,
                 AVG({attribute})
             FROM spotify_chart
-            WHERE date BETWEEN %s AND %s
+            WHERE date = %s
             GROUP BY region;
         """
 
-        cursor.execute(query, (from_date, to_date))
+        cursor.execute(query, (date,))
 
         # Fetch the result
         result = cursor.fetchall()
@@ -220,18 +221,19 @@ def metrics():
             raise Exception("No countries specified")
         country_list = [country.strip() for country in countries.split(',')]
 
-        from_date, to_date = get_from_and_to_date()
+        date = get_date()
+        print("date in metrics:", date)
 
         query = f"""
             SELECT
                 id, region, danceability, energy, valence, acousticness, instrumentalness, liveness, speechiness
             FROM spotify_chart
             WHERE 
-                date BETWEEN %s AND %s
+                date = %s
                 AND region IN ({', '.join(['%s' for _ in country_list])})
         """
 
-        cursor.execute(query, (from_date, to_date) + tuple(country_list))
+        cursor.execute(query, (date,) + tuple(country_list))
 
         # Fetch the result
         result = cursor.fetchall()
@@ -302,10 +304,11 @@ def timeseries():
         conn.close()
 
 # Assumes active request
-def get_from_and_to_date():
-    from_date = request.args.get("fromDate", "2017-01-01")
-    to_date = request.args.get("toDate", "2021-12-31")
-    return from_date, to_date
+def get_date():
+    date = request.args.get("date")
+    if date is None:
+        raise Exception("No date specified")
+    return date
 
 def connect_to_db():
     global cursor, conn
