@@ -129,7 +129,63 @@ export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, wid
 		svg.append('g')
 			.call(d3.axisLeft(y))
 			.style('font-size', '14px')
+
+		// Draggable vertical line to select date
+		const drag = d3.drag()
+			.on('start', dragStarted)
+			.on('drag', dragged)
+			.on('end', dragEnded);
+
+		let tooltip = d3.select("body").append("div")
+			.attr("class", "tooltip")
+			.style("opacity", 0);
+
+		function dragStarted(event, d) {
+			d3.select(this).raise();
+		}
+
+		const formatTime = d3.timeFormat("%B %d, %Y");
+
+		function dragged(event, d) {
+			const chartBoundingBox = chartRef.current.getBoundingClientRect();
+
+			d3.select(this)
+				.attr('x1', event.x)
+				.attr('x2', event.x);
+
+			// Update tooltip content and position
+			tooltip.transition()
+				.duration(50)
+				.style("opacity", 0.8);
+
+			tooltip.html(formatTime(x.invert(event.x)))
+				.style("left", (event.x + chartBoundingBox.left) + "px") // Adjust left position
+				.style("top", (chartBoundingBox.top - 8) + "px") // Adjust top position
+				.style('position', 'absolute')
+
+		}
+
+		function dragEnded(event, d) {
+			// Hide tooltip
+			tooltip.transition()
+				.duration(500)
+				.style("opacity", 0);
+		}
+
+		const actualStartDate = new Date('2020-08-30');
+
+		const verticalLine = svg.append('line')
+			.attr('x1', x(actualStartDate)) // Assuming startDate is the initial position of the line
+			.attr('y1', 0)
+			.attr('x2', x(actualStartDate))
+			.attr('y2', height)
+			.attr('stroke', 'white')
+			.attr('cursor', 'pointer')
+			.attr('stroke-width', 8)
+			.attr('stroke-dasharray', '2, 2')
+			.attr('opacity', 0.5)
+			.call(drag); // Attach the drag behavior 
 	}, [color, data, domainType, height, margin.bottom, margin.left, margin.right, margin.top, queryType, width]);
 
-	return <div ref={chartRef}></div>;
+	return <div ref={chartRef} style={{ position: 'relative' }}></div>;
 };
