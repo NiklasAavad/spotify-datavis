@@ -18,9 +18,11 @@ export type TimeSeriesProps = {
 	margin: { top: number; right: number; bottom: number; left: number; }
 	domainType: 'full' | 'cropped';
 	queryType: QueryType;
+	date: Date;
+	setDate: (date: Date) => void;
 };
 
-export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, width, margin, domainType, queryType }) => {
+export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, width, margin, domainType, queryType, date, setDate }) => {
 	const chartRef = useRef<null | HTMLDivElement>(null);
 
 	useEffect(() => {
@@ -175,14 +177,19 @@ export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, wid
 			tooltip.transition()
 				.duration(500)
 				.style("opacity", 0);
+
+			// update date
+			const tempDate = x.invert(event.x)
+			tempDate.setHours(0, 0, 0, 0);
+			const formattedDate = tempDate.toISOString().split('T')[0];
+			const newDate = new Date(formattedDate)
+			setDate(newDate);
 		}
 
-		const actualStartDate = new Date('2020-08-30');
-
 		const verticalLine = svg.append('line')
-			.attr('x1', x(actualStartDate)) // Assuming startDate is the initial position of the line
+			.attr('x1', x(date)) // Assuming startDate is the initial position of the line
 			.attr('y1', 0)
-			.attr('x2', x(actualStartDate))
+			.attr('x2', x(date))
 			.attr('y2', height)
 			.attr('stroke', 'white')
 			.attr('cursor', 'pointer')
@@ -190,7 +197,7 @@ export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, wid
 			.attr('stroke-dasharray', '2, 2')
 			.attr('opacity', 0.5)
 			.call(drag); // Attach the drag behavior 
-	}, [color, data, domainType, height, margin.bottom, margin.left, margin.right, margin.top, queryType, width]);
+	}, [color, data, date, domainType, height, margin.bottom, margin.left, margin.right, margin.top, queryType, setDate, width]);
 
 	return <div ref={chartRef} style={{ position: 'relative' }}></div>;
 };

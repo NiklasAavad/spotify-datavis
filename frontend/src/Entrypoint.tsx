@@ -126,10 +126,17 @@ export const Entrypoint = () => {
 
 	const [date, setDate] = useState<Date>(new Date('2020-08-30'))
 
+	const setDateHelper = (date: Date) => {
+		date.setHours(0, 0, 0, 0);
+		const formattedDate = date.toISOString().split('T')[0];
+		const newDate = new Date(formattedDate)
+		setDate(newDate)
+	}
+
 	const updateDates = (delta: number) => {
 		const newDate = new Date(date);
-		newDate.setDate(newDate.getDate() + delta);
-		setDate(newDate)
+		newDate.setDate(newDate.getDate() + delta + 1); // TODO off by one error
+		setDateHelper(newDate)
 	}
 
 	const [domainType, setDomainType] = useState<'full' | 'cropped'>('full');
@@ -275,6 +282,8 @@ export const Entrypoint = () => {
 							margin={{ top: 20, right: 30, bottom: 30, left: 50 }}
 							domainType={domainType}
 							queryType={queryType}
+							date={date}
+							setDate={setDateHelper}
 						/>
 						<div style={{ display: 'flex', paddingTop: '50px', paddingLeft: '8px' }}>
 							<button
