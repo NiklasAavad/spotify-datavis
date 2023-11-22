@@ -127,6 +127,7 @@ export const Entrypoint = () => {
 	const [date, setDate] = useState<Date>(new Date('2020-08-30'))
 
 	const setDateHelper = (date: Date) => {
+		date.setDate(date.getDate() + 2)
 		date.setHours(0, 0, 0, 0);
 		const formattedDate = date.toISOString().split('T')[0];
 		const newDate = new Date(formattedDate)
@@ -135,7 +136,7 @@ export const Entrypoint = () => {
 
 	const updateDates = (delta: number) => {
 		const newDate = new Date(date);
-		newDate.setDate(newDate.getDate() + delta + 1); // TODO off by one error
+		newDate.setDate(newDate.getDate() + delta - 1); // TODO off by one error
 		setDateHelper(newDate)
 	}
 
