@@ -41,42 +41,46 @@ const baseScore: ScoreParams = {
 	speechiness_upper_bound: 1,
 }
 
+const roundToTwoDecimals = (num: number) => {
+	return parseFloat(num.toFixed(2));
+}
+
 const getScoreParam = (key: Attribute, value: [number, number]) => {
 	switch (key) {
 		case Attribute.Danceability:
 			return {
-				dance_lower_bound: value[0],
-				dance_upper_bound: value[1],
+				dance_lower_bound: roundToTwoDecimals(value[0]),
+				dance_upper_bound: roundToTwoDecimals(value[1]),
 			}
 		case Attribute.Energy:
 			return {
-				energy_lower_bound: value[0],
-				energy_upper_bound: value[1],
+				energy_lower_bound: roundToTwoDecimals(value[0]),
+				energy_upper_bound: roundToTwoDecimals(value[1]),
 			}
 		case Attribute.Valence:
 			return {
-				valence_lower_bound: value[0],
-				valence_upper_bound: value[1],
+				valence_lower_bound: roundToTwoDecimals(value[0]),
+				valence_upper_bound: roundToTwoDecimals(value[1]),
 			}
 		case Attribute.Acousticness:
 			return {
-				acousticness_lower_bound: value[0],
-				acousticness_upper_bound: value[1],
+				acousticness_lower_bound: roundToTwoDecimals(value[0]),
+				acousticness_upper_bound: roundToTwoDecimals(value[1]),
 			}
 		case Attribute.Instrumentalness:
 			return {
-				instrumentalness_lower_bound: value[0],
-				instrumentalness_upper_bound: value[1],
+				instrumentalness_lower_bound: roundToTwoDecimals(value[0]),
+				instrumentalness_upper_bound: roundToTwoDecimals(value[1]),
 			}
 		case Attribute.Liveness:
 			return {
-				liveness_lower_bound: value[0],
-				liveness_upper_bound: value[1],
+				liveness_lower_bound: roundToTwoDecimals(value[0]),
+				liveness_upper_bound: roundToTwoDecimals(value[1]),
 			}
 		case Attribute.Speechiness:
 			return {
-				speechiness_lower_bound: value[0],
-				speechiness_upper_bound: value[1],
+				speechiness_lower_bound: roundToTwoDecimals(value[0]),
+				speechiness_upper_bound: roundToTwoDecimals(value[1]),
 			}
 	}
 }
