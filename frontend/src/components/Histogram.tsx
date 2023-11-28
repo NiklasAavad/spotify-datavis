@@ -122,6 +122,21 @@ export const Histogram: React.FC<HistogramProps> = ({ data, selectedCountries, s
 				.style("fill", (d) => getColor(region, d))
 				.style("opacity", 0.5);
 		});
+
+		const capitalizeFirstLetter = (string: string) => {
+			return string.charAt(0).toUpperCase() + string.slice(1);
+		}
+
+		// Append title
+		svg.append("text")
+			.attr("x", 8)
+			.attr("y", 30)
+			.attr("dy", "-1em") // Adjust this value to move the title higher or lower
+			.style("font-size", "16px")
+			.style("font-weight", "bold")
+			.style("fill", "white")
+			.text(capitalizeFirstLetter(selectedMetric)); // Use the selectedMetric prop as the title
+
 	}, [brushedInterval, colorScale, data, height, margin.bottom, margin.left, margin.right, margin.top, selectedCountries, selectedMetric, width]);
 
 	return <svg ref={svgRef}></svg>;
