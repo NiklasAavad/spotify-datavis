@@ -13,6 +13,7 @@ import { BarChart } from './components/BarChart';
 import { HistogramContainer } from './components/HistogramContainer';
 import { Interval } from './components/ScatterPlot';
 import { TimeSeriesContainer } from './components/TimeSeriesContainer';
+import { Navbar } from './components/Navbar';
 
 // TODO consider moving the shuffling to the backend, so we cache the results, and the removal of one region will not change the order of the results
 const shuffleArray = (array: unknown[]) => {
@@ -124,6 +125,12 @@ export const Entrypoint = () => {
 
 	const [selectedCountries, setSelectedCountries] = useState<string[]>(["Global"])
 
+	const [selectedMetrics, setSelectedMetrics] = useState<Attribute[]>([
+		Attribute.Danceability,
+		Attribute.Liveness,
+		Attribute.Speechiness
+	]);
+
 	const [date, setDate] = useState<Date>(new Date('2020-08-30'))
 
 	const setDateHelper = (date: Date) => {
@@ -209,14 +216,26 @@ export const Entrypoint = () => {
 
 	}, [brushedInterval])
 
-	const selectedMetrics = [Attribute.Danceability, Attribute.Liveness, Attribute.Speechiness]
-
 	const upperHeight = 700;
 
 	const upperRightWidth = 750;
 
 	return (
 		<>
+			<Navbar
+				queryType={queryType}
+				setQueryType={setQueryType}
+				domainType={domainType}
+				toggleDomainType={toggleDomainType}
+				date={date}
+				setDate={setDateHelper}
+				currentScoreParams={currentScoreParams}
+				setCurrentScoreParams={setCurrentScoreParams}
+				currentAttributeParams={currentAttributeParams}
+				setCurrentAttributeParams={setCurrentAttributeParams}
+				selectedMetrics={selectedMetrics}
+				setSelectedMetrics={setSelectedMetrics}
+			/>
 			<div style={{ display: 'flex', flexDirection: 'row' }}>
 				<div>
 					<div style={{ display: 'flex' }}>
