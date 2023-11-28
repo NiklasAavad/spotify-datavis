@@ -55,57 +55,67 @@ export const Navbar: React.FC<NavbarProps> = ({
 				if (!(currentScoreParams.dance_lower_bound !== 0 || currentScoreParams.dance_upper_bound !== 1)) {
 					return null;
 				}
-				return <div>
+				return <>
 					<strong>Danceability</strong> [{currentScoreParams.dance_lower_bound}, {currentScoreParams.dance_upper_bound}]
-				</div>
+				</>
 			case Attribute.Energy:
 				if (!(currentScoreParams.energy_lower_bound !== 0 || currentScoreParams.energy_upper_bound !== 1)) {
 					return null;
 				}
-				return <div>
+				return <>
 					<strong>Energy</strong> [{currentScoreParams.energy_lower_bound}, {currentScoreParams.energy_upper_bound}]
-				</div>
+				</>
 			case Attribute.Valence:
 				if (!(currentScoreParams.valence_lower_bound !== 0 || currentScoreParams.valence_upper_bound !== 1)) {
 					return null;
 				}
-				return <div>
+				return <>
 					<strong>Valence</strong> [{currentScoreParams.valence_lower_bound}, {currentScoreParams.valence_upper_bound}]
-				</div>
+				</>
 			case Attribute.Acousticness:
 				if (!(currentScoreParams.acousticness_lower_bound !== 0 || currentScoreParams.acousticness_upper_bound !== 1)) {
 					return null;
 				}
-				return <div>
+				return <>
 					<strong>Acousticness</strong> [{currentScoreParams.acousticness_lower_bound}, {currentScoreParams.acousticness_upper_bound}]
-				</div>
+				</>
 			case Attribute.Instrumentalness:
 				if (!(currentScoreParams.instrumentalness_lower_bound !== 0 || currentScoreParams.instrumentalness_upper_bound !== 1)) {
 					return null;
 				}
-				return <div>
+				return <>
 					<strong>Instrumentalness</strong> [{currentScoreParams.instrumentalness_lower_bound}, {currentScoreParams.instrumentalness_upper_bound}]
-				</div>
+				</>
 			case Attribute.Liveness:
 				if (!(currentScoreParams.liveness_lower_bound !== 0 || currentScoreParams.liveness_upper_bound !== 1)) {
 					return null;
 				}
-				return <div>
+				return <>
 					<strong>Liveness</strong> [{currentScoreParams.liveness_lower_bound}, {currentScoreParams.liveness_upper_bound}]
-				</div>
+				</>
 			case Attribute.Speechiness:
 				if (!(currentScoreParams.speechiness_lower_bound !== 0 || currentScoreParams.speechiness_upper_bound !== 1)) {
 					return null;
 				}
-				return <div>
+				return <>
 					<strong>Speechiness</strong> [{currentScoreParams.speechiness_lower_bound}, {currentScoreParams.speechiness_upper_bound}]
-				</div>
+				</>
 		}
 	}
 
+	const scoreParamComponents = [
+		showScoreParamRange(Attribute.Danceability),
+		showScoreParamRange(Attribute.Energy),
+		showScoreParamRange(Attribute.Valence),
+		showScoreParamRange(Attribute.Acousticness),
+		showScoreParamRange(Attribute.Instrumentalness),
+		showScoreParamRange(Attribute.Liveness),
+		showScoreParamRange(Attribute.Speechiness),
+	].filter((component) => component !== null);
+
 	return (
 		<div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px', background: 'grey', marginBottom: '16px' }}>
-			<div>
+			<div style={{ width: '600px', textAlign: 'center' }}>
 				<strong>Overview</strong>
 				<p style={{ marginTop: '-8px', marginBottom: '0px', fontSize: '12px', fontStyle: 'italic' }}>{queryType === QueryType.Attribute ? 'average per country' : '% of songs within selected range'}</p>
 				<div style={{ marginTop: '0px' }}>
@@ -124,15 +134,9 @@ export const Navbar: React.FC<NavbarProps> = ({
 							</span>
 						))
 					}
-						{queryType === QueryType.Score &&
+					{queryType === QueryType.Score &&
 						<>
-							{showScoreParamRange(Attribute.Danceability)}
-							{showScoreParamRange(Attribute.Energy)}
-							{showScoreParamRange(Attribute.Valence)}
-							{showScoreParamRange(Attribute.Acousticness)}
-							{showScoreParamRange(Attribute.Instrumentalness)}
-							{showScoreParamRange(Attribute.Liveness)}
-							{showScoreParamRange(Attribute.Speechiness)}
+							{scoreParamComponents[0]}, {scoreParamComponents[1]}
 						</>
 					}
 				</div>
