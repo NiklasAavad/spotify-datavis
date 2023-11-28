@@ -52,73 +52,54 @@ export const Navbar: React.FC<NavbarProps> = ({
 	return (
 		<div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px', background: 'grey', marginBottom: '16px' }}>
 			<div>
-				<strong>Query Type:</strong>
-				<label>
-					<input
-						type="radio"
-						value={QueryType.Attribute}
-						checked={queryType === QueryType.Attribute}
-						onChange={() => setQueryType(QueryType.Attribute)}
-					/>
-					Attribute
-				</label>
-				<label>
-					<input
-						type="radio"
-						value={QueryType.Score}
-						checked={queryType === QueryType.Score}
-						onChange={() => setQueryType(QueryType.Score)}
-					/>
-					Score
-				</label>
+				<strong>Overview Attribute</strong>
+				<div style={{ marginTop: '0px' }}>
+					{Object.values(Attribute).map((attribute) => (
+						<span
+							key={attribute}
+							style={{
+								textDecoration: currentAttributeParams.attribute === attribute ? 'underline' : 'none',
+								cursor: 'pointer',
+								marginRight: '10px',
+							}}
+							onClick={() => setCurrentAttributeParams({ attribute })}
+						>
+							{attribute}
+						</span>
+					))}
+				</div>
 			</div>
 			<div>
 				<strong>Domain Type:</strong>
-				<button onClick={toggleDomainType}>Toggle domain (full, cropped)</button>
+				<div>
+					<button onClick={toggleDomainType}>Toggle domain (full, cropped)</button>
+				</div>
 			</div>
 			<div>
 				<strong>Date:</strong>
-				<input
-					type="date"
-					value={date.toISOString().split('T')[0]}
-					onChange={(e) => setDate(new Date(e.target.value))}
-				/>
-			</div>
-			{queryType === QueryType.Attribute && (
 				<div>
-					<strong>Attribute Parameters:</strong>
-					{Object.values(Attribute).map((attribute) => (
-						<label key={attribute}>
+					<input
+						type="date"
+						value={date.toISOString().split('T')[0]}
+						onChange={(e) => setDate(new Date(e.target.value))}
+					/>
+				</div>
+			</div>
+			<div>
+				<strong>Selected Metrics</strong>
+				<div style={{ marginTop: '0px' }}>
+					{Object.values(Attribute).map((metric) => (
+						<label key={metric}>
 							<input
-								type="radio"
-								value={attribute}
-								checked={currentAttributeParams.attribute === attribute}
-								onChange={() => setCurrentAttributeParams({ attribute })}
+								type="checkbox"
+								value={metric}
+								checked={selectedMetrics.includes(metric)}
+								onChange={() => handleMetricChange(metric)}
 							/>
-							{attribute}
+							{metric}
 						</label>
 					))}
 				</div>
-			)}
-			{queryType === QueryType.Score && (
-				<div>
-					<strong>Score Parameters:</strong>
-					{/* Render your Score Parameter Changer component here */}
-				</div>
-			)}
-			<div>
-				<strong>Selected Metrics:</strong>
-				{Object.values(Attribute).map((metric) => (
-					<label key={metric}>
-						<input
-							type="checkbox"
-							value={metric}
-							checked={selectedMetrics.includes(metric)}
-							onChange={() => handleMetricChange(metric)}
-						/>
-						{metric}
-					</label>
-				))}
 			</div>
 		</div>
 	);
