@@ -52,7 +52,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 	return (
 		<div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px', background: 'grey', marginBottom: '16px' }}>
 			<div>
-				<strong>Overview Attribute</strong>
+				<strong>Overview</strong>
 				<div style={{ marginTop: '0px' }}>
 					{Object.values(Attribute).map((attribute) => (
 						<span
@@ -86,7 +86,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 				</div>
 			</div>
 			<div>
-				<strong>Selected Metrics</strong>
+				<strong>Detail</strong>
 				<div style={{ marginTop: '0px' }}>
 					{Object.values(Attribute).map((metric) => (
 						<label key={metric}>

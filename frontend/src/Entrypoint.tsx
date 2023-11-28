@@ -258,40 +258,48 @@ export const Entrypoint = () => {
 					/>
 				</div>
 				<div style={{ marginLeft: "32px" }}>
-					<BrushProvider>
-						{
-							selectedMetrics.map((metric1) => (
-								<div style={{ display: 'flex', flexDirection: 'row' }}>
-									{
-										selectedMetrics.map((metric2) => (
-											metric1 === metric2 ?
-												<HistogramContainer
-													data={metrics}
-													isLoading={loadingMetrics}
-													selectedCountries={selectedCountries}
-													selectedMetric={metric1}
-													brushedInterval={brushedInterval}
-													totalHeight={upperHeight / 3}
-													totalWidth={upperRightWidth / 3}
-													colorScale={rightSideColorScale}
-												/>
-												:
-												<ScatterPlotContainer
-													data={metrics}
-													isLoading={loadingMetrics}
-													selectedMetric={metric1}
-													selectedMetric2={metric2}
-													setBrushedInterval={setBrushedInterval}
-													totalHeight={upperHeight / 3}
-													totalWidth={upperRightWidth / 3}
-													colorScale={rightSideColorScale}
-												/>
-										))
-									}
+					<div style={{height: upperHeight}}>
+						<BrushProvider>
+							{
+								selectedMetrics.length === 3 && selectedMetrics.map((metric1) => (
+									<div style={{ display: 'flex', flexDirection: 'row' }}>
+										{
+											selectedMetrics.map((metric2) => (
+												metric1 === metric2 ?
+													<HistogramContainer
+														data={metrics}
+														isLoading={loadingMetrics}
+														selectedCountries={selectedCountries}
+														selectedMetric={metric1}
+														brushedInterval={brushedInterval}
+														totalHeight={upperHeight / 3}
+														totalWidth={upperRightWidth / 3}
+														colorScale={rightSideColorScale}
+													/>
+													:
+													<ScatterPlotContainer
+														data={metrics}
+														isLoading={loadingMetrics}
+														selectedMetric={metric1}
+														selectedMetric2={metric2}
+														setBrushedInterval={setBrushedInterval}
+														totalHeight={upperHeight / 3}
+														totalWidth={upperRightWidth / 3}
+														colorScale={rightSideColorScale}
+													/>
+											))
+										}
+									</div>
+								))
+							}
+							{
+								selectedMetrics.length !== 3 &&
+								<div>
+									<p>Please select exactly three!</p>
 								</div>
-							))
-						}
-					</BrushProvider>
+							}
+						</BrushProvider>
+					</div>
 					<div style={{ position: 'relative' }}>
 						<TimeSeriesContainer
 							data={timeSeries}
