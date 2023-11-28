@@ -347,21 +347,8 @@ export const Entrypoint = () => {
 								{'>>>'}
 							</button>
 						</div>
-						Current date is {date.toISOString().slice(0, 10)}
 					</div>
 				</div>
-			</div>
-			<button onClick={toggleDomainType}>Toggle domain (full, cropped)</button>
-			<div style={{ margin: '8px' }}>
-				{queryType === QueryType.Attribute ?
-					<AttributeParameterChanger attribute={currentAttributeParams.attribute} setParams={setCurrentAttributeParams} /> :
-					<ScoreParameterChanger score={currentScoreParams} setParams={setCurrentScoreParams} />
-				}
-			</div>
-			<div>Query Type:</div>
-			<div>
-				<input type="radio" value={QueryType.Attribute} checked={queryType === QueryType.Attribute} onChange={onChangeQueryType} /> Attribute
-				<input type="radio" value={QueryType.Score} checked={queryType === QueryType.Score} onChange={onChangeQueryType} /> Score
 			</div>
 		</>
 	)
