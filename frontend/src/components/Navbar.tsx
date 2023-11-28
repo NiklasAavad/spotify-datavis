@@ -76,13 +76,13 @@ export const Navbar: React.FC<NavbarProps> = ({
 				</div>
 			</div>
 			<div>
-				<strong>Domain Type:</strong>
+				<strong>Domain Type</strong>
 				<div>
 					<button onClick={toggleDomainType}>Toggle domain (full, cropped)</button>
 				</div>
 			</div>
 			<div>
-				<strong>Date:</strong>
+				<strong>Date</strong>
 				<div>
 					<input
 						type="date"
