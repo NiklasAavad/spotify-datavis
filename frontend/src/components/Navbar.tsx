@@ -1,6 +1,8 @@
 import { QueryType } from '../hooks/useQueryFunction';
 import { ScoreParams } from './ScoreParameterChanger';
 import { Attribute, AttributeParams } from './AttributeParameterChanger';
+import "react-toggle/style.css"
+import Toggle from 'react-toggle'
 
 import React from 'react';
 
@@ -114,11 +116,11 @@ export const Navbar: React.FC<NavbarProps> = ({
 	].filter((component) => component !== null);
 
 	return (
-		<div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px', background: 'grey', marginBottom: '16px' }}>
-			<div style={{ width: '600px', textAlign: 'center' }}>
+		<div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px', background: 'grey', marginBottom: '16px', fontSize: '20px' }}>
+			<div style={{ width: '700px', textAlign: 'center' }}>
 				<strong>Overview</strong>
-				<p style={{ marginTop: '-8px', marginBottom: '0px', fontSize: '12px', fontStyle: 'italic' }}>{queryType === QueryType.Attribute ? 'average per country' : '% of songs within selected range'}</p>
-				<div style={{ marginTop: '0px' }}>
+				<p style={{ marginTop: '-8px', marginBottom: '0px', fontSize: '16px', fontStyle: 'italic' }}>{queryType === QueryType.Attribute ? 'average per country' : '% of songs within selected range'}</p>
+				<div style={{ marginTop: '0px', fontSize: '18px' }}>
 					{queryType === QueryType.Attribute &&
 						Object.values(Attribute).map((attribute) => (
 							<span
@@ -142,15 +144,22 @@ export const Navbar: React.FC<NavbarProps> = ({
 				</div>
 			</div>
 			<div>
-				<strong>Domain Type</strong>
-				<div>
-					<button onClick={toggleDomainType}>Toggle domain (full, cropped)</button>
+				<div style={{ marginBottom: '4px' }}>
+					<strong>Domain Type</strong>
+					<p style={{ marginTop: '-8px', marginBottom: '0px', fontSize: '16px', fontStyle: 'italic' }}>full vs cropped</p>
 				</div>
+				<label>
+					<Toggle
+						defaultChecked={domainType === 'cropped'}
+						icons={false}
+						onChange={toggleDomainType} />
+				</label>
 			</div>
 			<div>
 				<strong>Date</strong>
 				<div>
 					<input
+						style={{ fontSize: '18px' }}
 						type="date"
 						value={date.toISOString().split('T')[0]}
 						onChange={(e) => setDate(new Date(e.target.value))}
@@ -159,7 +168,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 			</div>
 			<div>
 				<strong>Detail</strong>
-				<div style={{ marginTop: '0px' }}>
+				<div style={{ marginTop: '0px', fontSize: '18px' }}>
 					{Object.values(Attribute).map((metric) => (
 						<label key={metric}>
 							<input
