@@ -52,21 +52,27 @@ export const Navbar: React.FC<NavbarProps> = ({
 	return (
 		<div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px', background: 'grey', marginBottom: '16px' }}>
 			<div>
-				<strong>Overview</strong>
+				<strong>Overview</strong> 
+				<p style={{marginTop: '-8px', marginBottom: '0px', fontSize: '12px', fontStyle: 'italic'}}>{queryType === QueryType.Attribute ? 'average per country' : '% of songs within selected range'}</p>
 				<div style={{ marginTop: '0px' }}>
-					{Object.values(Attribute).map((attribute) => (
-						<span
-							key={attribute}
-							style={{
-								textDecoration: currentAttributeParams.attribute === attribute ? 'underline' : 'none',
-								cursor: 'pointer',
-								marginRight: '10px',
-							}}
-							onClick={() => setCurrentAttributeParams({ attribute })}
-						>
-							{attribute}
-						</span>
-					))}
+					{queryType === QueryType.Attribute &&
+						Object.values(Attribute).map((attribute) => (
+							<span
+								key={attribute}
+								style={{
+									textDecoration: currentAttributeParams.attribute === attribute ? 'underline' : 'none',
+									cursor: 'pointer',
+									marginRight: '10px',
+								}}
+								onClick={() => setCurrentAttributeParams({ attribute })}
+							>
+								{attribute}
+							</span>
+						))
+					}
+					{queryType === QueryType.Score &&
+						<div>score chosen</div>
+					}
 				</div>
 			</div>
 			<div>
