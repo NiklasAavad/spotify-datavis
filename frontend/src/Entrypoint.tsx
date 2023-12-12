@@ -224,6 +224,8 @@ export const Entrypoint = () => {
 
 	const upperRightWidth = 750;
 
+	const metricsChosen = selectedMetrics.length;
+
 	return (
 		<>
 			<Navbar
@@ -265,7 +267,7 @@ export const Entrypoint = () => {
 					<div style={{height: upperHeight}}>
 						<BrushProvider>
 							{
-								selectedMetrics.length === 3 && selectedMetrics.map((metric1) => (
+								selectedMetrics.map((metric1) => (
 									<div style={{ display: 'flex', flexDirection: 'row' }}>
 										{
 											selectedMetrics.map((metric2) => (
@@ -276,8 +278,8 @@ export const Entrypoint = () => {
 														selectedCountries={selectedCountries}
 														selectedMetric={metric1}
 														brushedInterval={brushedInterval}
-														totalHeight={upperHeight / 3}
-														totalWidth={upperRightWidth / 3}
+														totalHeight={upperHeight / metricsChosen}
+														totalWidth={upperRightWidth / metricsChosen}
 														colorScale={rightSideColorScale}
 													/>
 													:
@@ -287,20 +289,14 @@ export const Entrypoint = () => {
 														selectedMetric={metric1}
 														selectedMetric2={metric2}
 														setBrushedInterval={setBrushedInterval}
-														totalHeight={upperHeight / 3}
-														totalWidth={upperRightWidth / 3}
+														totalHeight={upperHeight / metricsChosen}
+														totalWidth={upperRightWidth / metricsChosen}
 														colorScale={rightSideColorScale}
 													/>
 											))
 										}
 									</div>
 								))
-							}
-							{
-								selectedMetrics.length !== 3 &&
-								<div>
-									<p>Please select exactly three!</p>
-								</div>
 							}
 						</BrushProvider>
 					</div>

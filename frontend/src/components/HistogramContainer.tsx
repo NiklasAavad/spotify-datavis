@@ -11,7 +11,7 @@ type HistogramContainerProps = {
 export const HistogramContainer: React.FC<HistogramContainerProps> = (props) => {
 	const svgOpacity = props.isLoading ? 0.1 : 1.0
 	const MARGIN = { top: 20, right: 30, bottom: 30, left: 40 };
-	const WIDTH = 250 - MARGIN.left - MARGIN.right;
+	const WIDTH = props.totalWidth - MARGIN.left - MARGIN.right;
 	const HEIGHT = WIDTH;
 
 	return (

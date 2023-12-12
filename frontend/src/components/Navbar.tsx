@@ -43,11 +43,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 				prevSelectedMetrics.filter((selectedMetric) => selectedMetric !== metric)
 			);
 		} else {
-			// If not selected and less than 3 metrics are selected, add it
-			// TODO, add some error	message if more than 3 metrics are selected
-			if (selectedMetrics.length < 3) {
-				setSelectedMetrics((prevSelectedMetrics) => [...prevSelectedMetrics, metric]);
-			}
+			setSelectedMetrics((prevSelectedMetrics) => [...prevSelectedMetrics, metric]);
 		}
 	};
 
