@@ -93,8 +93,8 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedMetric, 
 			.join('circle')
 			.attr('cx', d => x(d[selectedMetric]))
 			.attr('cy', d => y(d[selectedMetric2]))
-			.attr('r', 4) // radius of each point
-			.attr('opacity', 0.5)
+			.attr('r', 2) // radius of each point
+			.attr('opacity', 0.6)
 			.attr('fill', d => colorScale(d.region) as string);
 
 		// Add brushing functionality
