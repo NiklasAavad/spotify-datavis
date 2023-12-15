@@ -19,7 +19,7 @@ export const MapContainer: React.FC<MapContainerProps> = (props) => {
 
 	return (
 		<>
-			<div style={{ height: props.height, width: width, overflow: 'hidden', position: 'relative', border: 'solid 2px' }}>
+			<div style={{ height: props.height, width: width, overflow: 'hidden', position: 'relative' }}>
 				<div style={{ opacity: svgOpacity, height: "100%" }}>
 					<WorldMap
 						data={props.data}

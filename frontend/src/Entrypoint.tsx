@@ -14,6 +14,7 @@ import { HistogramContainer } from './components/HistogramContainer';
 import { Interval } from './components/ScatterPlot';
 import { TimeSeriesContainer } from './components/TimeSeriesContainer';
 import { Navbar } from './components/Navbar';
+import { secondaryColor } from './config'
 
 // TODO consider moving the shuffling to the backend, so we cache the results, and the removal of one region will not change the order of the results
 const shuffleArray = (array: unknown[]) => {
@@ -137,8 +138,9 @@ export const Entrypoint = () => {
 
 	const [date, setDate] = useState<Date>(new Date('2020-08-30'))
 
-	const setDateHelper = (date: Date) => {
-		date.setDate(date.getDate() + 2)
+	const setDateHelper = (date: Date, offByOne: boolean) => {
+		const delta = offByOne ? 1 : 2;
+		date.setDate(date.getDate() + delta)
 		date.setHours(0, 0, 0, 0);
 		const formattedDate = date.toISOString().split('T')[0];
 		const newDate = new Date(formattedDate)
@@ -148,7 +150,7 @@ export const Entrypoint = () => {
 	const updateDates = (delta: number) => {
 		const newDate = new Date(date);
 		newDate.setDate(newDate.getDate() + delta - 1); // TODO off by one error
-		setDateHelper(newDate)
+		setDateHelper(newDate, false)
 	}
 
 	const [domainType, setDomainType] = useState<'full' | 'cropped'>('full');
@@ -190,15 +192,22 @@ export const Entrypoint = () => {
 	/* 	.range(d3.quantize(t => d3.interpolateGreens(t), intervals)) */
 	/* 	.unknown('grey'); */
 
+	/* const leftSideColorScale: ColorScale = d3 */
+	/* 	.scaleSequential(t => d3.interpolateBlues(t)) */
+	/* 	.domain([lowerBound, upperBound]) */
+	/* 	.unknown('grey'); */
+
+
 	const leftSideColorScale: ColorScale = d3
-		.scaleSequential(t => d3.interpolateBlues(t))
+		.scaleQuantize<string>()
+		.range(d3.quantize(t => d3.interpolateOranges(t), 10))
 		.domain([lowerBound, upperBound])
-		.unknown('grey');
+		.unknown(secondaryColor);
 
 	const rightSideColorScale = useMemo(() => {
 		return d3.scaleOrdinal()
 			.domain(selectedCountries)
-			.range(d3.schemeCategory10)
+			.range(d3.schemeCategory10.slice(1))
 	}, [selectedCountries]);
 
 	const onChangeQueryType = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -244,15 +253,15 @@ export const Entrypoint = () => {
 			/>
 			<div style={{ display: 'flex', flexDirection: 'row' }}>
 				<div>
-					<div style={{ display: 'flex' }}>
-						<ColorLegend colorScale={leftSideColorScale} width={40} height={upperHeight + 4} lowerBound={lowerBound} upperBound={upperBound} />
+					<div style={{ height: upperHeight - 50, display: 'flex' }}>
+						<ColorLegend colorScale={leftSideColorScale} width={40} height={upperHeight - 100 + 4} lowerBound={lowerBound} upperBound={upperBound} />
 						<MapContainer
 							data={data}
 							isLoading={isLoading}
 							colorScale={leftSideColorScale}
 							selectedCountries={selectedCountries}
 							setSelectedCountries={setSelectedCountries}
-							height={upperHeight}
+							height={upperHeight - 100}
 						/>
 					</div>
 					<BarChart
@@ -261,10 +270,11 @@ export const Entrypoint = () => {
 						setSelectedCountries={setSelectedCountries}
 						leftSideColorScale={leftSideColorScale}
 						rightSideColorScale={rightSideColorScale}
+						domainType={domainType}
 					/>
 				</div>
 				<div style={{ marginLeft: "32px" }}>
-					<div style={{height: upperHeight}}>
+					<div style={{ height: upperHeight }}>
 						<BrushProvider>
 							{
 								selectedMetrics.map((metric1) => (
@@ -305,55 +315,43 @@ export const Entrypoint = () => {
 							data={timeSeries}
 							color={rightSideColorScale}
 							isLoading={loadingTimeSeries}
-							height={300}
-							width={800}
+							height={250}
+							width={700}
 							margin={{ top: 20, right: 30, bottom: 30, left: 50 }}
 							domainType={domainType}
 							queryType={queryType}
 							date={date}
 							setDate={setDateHelper}
 						/>
-						<div style={{ display: 'flex', paddingTop: '50px', paddingLeft: '8px' }}>
-							<button
-								style={{ zIndex: 10, marginRight: '8px' }}
-								onClick={() => updateDates(-1)}
-							>
-								{'<'}
-							</button>
-							<button
-								style={{ zIndex: 10 }}
-								onClick={() => updateDates(1)}
-							>
-								{'>'}
-							</button>
-						</div>
-						<div style={{ display: 'flex', paddingTop: '8px', paddingLeft: '8px' }}>
-							<button
-								style={{ zIndex: 10, marginRight: '8px' }}
-								onClick={() => updateDates(-7)}
-							>
-								{'<<'}
-							</button>
-							<button
-								style={{ zIndex: 10 }}
-								onClick={() => updateDates(7)}
-							>
-								{'>>'}
-							</button>
-						</div>
-						<div style={{ display: 'flex', paddingTop: '8px', paddingLeft: '8px' }}>
-							<button
-								style={{ zIndex: 10, marginRight: '8px' }}
-								onClick={() => updateDates(-30)}
-							>
-								{'<<<'}
-							</button>
-							<button
-								style={{ zIndex: 10 }}
-								onClick={() => updateDates(30)}
-							>
-								{'>>>'}
-							</button>
+						<div style={{ display: 'flex', flexDirection: 'row', paddingTop: '48px', paddingLeft: '8px', color: '#262626', justifyContent: 'space-between'}}>
+							<div style={{ display: 'flex', marginRight: '8px'}}>
+								<div style={{ zIndex: 10, marginRight: '16px', cursor: 'pointer' }} onClick={() => updateDates(-365)}>
+									{'< year'}	
+								</div>
+								<div style={{ zIndex: 10, marginRight: '16px', cursor: 'pointer' }} onClick={() => updateDates(-30)}>
+									{'< month'}	
+								</div>
+								<div style={{ zIndex: 10, marginRight: '16px', cursor: 'pointer' }} onClick={() => updateDates(-7)}>
+									{'< week'}
+								</div>
+								<div style={{ zIndex: 10, cursor: 'pointer' }} onClick={() => updateDates(-1)}>
+									{'< day'}
+								</div>
+							</div>
+							<div style={{ display: 'flex' }}>
+								<div style={{ zIndex: 10, marginRight: '16px', cursor: 'pointer' }} onClick={() => updateDates(1)}>
+									{'day >'}
+								</div>
+								<div style={{ zIndex: 10, marginRight: '16px', cursor: 'pointer' }} onClick={() => updateDates(7)}>
+									{'week >'}
+								</div>
+								<div style={{ zIndex: 10, cursor: 'pointer', marginRight: '16px' }} onClick={() => updateDates(30)}>
+									{'month >'}
+								</div>
+								<div style={{ zIndex: 10, cursor: 'pointer' }} onClick={() => updateDates(365)}>
+									{'year >'}
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>

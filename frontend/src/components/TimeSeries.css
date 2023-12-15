@@ -1,0 +1,24 @@
+/* Add styles for the vertical line */
+.line-path {
+  fill: none;
+}
+
+/* Add styles for the X-axis ticks */
+.x-axis path,
+.x-axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+/* Add styles for the brush */
+.brush .handle {
+  fill: #666;
+  stroke: #000;
+}
+
+.brush .overlay {
+  fill: none;
+  pointer-events: all;
+}
+

@@ -76,6 +76,7 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedMetric, 
 			)
 			.selectAll('text')
 			.style('font-size', '13px')
+			.style('stroke', 'grey')
 
 
 
@@ -87,6 +88,7 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, selectedMetric, 
 			)
 			.selectAll('text')
 			.style('font-size', '13px')
+			.style('stroke', 'grey')
 
 		g.selectAll('dot')
 			.data(data)

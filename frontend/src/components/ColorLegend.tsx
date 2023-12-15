@@ -1,5 +1,6 @@
 import * as d3 from 'd3';
 import { ColorScale } from '../Entrypoint';
+import { secondaryColor } from '../config';
 
 type ColorLegendProps = {
 	colorScale: ColorScale;
@@ -28,9 +29,12 @@ export const ColorLegend: React.FC<ColorLegendProps> = ({ colorScale, width, hei
 	);
 
 	return (
-		<svg width={width} height={height}>
+		<svg width={width} height={height} xmlns="http://www.w3.org/2000/svg">
 			{linearGradient}
-			<rect x={0} y={0} width={width} height={height} fill={`url(#${gradientId})`} />
+			{/* Border */}
+			<rect x={0} y={0} width={width} height={height} fill="none" stroke={secondaryColor} strokeWidth="1" />
+			{/* Inner filled rectangle */}
+			<rect x={2} y={2} width={width - 4} height={height - 4} fill={`url(#${gradientId})`} />
 		</svg>
 	);
 };

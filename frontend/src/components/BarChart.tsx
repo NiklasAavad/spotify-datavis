@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import { ColorScale } from '../Entrypoint';
+import { secondaryColor } from '../config';
 
 type DataItem = {
 	region: string;
@@ -14,6 +15,7 @@ type BarChartProps = {
 	setSelectedCountries: React.Dispatch<React.SetStateAction<string[]>>;
 	leftSideColorScale: ColorScale;
 	rightSideColorScale: d3.ScaleOrdinal<string, unknown, never>;
+	domainType: 'full' | 'cropped';
 }
 
 const sortScore = (a: DataItem, b: DataItem) => d3.descending(a?.score, b?.score);
@@ -24,7 +26,7 @@ const orderMap = {
 	"alphabetically": sortAlphabetically
 }
 
-export const BarChart: React.FC<BarChartProps> = ({ data, selectedCountries, setSelectedCountries, leftSideColorScale, rightSideColorScale }) => {
+export const BarChart: React.FC<BarChartProps> = ({ data, selectedCountries, setSelectedCountries, leftSideColorScale, rightSideColorScale, domainType }) => {
 	const [order, setOrder] = useState<"score" | "alphabetically">("alphabetically");
 
 	const chartRef = useRef<SVGSVGElement>(null);
@@ -56,7 +58,7 @@ export const BarChart: React.FC<BarChartProps> = ({ data, selectedCountries, set
 		const marginTop = 20;
 		const marginRight = 0;
 		const marginBottom = 100;
-		const marginLeft = 40;
+		const marginLeft = 35;
 
 		// Declare the x (horizontal position) scale and the corresponding axis generator.
 		const x = d3
@@ -67,10 +69,18 @@ export const BarChart: React.FC<BarChartProps> = ({ data, selectedCountries, set
 
 		const xAxis = d3.axisBottom(x).tickSizeOuter(0);
 
+		const getYDomain = () => {
+			if (domainType === 'full') {
+				return [0, 1];
+			}
+			const max = d3.max(dataArray, d => d.score);
+			return [0, max]
+		}
+
 		// Declare the y (vertical position) scale.
 		const y = d3
 			.scaleLinear()
-			.domain([0, 1]) // Change domain here
+			.domain(getYDomain()) // Change domain here
 			.range([height - marginBottom, marginTop]);
 
 		// Create the SVG container.
@@ -88,7 +98,7 @@ export const BarChart: React.FC<BarChartProps> = ({ data, selectedCountries, set
 
 			const isNotIncludedInSelectedCountries = selectedCountries.length > 0 && !selectedCountries.includes(d.region)
 			if (isNotIncludedInSelectedCountries) {
-				return 'grey';
+				return secondaryColor;
 			}
 
 			return rightSideColorScale(d.region);
@@ -97,10 +107,19 @@ export const BarChart: React.FC<BarChartProps> = ({ data, selectedCountries, set
 		const getTextColor = (region: string) => {
 			const isNotIncludedInSelectedCountries = selectedCountries.length > 0 && !selectedCountries.includes(region)
 			if (isNotIncludedInSelectedCountries) {
-				return 'grey';
+				return secondaryColor;
 			}
 
-			return 'white';
+			return 'black';
+		}
+
+		const getFontWeight = (region: string) => {
+			const isNotIncludedInSelectedCountries = selectedCountries.length > 0 && !selectedCountries.includes(region)
+			if (isNotIncludedInSelectedCountries) {
+				return 'normal';
+			}
+
+			return 'bolder';
 		}
 
 		const bar = svg
@@ -117,13 +136,13 @@ export const BarChart: React.FC<BarChartProps> = ({ data, selectedCountries, set
 			.attr('fill', d => getBarColor(d))
 
 		bar.on('mouseover', function(_, d) {
-			d3.select(this).attr('fill', 'orange'); // Change color to orange
+			d3.select(this).attr('fill', 'black'); // Change color to orange
 
 			// Find the corresponding label and change its color
 			svg
 				.selectAll('text')
 				.filter(label => label === d.region)
-				.attr('fill', 'orange');
+				.attr('fill', 'black');
 		});
 
 		bar.on('mouseout', function(_, d) {
@@ -151,23 +170,27 @@ export const BarChart: React.FC<BarChartProps> = ({ data, selectedCountries, set
 			.attr('x', -5) // Shift the text to the left so the center of the text is aligned with the tick TODO overvej at fjern
 			.attr('font-size', '11px')
 			.attr('fill', (region: string) => getTextColor(region))
+			.attr('style', (region: string) => getFontWeight(region))
 			.style('text-anchor', 'end'); // Align the text to the end
 
 		const gy = svg
 			.append('g')
+			.style('stroke', 'grey')
 			.attr('transform', `translate(${marginLeft},0)`)
 			.call(d3.axisLeft(y))
 			.call(g => g.select('.domain').remove());
 
-	}, [data, leftSideColorScale, order, selectedCountries, setSelectedCountries]);
+	}, [data, leftSideColorScale, order, rightSideColorScale, selectedCountries, setSelectedCountries]);
 
 	return <div style={{ position: 'relative' }}>
 		<svg ref={chartRef}></svg>
 		<button style={{
 			position: 'absolute',
-			top: 30,
+			top: -20,
 			right: 30,
-			zIndex: 1
+			zIndex: 1,
+			color: '#fff5e1',
+			backgroundColor: 'grey'
 		}}
 			onClick={toggleOrder}>
 			Toggle order

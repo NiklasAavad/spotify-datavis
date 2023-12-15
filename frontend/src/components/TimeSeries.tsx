@@ -1,6 +1,8 @@
 import React, { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
 import { QueryType } from '../hooks/useQueryFunction';
+import { secondaryColor } from '../config';
+/* import './TimeSeries.css' // TODO remove this if we want the old brushing styling */
 
 type DataPoint = {
 	avg: number;
@@ -15,15 +17,16 @@ export type TimeSeriesProps = {
 	color: d3.ScaleOrdinal<string, unknown, never>;
 	height: number;
 	width: number;
-	margin: { top: number; right: number; bottom: number; left: number; }
+	margin: { top: number; right: number; bottom: number; left: number; };
 	domainType: 'full' | 'cropped';
 	queryType: QueryType;
 	date: Date;
-	setDate: (date: Date) => void;
+	setDate: (date: Date, offByOne: boolean) => void;
 };
 
 export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, width, margin, domainType, queryType, date, setDate }) => {
 	const chartRef = useRef<null | HTMLDivElement>(null);
+	const [period, setPeriod] = React.useState<[Date, Date]>([new Date('2017-01-01'), new Date('2021-12-31')]);
 
 	useEffect(() => {
 		if (!chartRef.current || !data) {
@@ -61,8 +64,10 @@ export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, wid
 			if (domainType === 'full') {
 				return [0, 1];
 			}
-			return d3.extent(data, d => d.avg);
-		}
+			const [min, max] = d3.extent(data, d => d.avg);
+			const space = (max - min) * 0.3;
+			return [min - space, max + space];
+		};
 
 		y.domain(getDomainY());
 
@@ -94,13 +99,10 @@ export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, wid
 
 		const getColor = (region: string) => {
 			if (queryType === QueryType.Score) {
-				return 'grey';
+				return secondaryColor;
 			}
 			return color(region);
 		}
-
-		console.log("data by region:", dataByRegion)
-		console.log("modified data by region:", modifiedDataByRegion)
 
 		// Draggable vertical line to select date
 		const drag = d3.drag()
@@ -113,7 +115,7 @@ export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, wid
 			.attr('y1', 0)
 			.attr('x2', x(date))
 			.attr('y2', height)
-			.attr('stroke', 'white')
+			.attr('stroke', 'grey')
 			.attr('cursor', 'pointer')
 			.attr('stroke-width', 8)
 			.attr('stroke-dasharray', '2, 2')
@@ -124,6 +126,7 @@ export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, wid
 		dataByRegion.forEach((regionData, i) => {
 			svg.append('path')
 				.data([Array.from(regionData)])
+				.attr('class', 'line-path')  // Add a class to the line paths
 				.attr('fill', 'none')
 				.attr('stroke', 'grey')
 				.attr('stroke-width', 1)
@@ -133,6 +136,7 @@ export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, wid
 		modifiedDataByRegion.forEach((regionData, i) => {
 			svg.append('path')
 				.data([Array.from(regionData)])
+				.attr('class', 'line-path')  // Add a class to the line paths
 				.attr('fill', 'none')
 				.attr('stroke', getColor(i))
 				.attr('stroke-width', 2)
@@ -141,17 +145,21 @@ export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, wid
 
 		// Add the X Axis
 		svg.append('g')
+			.attr('class', 'x-axis')  // Add a class to the X-axis
 			.attr('transform', `translate(0, ${height})`)
-			.call(d3.axisBottom(x))
+			.call(d3.axisBottom(x).tickFormat(d3.timeFormat('%Y')).ticks(d3.timeYear.every(1)))
 			.style('font-size', '14px')
+			.style('stroke', 'grey');
 
 		// Add the Y Axis
 		svg.append('g')
 			.call(d3.axisLeft(y))
 			.style('font-size', '14px')
+			.style('stroke', 'grey');
 
 		let tooltip = d3.select("body").append("div")
 			.attr("class", "tooltip")
+			.style("color", "black")
 			.style("opacity", 0);
 
 		function dragStarted(event, d) {
@@ -163,7 +171,7 @@ export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, wid
 			tooltip.html(formatTime(x.invert(event.x)))
 				.style("left", (event.x + chartBoundingBox.left) + "px") // Adjust left position
 				.style("top", (chartBoundingBox.top - 8) + "px") // Adjust top position
-				.style('position', 'absolute')
+				.style('position', 'absolute');
 			d3.select(this).raise();
 		}
 
@@ -180,7 +188,7 @@ export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, wid
 			tooltip.html(formatTime(x.invert(event.x)))
 				.style("left", (event.x + chartBoundingBox.left) + "px") // Adjust left position
 				.style("top", (chartBoundingBox.top - 8) + "px") // Adjust top position
-				.style('position', 'absolute')
+				.style('position', 'absolute');
 		}
 
 		function dragEnded(event, d) {
@@ -190,10 +198,10 @@ export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, wid
 				.style("opacity", 0);
 
 			// update date
-			const tempDate = x.invert(event.x)
+			const tempDate = x.invert(event.x);
 			tempDate.setHours(0, 0, 0, 0);
 			const formattedDate = tempDate.toISOString().split('T')[0];
-			const newDate = new Date(formattedDate)
+			const newDate = new Date(formattedDate);
 			setDate(newDate);
 		}
 
@@ -201,3 +209,4 @@ export const TimeSeries: React.FC<TimeSeriesProps> = ({ data, color, height, wid
 
 	return <div ref={chartRef} style={{ position: 'relative' }}></div>;
 };
+

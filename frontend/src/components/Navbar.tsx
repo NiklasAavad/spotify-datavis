@@ -5,6 +5,7 @@ import "react-toggle/style.css"
 import Toggle from 'react-toggle'
 
 import React from 'react';
+import { secondaryColor } from '../config';
 
 interface NavbarProps {
 	queryType: QueryType;
@@ -12,7 +13,7 @@ interface NavbarProps {
 	domainType: 'full' | 'cropped';
 	toggleDomainType: () => void;
 	date: Date;
-	setDate: (date: Date) => void;
+	setDate: (date: Date, offByOne: boolean) => void;
 	currentScoreParams: ScoreParams;
 	setCurrentScoreParams: React.Dispatch<React.SetStateAction<ScoreParams>>;
 	currentAttributeParams: AttributeParams;
@@ -111,8 +112,14 @@ export const Navbar: React.FC<NavbarProps> = ({
 		showScoreParamRange(Attribute.Speechiness),
 	].filter((component) => component !== null);
 
+	const textColor = "#fff5e1"
+
+	const capitalizeFirstLetter = (string: string) => {
+		return string.charAt(0).toUpperCase() + string.slice(1);
+	}
+
 	return (
-		<div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px', background: 'grey', marginBottom: '16px', fontSize: '20px' }}>
+		<div style={{ display: 'flex', color: textColor, justifyContent: 'space-between', padding: '16px', background: secondaryColor, marginBottom: '16px', fontSize: '20px', borderRadius: '24px', marginTop: '-16px' }}>
 			<div style={{ width: '700px', textAlign: 'center' }}>
 				<strong>Overview</strong>
 				<p style={{ marginTop: '-8px', marginBottom: '0px', fontSize: '16px', fontStyle: 'italic' }}>{queryType === QueryType.Attribute ? 'average per country' : '% of songs within selected range'}</p>
@@ -122,13 +129,13 @@ export const Navbar: React.FC<NavbarProps> = ({
 							<span
 								key={attribute}
 								style={{
-									textDecoration: currentAttributeParams.attribute === attribute ? 'underline' : 'none',
+									fontWeight: currentAttributeParams.attribute === attribute ? 'bold' : 'normal',
 									cursor: 'pointer',
 									marginRight: '10px',
 								}}
 								onClick={() => setCurrentAttributeParams({ attribute })}
 							>
-								{attribute}
+								{capitalizeFirstLetter(attribute)}
 							</span>
 						))
 					}
@@ -141,8 +148,8 @@ export const Navbar: React.FC<NavbarProps> = ({
 			</div>
 			<div>
 				<div style={{ marginBottom: '4px' }}>
-					<strong>Domain Type</strong>
-					<p style={{ marginTop: '-8px', marginBottom: '0px', fontSize: '16px', fontStyle: 'italic' }}>full vs cropped</p>
+					<strong>Value Range</strong>
+					<p style={{ marginTop: '-8px', marginBottom: '0px', fontSize: '16px', fontStyle: 'italic' }}>full / focused</p>
 				</div>
 				<label>
 					<Toggle
@@ -153,27 +160,33 @@ export const Navbar: React.FC<NavbarProps> = ({
 			</div>
 			<div>
 				<strong>Date</strong>
+				<p style={{ marginTop: '-8px', marginBottom: '0px', fontSize: '16px', fontStyle: 'italic' }}>from 2017 to 2021</p>
 				<div>
 					<input
 						style={{ fontSize: '18px' }}
 						type="date"
 						value={date.toISOString().split('T')[0]}
-						onChange={(e) => setDate(new Date(e.target.value))}
+						onChange={(e) => setDate(new Date(e.target.value), true)}
 					/>
 				</div>
 			</div>
-			<div>
+			<div style={{ width: '750px' }}>
 				<strong>Detail</strong>
+				<p style={{ marginTop: '-8px', marginBottom: '0px', fontSize: '16px', fontStyle: 'italic' }}>on demand</p>
 				<div style={{ marginTop: '0px', fontSize: '18px' }}>
 					{Object.values(Attribute).map((metric) => (
 						<label key={metric}>
-							<input
-								type="checkbox"
-								value={metric}
-								checked={selectedMetrics.includes(metric)}
-								onChange={() => handleMetricChange(metric)}
-							/>
-							{metric}
+							<span
+								key={metric}
+								style={{
+									fontWeight: selectedMetrics.includes(metric) ? 'bold' : 'normal',
+									cursor: 'pointer',
+									marginRight: '10px',
+								}}
+								onClick={() => handleMetricChange(metric)}
+							>
+								{capitalizeFirstLetter(metric)}
+							</span>
 						</label>
 					))}
 				</div>

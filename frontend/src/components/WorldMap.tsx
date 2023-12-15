@@ -5,6 +5,7 @@ import './WorldMap.css'
 import { countries } from '../data/countries.ts'
 import { Country } from './Country.tsx';
 import { ColorScale } from '../Entrypoint.tsx';
+import { secondaryColor } from '../config.ts';
 
 type WorldMapProps = {
 	data: any; // should be a dict of country name -> score (percentage), but we do not validate this yet.
@@ -40,7 +41,7 @@ export const WorldMap: React.FC<WorldMapProps> = (props) => {
 	const projection = d3
 		.geoMercator()
 		.scale(props.width / 2 / Math.PI - 40)
-		.center([-40, 65])
+		.center([-40, 60])
 
 	const geoPathGenerator = d3.geoPath().projection(projection);
 
@@ -52,6 +53,7 @@ export const WorldMap: React.FC<WorldMapProps> = (props) => {
 		const zoomed = (event: d3.D3ZoomEvent<SVGSVGElement, unknown>) => {
 			const { transform } = event
 			svg.selectAll('path').attr('transform', transform as any)
+
 		}
 
 		const zoom = d3
@@ -79,6 +81,11 @@ export const WorldMap: React.FC<WorldMapProps> = (props) => {
 
 	return (
 		<svg ref={svgRef} width={props.width} height={props.height}>
+			<defs>
+				<pattern id="striped-pattern" patternUnits="userSpaceOnUse" width="8" height="8">
+					<path d="M-1,1 l2,-2 M0,8 l8,-8 M7,9 l2,-2" stroke={secondaryColor} strokeWidth="0.5" />
+				</pattern>
+			</defs>
 			<g>{countrySvgPaths}</g>
 		</svg>
 	)

@@ -44,6 +44,9 @@ export const Country: React.FC<CountryProps> = (props) => {
 		if (score === undefined) {
 			return ''
 		}
+		if (typeof score === 'number') {
+			return `${country}: ${score.toFixed(4)}`
+		}
 		return `${country}: ${score}`
 	}
 
@@ -52,6 +55,7 @@ export const Country: React.FC<CountryProps> = (props) => {
 		d3.select('#tooltip')
 			.style('opacity', 0.9)
 			.classed('unselectable', true)
+			.style('color', 'black')
 			.text(getText(country))
 	}
 
@@ -90,7 +94,7 @@ export const Country: React.FC<CountryProps> = (props) => {
 
 	return <path
 		d={geoPathGenerator(countryFeature)}
-		stroke="lightgrey"
+		stroke="grey"
 		strokeWidth={getStrokeWidth()}
 		fill={getFill()}
 		fillOpacity={0.7}

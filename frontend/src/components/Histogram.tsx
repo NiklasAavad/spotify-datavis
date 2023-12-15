@@ -45,6 +45,7 @@ export const Histogram: React.FC<HistogramProps> = ({ data, selectedCountries, s
 			)
 			.selectAll('text') // Select all text elements of x-axis
 			.style('font-size', '13px') // Adjust the font size as needed
+			.style('stroke', 'grey')
 
 		// set the parameters for the histogram
 		const histogram = d3
@@ -102,6 +103,7 @@ export const Histogram: React.FC<HistogramProps> = ({ data, selectedCountries, s
 			)
 			.selectAll('text') // Select all text elements of y-axis
 			.style('font-size', '13px') // Adjust the font size as needed
+			.style('stroke', 'grey')
 
 		// create a histogram for each region
 		selectedCountries.forEach((region, index) => {
@@ -134,7 +136,7 @@ export const Histogram: React.FC<HistogramProps> = ({ data, selectedCountries, s
 			.attr("dy", "-1em") // Adjust this value to move the title higher or lower
 			.style("font-size", "16px")
 			.style("font-weight", "bold")
-			.style("fill", "white")
+			.style("fill", "grey")
 			.text(capitalizeFirstLetter(selectedMetric)); // Use the selectedMetric prop as the title
 
 	}, [brushedInterval, colorScale, data, height, margin.bottom, margin.left, margin.right, margin.top, selectedCountries, selectedMetric, width]);
